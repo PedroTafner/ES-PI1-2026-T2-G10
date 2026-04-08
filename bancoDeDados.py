@@ -8,13 +8,13 @@ database='pi1_2026'
 )
 cursor = conexao.cursor()
 
-def inserir_eleitores(nome, titulo_eleitor,cpf, mesario):
-    sql = "INSERT INTO eleitores (nome, titulo_eleitor,cpf, mesario) VALUES (%s, %s)"
-    valores = (nome, titulo_eleitor,cpf, mesario)
+def inserir_eleitores(nome, titulo_eleitor,cpf, mesario, chave_acesso, status_voto=0):
+    sql = "INSERT INTO eleitores (nome, titulo_eleitor,cpf, mesario, chave_acesso, status_voto) VALUES (%s, %s, %s, %s, %s, %s)"
+    valores = (nome, titulo_eleitor,cpf, mesario, chave_acesso, status_voto)
     cursor.execute(sql, valores)
     conexao.commit()
 
 def listar_usuarios():
-        cursor.execute("SELECT id, nome, titulo_eleitor,cpf, mesario FROM eleitores")
-    for (id, nome, titulo_eleitor, cpf, mesario) in cursor.fetchall():
-        print(f"ID: {id}, Nome: {nome}, Titulo Eleitor: {titulo_eleitor}, cpf {cpf}, mesario {mesario}")
+    cursor.execute("SELECT id, nome, titulo_eleitor,cpf, mesario, chave_acesso FROM eleitores")
+    for (id, nome, titulo_eleitor, cpf, mesario, chave_acesso) in cursor.fetchall():
+        print(f"ID: {id}, Nome: {nome}, Titulo Eleitor: {titulo_eleitor}, cpf {cpf}, mesario {mesario}, Chave de Acesso: {chave_acesso}")

@@ -1,3 +1,5 @@
+import bancoDeDados
+import random
 def opcao_gerenciamento(): #OPÇÃO GERENCIAMENTO
     opcger=0
     while opcger != 6:
@@ -111,8 +113,40 @@ def opcao_resultadoVotacao(): #OPÇÃO RESULTADO DA VOTAÇÃO
                 return
             case _: #OPÇÃO INVÁLIDA
                 print("Opção Inválida")
+
+
 def opcao_cadastro(): #OPÇÃO CADASTRO
     nome=str(input("Digite seu Nome: "))
-    titulo_eleitor=int(input("Digite seu Título de Eleitor: "))
-    cpf=int(input("Digite seu CPF: "))
-    mesario=str(input("Você atuará como mesário? (sim/nao)"))
+    titulo_eleitor=input("Digite seu Título de Eleitor: ")
+    cpf=input("Digite seu CPF: ")
+    mesario=str(input("Você atuará como mesário? (sim/nao): "))
+    if mesario == "sim":
+        mesario=1
+    else:
+        mesario=0
+    chave_acesso = gerar_chave_acesso(nome)
+    bancoDeDados.inserir_eleitores(nome,titulo_eleitor,cpf,mesario,chave_acesso)
+
+
+def gerar_chave_acesso(nome): #GERAR CHAVE DE ACESSO
+
+    partes_nome = nome.strip().split()
+    if len(partes_nome) < 2:
+        raise ValueError("O nome deve conter pelo menos nome e sobrenome.")
+    
+    primeiro_nome = partes_nome[0]
+    segundo_nome = partes_nome[1]
+
+    letras = (
+        primeiro_nome[:2].upper() +
+        segundo_nome[0].upper()
+    )
+
+    numeros = ""
+    for _ in range(4):
+        numeros += str(random.randint(0, 9))
+
+
+    chave_acesso = letras + numeros
+
+    return chave_acesso
