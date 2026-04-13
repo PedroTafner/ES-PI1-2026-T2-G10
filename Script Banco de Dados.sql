@@ -1,5 +1,6 @@
 /*  hosname: localhost
-	password: 1234
+	user: 'root'
+	password: Zxxyf1
 */
 
 CREATE DATABASE pi1_2026;
