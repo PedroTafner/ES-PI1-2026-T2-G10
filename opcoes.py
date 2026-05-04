@@ -131,8 +131,18 @@ def validacaoCPF(cpf):
     else:
         if int(stringCPF[9]) != 11 - DV1:
             return False
-
+    DV2= 0 
+    digito = 0
+    for multiplicador in range(11,1,-1):
+        DV2+=int(stringCPF[digito])*multiplicador
+        digito+=1
+    DV2%=11
+    if int(stringCPF[10]) != 11 - DV2:
+        return False
+    
     return True
+
+
 
 
 def opcao_cadastro(): #OPÇÃO CADASTRO
