@@ -113,6 +113,19 @@ def opcao_resultadoVotacao(): #OPÇÃO RESULTADO DA VOTAÇÃO
                 return
             case _: #OPÇÃO INVÁLIDA
                 print("Opção Inválida")
+                
+def validacaoCPF(cpf):
+    if len(cpf) != 11 or cpf == cpf[0] * 11:
+        return False
+
+    
+    for i in range(9, 11):
+        soma = sum(int(cpf[n]) * ((i + 1) - n) for n in range(i))
+        digito = (soma * 10 % 11) % 10
+        if digito != int(cpf[i]):
+            return False
+
+    return True
 
 
 def opcao_cadastro(): #OPÇÃO CADASTRO
@@ -150,3 +163,6 @@ def gerar_chave_acesso(nome): #GERAR CHAVE DE ACESSO
     chave_acesso = letras + numeros
 
     return chave_acesso
+
+
+

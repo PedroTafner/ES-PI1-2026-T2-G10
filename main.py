@@ -1,4 +1,5 @@
 import opcoes
+
 opcao=0
 while opcao != 3:
     print("\n-- MENU PRINCIPAL --")
