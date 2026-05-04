@@ -117,12 +117,19 @@ def opcao_resultadoVotacao(): #OPÇÃO RESULTADO DA VOTAÇÃO
 def validacaoCPF(cpf):
     if len(cpf) != 11 or cpf == cpf[0] * 11:
         return False
+    stringCPF=str(cpf)
+    DV1=0
+    digito=0
+    for multiplicador in range(10,1,-1):
+        DV1+=int(stringCPF[digito])*multiplicador
+        digito+=1
+    DV1%=11
 
-    
-    for i in range(9, 11):
-        soma = sum(int(cpf[n]) * ((i + 1) - n) for n in range(i))
-        digito = (soma * 10 % 11) % 10
-        if digito != int(cpf[i]):
+    if DV1<2:
+        if int(stringCPF[9])!= 0:
+            return False
+    else:
+        if int(stringCPF[9]) != 11 - DV1:
             return False
 
     return True
