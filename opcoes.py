@@ -130,14 +130,28 @@ def validacaoCPF(cpf):
 
 def opcao_cadastro(): #OPÇÃO CADASTRO
     nome=str(input("Digite seu Nome: "))
+
     titulo_eleitor=input("Digite seu Título de Eleitor: ")
-    cpf=input("Digite seu CPF: ")
+    
+    cpf=int(input("Digite seu CPF, sem : "))
+    aprovacao=validacaoCPF(cpf)
+
+    while aprovacao != True:
+        print("\n\tErro: O CPF informado não é válido, tente novamente.")
+        cpf=int(input("\nDigite seu CPF: "))
+        aprovacao=validacaoCPF(cpf)
+        
+
     mesario=str(input("Você atuará como mesário? (sim/nao): "))
+
     if mesario == "sim":
         mesario=1
+        
     else:
         mesario=0
+
     chave_acesso = gerar_chave_acesso(nome)
+
     bancoDeDados.inserir_eleitores(nome,titulo_eleitor,cpf,mesario,chave_acesso)
 
 
