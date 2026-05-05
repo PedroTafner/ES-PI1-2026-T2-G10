@@ -115,9 +115,9 @@ def opcao_resultadoVotacao(): #OPÇÃO RESULTADO DA VOTAÇÃO
                 print("Opção Inválida")
                 
 def validacaoCPF(cpf):
-    if len(str(cpf)) != 11 or cpf == str(cpf)[0] * 11:
-        return False
     stringCPF=str(cpf)
+    if len(stringCPF) != 11 or stringCPF == stringCPF[0] * 11:
+        return False
     DV1=0
     digito=0
     for multiplicador in range(10,1,-1):
@@ -142,72 +142,66 @@ def validacaoCPF(cpf):
     
     return True
 
-def titulo_eleitor(NUMTIT):
-    if len(NUMTIT) != 12:
-        print("Erro, Titulo tem que ter 12 Numeros")
+def validacaoTituloEleitor(NUMTIT):
+    stringTitEleitor=str(NUMTIT)
+    if len(stringTitEleitor) != 12:
         return False
-        
+    #DVT 1    
     DVT=0
     digitoT=0
-    stringNUMTIT=str(NUMTIT)
     for multiplicador in range(2,10):
-        DVT+=int(stringNUMTIT[digitoT])*multiplicador
+        DVT+=int(stringTitEleitor[digitoT])*multiplicador
         digitoT+=1
-    DVTint=int(DVT/11) 
-    DVTresto=DVT-DVTint*11  
+    DVT%=11
+    if DVT == 10:
+        DVT=0
+        if stringTitEleitor[8] == '0' and stringTitEleitor[9] == '1' or '2':
+            DVT=1
+
+    if int(stringTitEleitor[10]) != DVT:
+        return False 
 
     #DVT 2
     DVT=0
     digitoT=8
     for multiplicador in range(7,10):
-        DVT+=int(stringNUMTIT[digitoT])*multiplicador
+        DVT+=int(stringTitEleitor[digitoT])*multiplicador
         digitoT+=1
-    DVTint=int(DVT/11) 
-    DVTresto2=DVT-DVTint*11 
+    DVT%=11
+    if DVT == 10:
+        DVT=0
+        if stringTitEleitor[8] == '0' and stringTitEleitor[9] == '1' or '2':
+            DVT=1
+
+    if int(stringTitEleitor[11]) != DVT:
+        return False 
     
-
-    DVTresto3=str(DVTresto)
-    if DVTresto >= 10:
-        DVTresto4=str(DVTresto)
-        DVTresto3=DVTresto4[1]
-
-    if DVTresto3 != stringNUMTIT[10]:
-        print("titulo errado")
-        return False
-        DVTresto3=str(DVTresto)
-
-    DVTresto6=str(DVTresto2)
-    if DVTresto2 >= 10:
-        DVTresto5=str(DVTresto2)
-        DVTresto6=DVTresto5[1]
-        
-    if str(DVTresto6) != stringNUMTIT[11]:
-        print("titulo errado 2")
-        return False
-    print("Titulo valido")
-    
-    num=(input("Digite Seu Titulo:"))
-    aprovacao =titulo_eleitor(num)
-    return aprovacao
+    return True
 
 
 def opcao_cadastro(): #OPÇÃO CADASTRO
     nome=str(input("Digite seu Nome: "))
 
-    titulo_eleitor=input("Digite seu Título de Eleitor: ")
+    titulo_eleitor=int(input("Digite seu Título de Eleitor: "))
+    aprovacao=validacaoTituloEleitor(titulo_eleitor)
+
+    while aprovacao != True:
+        print("\n\tErro: O Título de Eleitor informado não é válido, tente novamente.")
+        titulo_eleitor=int(input("\nDigite seu Título de eleitor: "))
+        aprovacao=validacaoTituloEleitor(titulo_eleitor)
     
-    cpf=int(input("Digite seu CPF, sem : "))
+    cpf=int(input("Digite seu CPF, sem pontuação: "))
     aprovacao=validacaoCPF(cpf)
 
     while aprovacao != True:
         print("\n\tErro: O CPF informado não é válido, tente novamente.")
-        cpf=int(input("\nDigite seu CPF: "))
+        cpf=int(input("\nDigite seu CPF, sem pontuação: "))
         aprovacao=validacaoCPF(cpf)
         
 
-    mesario=str(input("Você atuará como mesário? (sim/nao): "))
+    mesario=str(input("Você atuará como mesário? (S/N): "))
 
-    if mesario == "sim":
+    if mesario == "S":
         mesario=1
         
     else:
