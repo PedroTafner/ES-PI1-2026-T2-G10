@@ -118,29 +118,40 @@ def opcao_resultadoVotacao(): #OPÇÃO RESULTADO DA VOTAÇÃO
 
 def opcao_cadastro(): #OPÇÃO CADASTRO
     nome=str(input("Digite seu Nome: "))
+    partes_nome = nome.strip().split()
+
+    while len(partes_nome) < 2:
+        print("\n\tErro: O nome deve conter pelo menos nome e sobrenome, tente novamente.")
+        nome=str(input("Digite seu Nome: "))
+        partes_nome = nome.strip().split()
+    
 
     titulo_eleitor=int(input("Digite seu Título de Eleitor: "))
-    aprovacao=validacoes.validacaoTituloEleitor(titulo_eleitor)
+    aprovacao_titulo=validacoes.validacaoTituloEleitor(titulo_eleitor)
 
-    while aprovacao != True:
+    while aprovacao_titulo != True:
         print("\n\tErro: O Título de Eleitor informado não é válido, tente novamente.")
         titulo_eleitor=int(input("\nDigite seu Título de eleitor: "))
-        aprovacao=validacoes.validacaoTituloEleitor(titulo_eleitor)
+        aprovacao_titulo=validacoes.validacaoTituloEleitor(titulo_eleitor)
     
     cpf=int(input("Digite seu CPF, sem pontuação: "))
-    aprovacao=validacoes.validacaoCPF(cpf)
+    aprovacao_CPF=validacoes.validacaoCPF(cpf)
 
-    while aprovacao != True:
+    while aprovacao_CPF != True:
         print("\n\tErro: O CPF informado não é válido, tente novamente.")
         cpf=int(input("\nDigite seu CPF, sem pontuação: "))
-        aprovacao=validacoes.validacaoCPF(cpf)
+        aprovacao_CPF=validacoes.validacaoCPF(cpf)
         
 
-    mesario=str(input("Você atuará como mesário? (S/N): "))
+    mesario=str(input("Você atuará como mesário? (s/n): "))
+    mesario=mesario.lower()
+    
+    while mesario != "s" and mesario != "n":
+        print("\n\tErro: Digite 's' para sim e 'n' para não, tente novamente.")
+        mesario=str(input("Você atuará como mesário? (s/n): "))
 
-    if mesario == "S":
+    if mesario == "s":
         mesario=1
-        
     else:
         mesario=0
 
@@ -171,6 +182,3 @@ def gerar_chave_acesso(nome): #GERAR CHAVE DE ACESSO
     chave_acesso = letras + numeros
 
     return chave_acesso
-
-
-

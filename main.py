@@ -17,4 +17,3 @@ while opcao != 3:
             print("Programa finalizado.")
         case _:
             print("Opção Inválida")
-        
