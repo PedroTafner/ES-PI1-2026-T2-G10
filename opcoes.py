@@ -154,9 +154,13 @@ def opcao_cadastro(): #OPÇÃO CADASTRO
         mesario=1
     else:
         mesario=0
+    print("----------------------------------------------")
+    print("\n\tCADASTRO REALIZADO COM SUCESSO!!!")
+
 
     chave_acesso = gerar_chave_acesso(nome)
-
+    print(f"\n\tSUA CHAVE DE ACESSO É {chave_acesso} ")
+    print("\n-----------------------------------------------")
     bancoDeDados.inserir_eleitores(nome,titulo_eleitor,cpf,mesario,chave_acesso)
 
 
