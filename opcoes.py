@@ -41,7 +41,7 @@ def opcao_votacao(): #OPÇÃO VOTAÇÃO
         opcvot=int(input("\nEscolha uma opção: "))
         match opcvot:
             case 1: #OPÇÃO ABRIR SISTEMA DE VOTAÇÃO
-                opcao_abrirSistemaVotacao()
+                abrirSistemaVotacao()
             case 2: #OPÇÃO AUDITORIA DO SISTEMA DE VOTAÇÃO
                 opcao_auditoriaSistemaVotacao()
             case 3: #OPÇÃO RESULTADO DA VOTAÇÃO
@@ -192,6 +192,31 @@ def buscaEleitores():
     nomeEleitor = input("Digite o Nome do eleitor que deseja buscar: ")
     resultadoBusca = bancoDeDados.buscarEleitor(nomeEleitor)
     if resultadoBusca == None:
-        print("Mais nenhuma eleitor encontrado")
+        print("Mais nenhum eleitor encontrado")
     else:
         print(resultadoBusca)
+
+def abrirSistemaVotacao():
+    validacao=False
+    while validacao != True:
+        titulo_eleitor=int(input("Digite seu título de eleitor: "))
+        valTitulo=validacoes.validacaoTituloEleitor(titulo_eleitor)
+        while valTitulo != True:
+            print("\n\tErro! Título de eleitor inválido, digite novamente.\n")
+            titulo_eleitor=int(input("Digite seu título de eleitor: "))
+            valTitulo=validacoes.validacaoTituloEleitor(titulo_eleitor)
+        cpf=int(input("Digite os 4 primeiros dígitos do seu CPF: "))
+        while len(str(cpf))<4 or len(str(cpf))>4:
+            print("\n\tErro! Digite os 4 primeiros caracteres do seu CPF, tente novamente.\n")
+            cpf=int(input("Digite os 4 primeiros dígitos do seu CPF: "))
+        chave=input("Digite a sua chave de acesso: ")
+        while len(str(chave))<7 or len(str(chave))>7:
+            print("\n\tErro! A chave de acesso precisa ter 7 valores, tente novamente.\n")
+            chave=input("Digite a sua chave de acesso: ")
+        validacao=bancoDeDados.validarEleitor(titulo_eleitor,chave,cpf)
+        if validacao == True:
+            opcao_abrirSistemaVotacao()
+        else:
+            return
+    
+    

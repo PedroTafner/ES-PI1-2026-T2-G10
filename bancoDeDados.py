@@ -1,4 +1,5 @@
 import mysql.connector
+import opcoes
 # Conexão com o banco
 conexao = mysql.connector.connect(
 host='localhost',
@@ -36,5 +37,32 @@ def buscarEleitor(nome):
             print(f"Nome: {nome}, Cpf: {cpf}, Mesario: Não")
 
         
+def validarEleitor(titulo_eleitor,Chave,cpf):
+    cursor.execute(f"SELECT titulo_eleitor,chave_acesso,cpf,mesario FROM eleitores WHERE cpf LIKE '{cpf}%'")
+    resultadoTC=cursor.fetchall()
 
+    for titulo_eleitor,cpf,chave,mesario in resultadoTC:
+        if chave == Chave:
+            if mesario == 0:
+                print("\n\tErro! Mesários não podem abrir o sistema de votação.")
+                return
+            else:
+                if str(titulo_eleitor) and str(chave) in resultadoTC[0]:
+                    return True
+                else:
+                    return False
+        else:
+            print("\n\tErro! Chave de acesso errada, tente novamente.")
+            return
+
+
+
+
+
+    
+    
+
+
+
+    
     
