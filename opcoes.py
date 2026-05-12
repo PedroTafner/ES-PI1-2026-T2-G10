@@ -1,10 +1,11 @@
-import bancoDeDados
-import random
-import validacoes
+import bancoDeDados as bd
+import random as r
+import validacoes as v
+
 def opcao_gerenciamento(): #OPÇÃO GERENCIAMENTO
     opcger=0
     while opcger != 6:
-        print("\n-- GERENCIAMENTO --")
+        print("\n\t-- GERENCIAMENTO --")
         print("\n1 - Cadastro")
         print("2 - Edição de dados")
         print("3 - Remoção de Eleitor")
@@ -18,7 +19,7 @@ def opcao_gerenciamento(): #OPÇÃO GERENCIAMENTO
             case 1: #OPÇÃO CADASTRO
                 opcao_cadastro()
             case 2: #OPÇÃO EDIÇÃO DE DADOS
-                pass
+                editarEleitor()
             case 3: #OPÇÃO REMOÇÃO DE ELEITOR
                 pass
             case 4: #OPÇÃO BUSCA POR ELEITOR
@@ -29,10 +30,11 @@ def opcao_gerenciamento(): #OPÇÃO GERENCIAMENTO
                 return
             case _: #OPÇÃO INVÁLIDA
                 print("Opção Inválida")
+
 def opcao_votacao(): #OPÇÃO VOTAÇÃO
     opcvot=0
     while opcvot != 4:
-        print("\n-- VOTAÇÃO --")
+        print("\n\t-- VOTAÇÃO --")
         print("\n1 - Abrir Sistema de Votação")
         print("2 - Auditoria do Sistema de Votação")
         print("3 - Resultado da Votação")
@@ -50,10 +52,11 @@ def opcao_votacao(): #OPÇÃO VOTAÇÃO
                 return
             case _: #OPÇÃO INVÁLIDA
                 print("Opção Inválida")
+
 def opcao_abrirSistemaVotacao(): #OPÇÃO ABRIR SISTEMA DE VOTAÇÃO
     opcasv=0
     while opcasv != 2:
-        print("\n-- SISTEMA DE VOTAÇÃO --")
+        print("\n\t-- SISTEMA DE VOTAÇÃO --")
         print("\n1 - Votar")
         print("2 - Encerrar Votação")
         print("3 - Voltar")
@@ -73,7 +76,7 @@ def opcao_abrirSistemaVotacao(): #OPÇÃO ABRIR SISTEMA DE VOTAÇÃO
 def opcao_auditoriaSistemaVotacao(): #OPÇÃO AUDITORIA DO SISTEMA DE VOTAÇÃO
     opcaud=0
     while opcaud != 3:
-        print("\n-- AUDITORIA DO SISTEMA DE VOTAÇÃO --")
+        print("\n\t-- AUDITORIA DO SISTEMA DE VOTAÇÃO --")
         print("\n1 - Log de Ocorrências")
         print("2 - Protocolos de Votação")
         print("3 - Voltar")
@@ -89,10 +92,11 @@ def opcao_auditoriaSistemaVotacao(): #OPÇÃO AUDITORIA DO SISTEMA DE VOTAÇÃO
                 return
             case _: #OPÇÃO INVÁLIDA
                 print("Opção Inválida")
+
 def opcao_resultadoVotacao(): #OPÇÃO RESULTADO DA VOTAÇÃO
     opcresult=0
     while opcresult != 5:
-        print("\n-- RESULTADO DA VOTAÇÃO --")
+        print("\n\t-- RESULTADO DA VOTAÇÃO --")
         print("\n1 - Boletim de Urna")
         print("2 - Estatística de Comparecimento")
         print("3 - Votos por Partido")
@@ -115,9 +119,9 @@ def opcao_resultadoVotacao(): #OPÇÃO RESULTADO DA VOTAÇÃO
             case _: #OPÇÃO INVÁLIDA
                 print("Opção Inválida")
                 
-
 def opcao_cadastro(): #OPÇÃO CADASTRO
-    nome=str(input("Digite seu Nome: "))
+    print("\n\t-- CADASTRANDO ELEITOR --")
+    nome=str(input("\nDigite seu Nome: "))
     partes_nome = nome.strip().split()
 
     while len(partes_nome) < 2:
@@ -127,20 +131,20 @@ def opcao_cadastro(): #OPÇÃO CADASTRO
     
 
     titulo_eleitor=int(input("Digite seu Título de Eleitor: "))
-    aprovacao_titulo=validacoes.validacaoTituloEleitor(titulo_eleitor)
+    aprovacao_titulo=v.validacaoTituloEleitor(titulo_eleitor)
 
     while aprovacao_titulo != True:
         print("\n\tErro: O Título de Eleitor informado não é válido, tente novamente.")
         titulo_eleitor=int(input("\nDigite seu Título de eleitor: "))
-        aprovacao_titulo=validacoes.validacaoTituloEleitor(titulo_eleitor)
+        aprovacao_titulo=v.validacaoTituloEleitor(titulo_eleitor)
     
     cpf=int(input("Digite seu CPF, sem pontuação: "))
-    aprovacao_CPF=validacoes.validacaoCPF(cpf)
+    aprovacao_CPF=v.validacaoCPF(cpf)
 
     while aprovacao_CPF != True:
         print("\n\tErro: O CPF informado não é válido, tente novamente.")
         cpf=int(input("\nDigite seu CPF, sem pontuação: "))
-        aprovacao_CPF=validacoes.validacaoCPF(cpf)
+        aprovacao_CPF=v.validacaoCPF(cpf)
         
 
     mesario=str(input("Você atuará como mesário? (s/n): "))
@@ -161,8 +165,7 @@ def opcao_cadastro(): #OPÇÃO CADASTRO
     chave_acesso = gerar_chave_acesso(nome)
     print(f"\n\tSUA CHAVE DE ACESSO É {chave_acesso} ")
     print("\n-----------------------------------------------")
-    bancoDeDados.inserir_eleitores(nome,titulo_eleitor,cpf,mesario,chave_acesso)
-
+    bd.inserir_eleitores(nome,titulo_eleitor,cpf,mesario,chave_acesso)
 
 def gerar_chave_acesso(nome): #GERAR CHAVE DE ACESSO
 
@@ -180,17 +183,17 @@ def gerar_chave_acesso(nome): #GERAR CHAVE DE ACESSO
 
     numeros = ""
     for _ in range(4):
-        numeros += str(random.randint(0, 9))
+        numeros += str(r.randint(0, 9))
 
 
     chave_acesso = letras + numeros
 
     return chave_acesso
 
-
-def buscaEleitores():
+def buscaEleitores(): #BUSCA OS ELEITORES CADASTRADOS
+    print("\n\t-- BUSCA DE ELEITOR --")
     nomeEleitor = input("Digite o Nome do eleitor que deseja buscar: ")
-    resultadoBusca = bancoDeDados.buscarEleitor(nomeEleitor)
+    resultadoBusca = bd.buscarEleitor(nomeEleitor)
     if resultadoBusca == None:
         print("Mais nenhum eleitor encontrado")
     else:
@@ -200,11 +203,11 @@ def abrirSistemaVotacao():
     validacao=False
     while validacao != True:
         titulo_eleitor=int(input("Digite seu título de eleitor: "))
-        valTitulo=validacoes.validacaoTituloEleitor(titulo_eleitor)
+        valTitulo=v.validacaoTituloEleitor(titulo_eleitor)
         while valTitulo != True:
             print("\n\tErro! Título de eleitor inválido, digite novamente.\n")
             titulo_eleitor=int(input("Digite seu título de eleitor: "))
-            valTitulo=validacoes.validacaoTituloEleitor(titulo_eleitor)
+            valTitulo=v.validacaoTituloEleitor(titulo_eleitor)
         cpf=int(input("Digite os 4 primeiros dígitos do seu CPF: "))
         while len(str(cpf))<4 or len(str(cpf))>4:
             print("\n\tErro! Digite os 4 primeiros caracteres do seu CPF, tente novamente.\n")
@@ -213,10 +216,70 @@ def abrirSistemaVotacao():
         while len(str(chave))<7 or len(str(chave))>7:
             print("\n\tErro! A chave de acesso precisa ter 7 valores, tente novamente.\n")
             chave=input("Digite a sua chave de acesso: ")
-        validacao=bancoDeDados.validarEleitor(titulo_eleitor,chave,cpf)
+        validacao=bd.validarEleitor(titulo_eleitor,chave,cpf)
         if validacao == True:
             opcao_abrirSistemaVotacao()
         else:
             return
     
+    
+def mudandoDados(opc, mudanca, chave_acesso): #FUNÇÃO FEITA PARA FACILITAR A TROCA DE DADOS NO EDITARELEITOR
+    match opc:
+        case 1: #nome
+            bd.cursor.execute(f"UPDATE eleitores SET nome = '{mudanca}' WHERE chave_acesso = '{chave_acesso}'")
+            bd.conexao.commit()
+        case 2: #cpf
+            bd.cursor.execute(f"UPDATE eleitores SET cpf = {mudanca} WHERE chave_acesso = '{chave_acesso}'")
+            bd.conexao.commit()
+        case 3: #titulo
+            bd.cursor.execute(f"UPDATE eleitores SET titulo_eleitor = {mudanca} WHERE chave_acesso = '{chave_acesso}'")
+            bd.conexao.commit()
+        case 4: #mesario
+            bd.cursor.execute(f"UPDATE eleitores SET mesario = {mudanca} WHERE chave_acesso = '{chave_acesso}'")
+            bd.conexao.commit()
+
+def editarEleitor(): #OPÇÃO QUE POSSIBILITA A MUDANÇA DE INFORMAÇÕES DO ELEITOR
+    print("\n\t-- EDIÇÃO DE DADOS DO ELEITOR --")
+    chave_acesso=input("\nDigite a chave de acesso do eleitor: ")
+    #validacao = v.validarChaveAcesso(chave_acesso)
+
+    #corrigir validacao 
+    #while validacao == False:
+    #    print("*ERRO: Chave de acesso inexistente, tente novamente.")
+    #    chave_acesso=input("\nDigite a chave de acesso do eleitor: ")
+    #    validacao = v.validarChaveAcesso(chave_acesso)
+
+    bd.cursor.execute(f"SELECT nome FROM eleitores WHERE chave_acesso = '{chave_acesso}'")
+
+    for nome in bd.cursor.fetchall():
+        print(f"\n\t| Usuário encontrado - {nome[0]} |\nSelecione o que você deseja alterar no seu cadastro:\n\n1 - Nome\n2 - CPF\n3 - Título de Eleitor\n4 - Mesário\n5 - Retornar ao menu Gerenciamento")
+        opcao=int(input("\nEscolha uma opção: "))
+        match opcao:
+            case 1:
+                alteracao = str(input("\n----------------------------------------------------\n\nDigite o novo nome: "))
+                mudandoDados(1 , alteracao, chave_acesso)
+                input("*ATUALIZAÇÃO: Nome alterado com sucesso.\n\nAperte ENTER para prosseguir...\n\n----------------------------------------------------")
+            case 2: #falta
+                alteracao = int(input("Digite o novo CPF: "))
+                validacao = v.validacaoCPF(alteracao)
+                while validacao == False:
+                    print("Este CPF é inválido ou já está sendo usado, tente novamente.")
+                    alteracao = int(input("Digite o novo CPF: "))
+                    validacao = v.validacaoCPF(alteracao)
+                mudandoDados(2, alteracao, chave_acesso)
+            case 3: #falta
+                mudandoDados
+            case 4:
+                alteracao = str(input("\n----------------------------------------------------\n\nVocê deseja atuar como mesário? (s/n): "))
+                while alteracao != "s" and alteracao != "n":
+                    print("*ERRO: Digite 's' para sim e 'n' para não, tente novamente.")
+                    alteracao=str(input("\nVocê deseja atuar como mesário? (s/n): "))
+                if alteracao == "s":
+                    alteracao = 1
+                else:
+                    alteracao = 0
+                mudandoDados(4, alteracao, chave_acesso)
+                input("*ATUALIZAÇÃO: Opção Mesário alterado com sucesso.\n\nAperte ENTER para prosseguir...\n\n----------------------------------------------------")
+            case 5:
+                opcao_gerenciamento()    
     

@@ -2,7 +2,7 @@ import opcoes
 
 opcao=0
 while opcao != 3:
-    print("\n-- MENU PRINCIPAL --")
+    print("\n\t-- MENU PRINCIPAL --")
     print("\n1 - Gerenciamento")
     print("2 - Votação")
     print("3 - Sair")
