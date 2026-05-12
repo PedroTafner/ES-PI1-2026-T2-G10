@@ -1,4 +1,6 @@
-def validacaoCPF(cpf):
+import bancoDeDados as bd
+
+def validacaoCPF(cpf): #VERIFICA SE O CPF INSERIDO CORRESPONDE AOS REQUISITOS DE VALIDAÇÃO
     stringCPF=str(cpf)
     if len(stringCPF) != 11 or stringCPF == stringCPF[0] * 11:
         return False
@@ -26,7 +28,7 @@ def validacaoCPF(cpf):
     
     return True
 
-def validacaoTituloEleitor(NUMTIT):
+def validacaoTituloEleitor(NUMTIT): #VERIFICA SE O TÍTULO DE ELEITOR INSERIDO CORRESPONDE AOS REQUISITOS DE VALIDAÇÃO
     stringTitEleitor=str(NUMTIT)
     if len(stringTitEleitor) != 12:
         return False
@@ -61,3 +63,12 @@ def validacaoTituloEleitor(NUMTIT):
         return False 
     
     return True
+
+#corrigir validacao
+#def validarChaveAcesso(chave): #VERIFICA SE A CHAVE DE ACESSO INSERIDA EXISTE
+    bd.cursor.execute(f"SELECT id_eleitor FROM eleitores WHERE chave_acesso = '{chave}'")
+    for id in bd.cursor.fetchall():
+        if len(id) > 0:
+            return True
+        else:
+            return False
