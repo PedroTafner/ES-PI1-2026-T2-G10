@@ -22,7 +22,7 @@ def opcao_gerenciamento(): #OPÇÃO GERENCIAMENTO
             case 3: #OPÇÃO REMOÇÃO DE ELEITOR
                 pass
             case 4: #OPÇÃO BUSCA POR ELEITOR
-                pass
+                buscaEleitores()
             case 5: #OPÇÃO LISTAGEM DE ELEITOR
                 pass
             case 6: #OPÇÃO VOLTAR PARA O MENU PRINCIPAL
@@ -186,3 +186,12 @@ def gerar_chave_acesso(nome): #GERAR CHAVE DE ACESSO
     chave_acesso = letras + numeros
 
     return chave_acesso
+
+
+def buscaEleitores():
+    nomeEleitor = input("Digite o Nome do eleitor que deseja buscar: ")
+    resultadoBusca = bancoDeDados.buscarEleitor(nomeEleitor)
+    if resultadoBusca == None:
+        print("Mais nenhuma eleitor encontrado")
+    else:
+        print(resultadoBusca)
