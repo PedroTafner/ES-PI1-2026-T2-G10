@@ -1,5 +1,6 @@
 import opcoes
 
+opcoes.limpar()
 opcao=0
 while opcao != 3:
     print("\n\t-- MENU PRINCIPAL --")
@@ -14,6 +15,6 @@ while opcao != 3:
         case 2: #OPÇÃO VOTAÇÃO
             opcoes.opcao_votacao()
         case 3:
-            input("\nPrograma finalizado.\n")
+            input("\nPrograma finalizado, tecle ENTER para fechar.\n")
         case _:
-            print("Opção Inválida")
+            opcoes.limpar()

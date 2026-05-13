@@ -29,9 +29,10 @@ def opcao_gerenciamento(): #OPÇÃO GERENCIAMENTO
             case 5: #OPÇÃO LISTAGEM DE ELEITOR
                 pass
             case 6: #OPÇÃO VOLTAR PARA O MENU PRINCIPAL
+                limpar()
                 return
             case _: #OPÇÃO INVÁLIDA
-                print("Opção Inválida")
+                limpar()
 
 def opcao_votacao(): #OPÇÃO VOTAÇÃO
     limpar()
@@ -248,7 +249,6 @@ def editarEleitor(): #OPÇÃO QUE POSSIBILITA A MUDANÇA DE INFORMAÇÕES DO ELE
     chave_acesso=input("\nDigite a chave de acesso do eleitor: ")
     validacao = v.validarChaveAcesso(chave_acesso)
 
-    #corrigir validacao 
     while validacao == False:
         print("*ERRO: Chave de acesso inexistente, tente novamente.")
         chave_acesso=input("\nDigite a chave de acesso do eleitor: ")
@@ -262,6 +262,7 @@ def editarEleitor(): #OPÇÃO QUE POSSIBILITA A MUDANÇA DE INFORMAÇÕES DO ELE
     for nome in bd.cursor.fetchall():
         print(f"\n\t| Usuário encontrado - {nome[0]} |\nSelecione o que você deseja alterar no seu cadastro:\n\n1 - Nome\n2 - CPF\n3 - Título de Eleitor\n4 - Mesário\n5 - Retornar ao menu Gerenciamento")
         opcao=int(input("\nEscolha uma opção: "))
+        
         match opcao:
             case 1:
                 limpar()
@@ -270,16 +271,34 @@ def editarEleitor(): #OPÇÃO QUE POSSIBILITA A MUDANÇA DE INFORMAÇÕES DO ELE
                 mudandoDados(1 , alteracao, chave_acesso)
                 input("*ATUALIZAÇÃO: Nome alterado com sucesso.\n\nAperte ENTER para prosseguir...")
                 limpar()
-            case 2: #falta
-                alteracao = int(input("Digite o novo CPF: "))
+
+            case 2: 
+                limpar()
+                print("\n\t-- ALTERANDO CPF --")
+                alteracao = int(input("\nDigite o novo CPF: "))
                 validacao = v.validacaoCPF(alteracao)
                 while validacao == False:
-                    print("Este CPF é inválido ou já está sendo usado, tente novamente.")
-                    alteracao = int(input("Digite o novo CPF: "))
+                    limpar()
+                    print("\n\t-- ALTERANDO CPF --\n\n*ERRO: Este CPF é inválido ou já está sendo usado, tente novamente.")
+                    alteracao = int(input("\nDigite o novo CPF: "))
                     validacao = v.validacaoCPF(alteracao)
                 mudandoDados(2, alteracao, chave_acesso)
-            case 3: #falta
-                mudandoDados
+                input("*ATUALIZAÇÃO: CPF alterado com sucesso.\n\nAperte ENTER para prosseguir...")
+                limpar()
+
+            case 3:
+                limpar()
+                print("\n\t-- ALTERANDO TÍTULO DE ELEITOR --")
+                alteracao = int(input("\n\nDigite o novo título de eleitor: "))
+                validacao = v.validacaoTituloEleitor(alteracao)
+                while validacao == False:
+                    print("*ERRO: Este título de eleitor é inválido ou já está sendo usado, tente novamente.")
+                    alteracao = int(input("\nDigite o novo título de eleitor: "))
+                    validacao = v.validacaoTituloEleitor(alteracao)
+                mudandoDados(3, alteracao, chave_acesso)
+                input("*ATUALIZAÇÃO: Título de eleitor alterado com sucesso.\n\nAperte ENTER para prosseguir...")
+                limpar()
+
             case 4:
                 limpar()
                 print("\n\t-- ALTERANDO OPÇÃO MESÁRIO --")
@@ -294,9 +313,13 @@ def editarEleitor(): #OPÇÃO QUE POSSIBILITA A MUDANÇA DE INFORMAÇÕES DO ELE
                 mudandoDados(4, alteracao, chave_acesso)
                 input("*ATUALIZAÇÃO: Opção Mesário alterado com sucesso.\n\nAperte ENTER para prosseguir...")
                 limpar()
+
             case 5:
                 limpar()
-                opcao_gerenciamento()    
+                opcao_gerenciamento()
+            
+            case _:
+                limpar()
     
 def limpar(): #LIMPA O TERMINAL PARA MANTER O SISTEMA ORGANIZADO
     os.system('cls' if os.name == 'nt' else 'clear')
