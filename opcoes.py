@@ -1,9 +1,11 @@
 import bancoDeDados as bd
 import random as r
 import validacoes as v
+import os
 
 def opcao_gerenciamento(): #OPÇÃO GERENCIAMENTO
     opcger=0
+    limpar()
     while opcger != 6:
         print("\n\t-- GERENCIAMENTO --")
         print("\n1 - Cadastro")
@@ -32,6 +34,7 @@ def opcao_gerenciamento(): #OPÇÃO GERENCIAMENTO
                 print("Opção Inválida")
 
 def opcao_votacao(): #OPÇÃO VOTAÇÃO
+    limpar()
     opcvot=0
     while opcvot != 4:
         print("\n\t-- VOTAÇÃO --")
@@ -120,6 +123,7 @@ def opcao_resultadoVotacao(): #OPÇÃO RESULTADO DA VOTAÇÃO
                 print("Opção Inválida")
                 
 def opcao_cadastro(): #OPÇÃO CADASTRO
+    limpar()
     print("\n\t-- CADASTRANDO ELEITOR --")
     nome=str(input("\nDigite seu Nome: "))
     partes_nome = nome.strip().split()
@@ -191,6 +195,7 @@ def gerar_chave_acesso(nome): #GERAR CHAVE DE ACESSO
     return chave_acesso
 
 def buscaEleitores(): #BUSCA OS ELEITORES CADASTRADOS
+    limpar()
     print("\n\t-- BUSCA DE ELEITOR --")
     nomeEleitor = input("Digite o Nome do eleitor que deseja buscar: ")
     resultadoBusca = bd.buscarEleitor(nomeEleitor)
@@ -222,7 +227,6 @@ def abrirSistemaVotacao():
         else:
             return
     
-    
 def mudandoDados(opc, mudanca, chave_acesso): #FUNÇÃO FEITA PARA FACILITAR A TROCA DE DADOS NO EDITARELEITOR
     match opc:
         case 1: #nome
@@ -239,15 +243,19 @@ def mudandoDados(opc, mudanca, chave_acesso): #FUNÇÃO FEITA PARA FACILITAR A T
             bd.conexao.commit()
 
 def editarEleitor(): #OPÇÃO QUE POSSIBILITA A MUDANÇA DE INFORMAÇÕES DO ELEITOR
+    limpar()
     print("\n\t-- EDIÇÃO DE DADOS DO ELEITOR --")
     chave_acesso=input("\nDigite a chave de acesso do eleitor: ")
-    #validacao = v.validarChaveAcesso(chave_acesso)
+    validacao = v.validarChaveAcesso(chave_acesso)
 
     #corrigir validacao 
-    #while validacao == False:
-    #    print("*ERRO: Chave de acesso inexistente, tente novamente.")
-    #    chave_acesso=input("\nDigite a chave de acesso do eleitor: ")
-    #    validacao = v.validarChaveAcesso(chave_acesso)
+    while validacao == False:
+        print("*ERRO: Chave de acesso inexistente, tente novamente.")
+        chave_acesso=input("\nDigite a chave de acesso do eleitor: ")
+        validacao = v.validarChaveAcesso(chave_acesso)
+
+    limpar()
+    print("\n\t-- EDIÇÃO DE DADOS DO ELEITOR --")
 
     bd.cursor.execute(f"SELECT nome FROM eleitores WHERE chave_acesso = '{chave_acesso}'")
 
@@ -256,9 +264,12 @@ def editarEleitor(): #OPÇÃO QUE POSSIBILITA A MUDANÇA DE INFORMAÇÕES DO ELE
         opcao=int(input("\nEscolha uma opção: "))
         match opcao:
             case 1:
-                alteracao = str(input("\n----------------------------------------------------\n\nDigite o novo nome: "))
+                limpar()
+                print("\n\t-- ALTERANDO NOME --")
+                alteracao = str(input("\n\nDigite o novo nome: "))
                 mudandoDados(1 , alteracao, chave_acesso)
-                input("*ATUALIZAÇÃO: Nome alterado com sucesso.\n\nAperte ENTER para prosseguir...\n\n----------------------------------------------------")
+                input("*ATUALIZAÇÃO: Nome alterado com sucesso.\n\nAperte ENTER para prosseguir...")
+                limpar()
             case 2: #falta
                 alteracao = int(input("Digite o novo CPF: "))
                 validacao = v.validacaoCPF(alteracao)
@@ -270,7 +281,9 @@ def editarEleitor(): #OPÇÃO QUE POSSIBILITA A MUDANÇA DE INFORMAÇÕES DO ELE
             case 3: #falta
                 mudandoDados
             case 4:
-                alteracao = str(input("\n----------------------------------------------------\n\nVocê deseja atuar como mesário? (s/n): "))
+                limpar()
+                print("\n\t-- ALTERANDO OPÇÃO MESÁRIO --")
+                alteracao = str(input("\n\nVocê deseja atuar como mesário? (s/n): "))
                 while alteracao != "s" and alteracao != "n":
                     print("*ERRO: Digite 's' para sim e 'n' para não, tente novamente.")
                     alteracao=str(input("\nVocê deseja atuar como mesário? (s/n): "))
@@ -279,7 +292,11 @@ def editarEleitor(): #OPÇÃO QUE POSSIBILITA A MUDANÇA DE INFORMAÇÕES DO ELE
                 else:
                     alteracao = 0
                 mudandoDados(4, alteracao, chave_acesso)
-                input("*ATUALIZAÇÃO: Opção Mesário alterado com sucesso.\n\nAperte ENTER para prosseguir...\n\n----------------------------------------------------")
+                input("*ATUALIZAÇÃO: Opção Mesário alterado com sucesso.\n\nAperte ENTER para prosseguir...")
+                limpar()
             case 5:
+                limpar()
                 opcao_gerenciamento()    
     
+def limpar(): #LIMPA O TERMINAL PARA MANTER O SISTEMA ORGANIZADO
+    os.system('cls' if os.name == 'nt' else 'clear')

@@ -64,11 +64,14 @@ def validacaoTituloEleitor(NUMTIT): #VERIFICA SE O TÍTULO DE ELEITOR INSERIDO C
     
     return True
 
-#corrigir validacao
-#def validarChaveAcesso(chave): #VERIFICA SE A CHAVE DE ACESSO INSERIDA EXISTE
+def validarChaveAcesso(chave): #VERIFICA SE A CHAVE DE ACESSO INSERIDA EXISTE
+
+    if len(chave) != 7:
+        return False
     bd.cursor.execute(f"SELECT id_eleitor FROM eleitores WHERE chave_acesso = '{chave}'")
-    for id in bd.cursor.fetchall():
-        if len(id) > 0:
-            return True
-        else:
-            return False
+    resultado = bd.cursor.fetchone()
+
+    if resultado:
+        return True
+    else:
+        return False

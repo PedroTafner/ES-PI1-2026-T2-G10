@@ -14,6 +14,6 @@ while opcao != 3:
         case 2: #OPÇÃO VOTAÇÃO
             opcoes.opcao_votacao()
         case 3:
-            print("\nPrograma finalizado.\n")
+            input("\nPrograma finalizado.\n")
         case _:
             print("Opção Inválida")
