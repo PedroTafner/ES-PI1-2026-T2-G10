@@ -12,9 +12,12 @@ while opcao != 3:
     match opcao:
         case 1: #OPÇÃO GERENCIAMENTO
             opcoes.opcao_gerenciamento()
+        
         case 2: #OPÇÃO VOTAÇÃO
             opcoes.opcao_votacao()
+        
         case 3:
-            input("\nPrograma finalizado, tecle ENTER para fechar.\n")
+            input("\nPrograma finalizado, tecle ENTER para fechar.")
+        
         case _:
             opcoes.limpar()
