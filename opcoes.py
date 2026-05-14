@@ -29,7 +29,7 @@ def opcao_gerenciamento(): #OPÇÃO GERENCIAMENTO
             case 4: #OPÇÃO BUSCA POR ELEITOR
                 buscaEleitores()
             case 5: #OPÇÃO LISTAGEM DE ELEITOR
-                pass
+                listaEleitores()
             case 6: #OPÇÃO ADICIONAR CANDIDATO
                 pass
             case 7: #OPÇÃO VOLTAR PARA O MENU PRINCIPAL
@@ -389,3 +389,21 @@ def arquivoTXT(acao, arquivo, mensagem): #REGISTRA (acao = 0) OU LÊ (acao = 1) 
         with open (f"Arquivos TXT\{arquivo}.txt", "r", encoding="utf-8") as arq:
             conteudo = arq.read()
             return conteudo
+
+
+def listaEleitores():
+
+    print(f"\n\t-- LISTAGEM DOS ELEITORES --")
+    validacaoCA = False
+
+    while validacaoCA == False:
+        chave_acessoLE = input("\nDigite a chave de acesso do eleitor: ")
+        validacaoCA = v.validarChaveAcesso(chave_acessoLE)
+     
+    limpar()
+    print(f"\n\t-- LISTAGEM DOS ELEITORES --")
+    bd.listar_usuarios()
+
+    input("\nAperte ENTER para continuar...")
+    limpar()
+    
