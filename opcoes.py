@@ -13,7 +13,8 @@ def opcao_gerenciamento(): #OPÇÃO GERENCIAMENTO
         print("3 - Remoção de Eleitor")
         print("4 - Busca por Eleitor")
         print("5 - Listagem de Eleitor")
-        print("6 - Voltar para o Menu Principal")
+        print("6 - Adicionar Candidato")
+        print("7 - Voltar para o Menu Principal")
 
         opcger=int(input("\nEscolha uma opção: "))
 
@@ -28,7 +29,9 @@ def opcao_gerenciamento(): #OPÇÃO GERENCIAMENTO
                 buscaEleitores()
             case 5: #OPÇÃO LISTAGEM DE ELEITOR
                 pass
-            case 6: #OPÇÃO VOLTAR PARA O MENU PRINCIPAL
+            case 6: #OPÇÃO ADICIONAR CANDIDATO
+                pass
+            case 7: #OPÇÃO VOLTAR PARA O MENU PRINCIPAL
                 return
             case _: #OPÇÃO INVÁLIDA
                 print("Opção Inválida")
@@ -300,3 +303,5 @@ def editarEleitor(): #OPÇÃO QUE POSSIBILITA A MUDANÇA DE INFORMAÇÕES DO ELE
     
 def limpar(): #LIMPA O TERMINAL PARA MANTER O SISTEMA ORGANIZADO
     os.system('cls' if os.name == 'nt' else 'clear')
+
+

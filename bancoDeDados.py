@@ -35,7 +35,7 @@ def buscarEleitor(nome): #FUNÇÃO QUE BUSCA E MOSTRA OS ELEITORES FILTRADOS
 
         
 def validarEleitor(titulo_eleitor,Chave,cpf):
-    cursor.execute(f"SELECT titulo_eleitor,chave_acesso,cpf,mesario FROM eleitores WHERE cpf LIKE '{cpf}%'")
+    cursor.execute(f"SELECT titulo_eleitor,cpf,chave_acesso,mesario FROM eleitores WHERE cpf LIKE '{cpf}%'")
     resultadoTC=cursor.fetchall()
 
     for titulo_eleitor,cpf,chave,mesario in resultadoTC:
