@@ -2,11 +2,12 @@ import bancoDeDados as bd
 import random as r
 import validacoes as v
 import os
+import datetime
 
 def opcao_gerenciamento(): #OPÇÃO GERENCIAMENTO
     opcger=0
     limpar()
-    while opcger != 6:
+    while opcger != 7:
         print("\n\t-- GERENCIAMENTO --")
         print("\n1 - Cadastro")
         print("2 - Edição de dados")
@@ -32,9 +33,10 @@ def opcao_gerenciamento(): #OPÇÃO GERENCIAMENTO
             case 6: #OPÇÃO ADICIONAR CANDIDATO
                 pass
             case 7: #OPÇÃO VOLTAR PARA O MENU PRINCIPAL
+                limpar()
                 return
             case _: #OPÇÃO INVÁLIDA
-                print("Opção Inválida")
+                limpar()
 
 def opcao_votacao(): #OPÇÃO VOTAÇÃO
     limpar()
@@ -55,9 +57,10 @@ def opcao_votacao(): #OPÇÃO VOTAÇÃO
             case 3: #OPÇÃO RESULTADO DA VOTAÇÃO
                 opcao_resultadoVotacao()
             case 4: #OPÇÃO SAIR
+                limpar()
                 return
             case _: #OPÇÃO INVÁLIDA
-                print("Opção Inválida")
+                limpar()
 
 def opcao_abrirSistemaVotacao(): #OPÇÃO ABRIR SISTEMA DE VOTAÇÃO
     opcasv=0
@@ -82,24 +85,38 @@ def opcao_abrirSistemaVotacao(): #OPÇÃO ABRIR SISTEMA DE VOTAÇÃO
 def opcao_auditoriaSistemaVotacao(): #OPÇÃO AUDITORIA DO SISTEMA DE VOTAÇÃO
     opcaud=0
     while opcaud != 3:
+        limpar()
         print("\n\t-- AUDITORIA DO SISTEMA DE VOTAÇÃO --")
         print("\n1 - Log de Ocorrências")
         print("2 - Protocolos de Votação")
         print("3 - Voltar")
 
-        opcaud=int(input("Escolha uma opção: "))
+        opcaud=int(input("\nEscolha uma opção: "))
 
         match opcaud:
             case 1: #OPÇÃO LOG DE OCORRÊNCIAS
-                pass
+                limpar()
+                print("\n-- Log de Ocorrências --")
+                conteudo = arquivoTXT(1, 'logOcorrências', 'lendo')
+                print(conteudo)
+                input("\nAperte ENTER para retornar...")
+            
             case 2: #OPÇÃO PROTOCOLOS DE VOTAÇÃO
-                pass
+                limpar()
+                print("\n-- Protocolos de Votação --")
+                conteudo = arquivoTXT(1, 'protocoloVotação', 'lendo')
+                print(conteudo)
+                input("\nAperte ENTER para retornar...")
+            
             case 3: #OPÇÃO VOLTAR
+                limpar()
                 return
+            
             case _: #OPÇÃO INVÁLIDA
-                print("Opção Inválida")
+                limpar()
 
 def opcao_resultadoVotacao(): #OPÇÃO RESULTADO DA VOTAÇÃO
+    limpar()
     opcresult=0
     while opcresult != 5:
         print("\n\t-- RESULTADO DA VOTAÇÃO --")
@@ -121,6 +138,7 @@ def opcao_resultadoVotacao(): #OPÇÃO RESULTADO DA VOTAÇÃO
             case 4: #OPÇÃO VALIDAÇÃO DE INTEGRIDADE
                 pass
             case 5: #OPÇÃO INVÁLIDA
+                limpar()
                 return
             case _: #OPÇÃO INVÁLIDA
                 print("Opção Inválida")
@@ -132,47 +150,56 @@ def opcao_cadastro(): #OPÇÃO CADASTRO
     partes_nome = nome.strip().split()
 
     while len(partes_nome) < 2:
-        print("\n\tErro: O nome deve conter pelo menos nome e sobrenome, tente novamente.")
-        nome=str(input("Digite seu Nome: "))
+        limpar()
+        print("\n\t-- CADASTRANDO ELEITOR --\n\n*ERRO: O nome deve conter pelo menos nome e sobrenome, tente novamente.")
+        nome=str(input("\nDigite seu Nome: "))
         partes_nome = nome.strip().split()
     
-
-    titulo_eleitor=int(input("Digite seu Título de Eleitor: "))
+    limpar()
+    print("\n\t-- CADASTRANDO ELEITOR --")
+    titulo_eleitor=int(input("\nDigite seu Título de Eleitor: "))
     aprovacao_titulo=v.validacaoTituloEleitor(titulo_eleitor)
 
     while aprovacao_titulo != True:
-        print("\n\tErro: O Título de Eleitor informado não é válido, tente novamente.")
+        limpar()
+        print("\n\t-- CADASTRANDO ELEITOR --\n\n*ERRO: O Título de Eleitor informado não é válido, tente novamente.")
         titulo_eleitor=int(input("\nDigite seu Título de eleitor: "))
         aprovacao_titulo=v.validacaoTituloEleitor(titulo_eleitor)
     
-    cpf=int(input("Digite seu CPF, sem pontuação: "))
+    limpar()
+    print("\n\t-- CADASTRANDO ELEITOR --")
+    cpf=int(input("\nDigite seu CPF, sem pontuação: "))
     aprovacao_CPF=v.validacaoCPF(cpf)
 
     while aprovacao_CPF != True:
-        print("\n\tErro: O CPF informado não é válido, tente novamente.")
+        limpar()
+        print("\n\t-- CADASTRANDO ELEITOR --\n\n*ERRO: O CPF informado não é válido, tente novamente.")
         cpf=int(input("\nDigite seu CPF, sem pontuação: "))
         aprovacao_CPF=v.validacaoCPF(cpf)
         
-
-    mesario=str(input("Você atuará como mesário? (s/n): "))
+    limpar()
+    print("\n\t-- CADASTRANDO ELEITOR --")
+    mesario=str(input("\nVocê atuará como mesário? (s/n): "))
     mesario=mesario.lower()
     
     while mesario != "s" and mesario != "n":
-        print("\n\tErro: Digite 's' para sim e 'n' para não, tente novamente.")
-        mesario=str(input("Você atuará como mesário? (s/n): "))
+        limpar()
+        print("\n\t-- CADASTRANDO ELEITOR --\n\n*ERRO: Digite 's' para sim e 'n' para não, tente novamente.")
+        mesario=str(input("\nVocê atuará como mesário? (s/n): "))
 
     if mesario == "s":
         mesario=1
+    
     else:
         mesario=0
-    print("----------------------------------------------")
-    print("\n\tCADASTRO REALIZADO COM SUCESSO!!!")
-
-
+    
+    limpar()
+    print("\n\t-- CADASTRO REALIZADO COM SUCESSO!!! --")
     chave_acesso = gerar_chave_acesso(nome)
-    print(f"\n\tSUA CHAVE DE ACESSO É {chave_acesso} ")
-    print("\n-----------------------------------------------")
+    print(f"\nSUA CHAVE DE ACESSO É {chave_acesso} ")
+    input("\nDigite ENTER para prosseguir...")
     bd.inserir_eleitores(nome,titulo_eleitor,cpf,mesario,chave_acesso)
+    limpar()
 
 def gerar_chave_acesso(nome): #GERAR CHAVE DE ACESSO
 
@@ -200,33 +227,41 @@ def gerar_chave_acesso(nome): #GERAR CHAVE DE ACESSO
 def buscaEleitores(): #BUSCA OS ELEITORES CADASTRADOS
     limpar()
     print("\n\t-- BUSCA DE ELEITOR --")
-    nomeEleitor = input("Digite o Nome do eleitor que deseja buscar: ")
+    nomeEleitor = input("\nDigite o Nome do eleitor que deseja buscar: ")
+    print("")
     resultadoBusca = bd.buscarEleitor(nomeEleitor)
     if resultadoBusca == None:
         print("Mais nenhum eleitor encontrado")
     else:
         print(resultadoBusca)
+    input("\nAperte ENTER para continuar...")
+    limpar()
 
 def abrirSistemaVotacao():
     validacao=False
     while validacao != True:
+        
         titulo_eleitor=int(input("Digite seu título de eleitor: "))
         valTitulo=v.validacaoTituloEleitor(titulo_eleitor)
         while valTitulo != True:
             print("\n\tErro! Título de eleitor inválido, digite novamente.\n")
             titulo_eleitor=int(input("Digite seu título de eleitor: "))
             valTitulo=v.validacaoTituloEleitor(titulo_eleitor)
+
         cpf=int(input("Digite os 4 primeiros dígitos do seu CPF: "))
         while len(str(cpf))<4 or len(str(cpf))>4:
             print("\n\tErro! Digite os 4 primeiros caracteres do seu CPF, tente novamente.\n")
             cpf=int(input("Digite os 4 primeiros dígitos do seu CPF: "))
+        
         chave=input("Digite a sua chave de acesso: ")
         while len(str(chave))<7 or len(str(chave))>7:
             print("\n\tErro! A chave de acesso precisa ter 7 valores, tente novamente.\n")
             chave=input("Digite a sua chave de acesso: ")
+        
         validacao=bd.validarEleitor(titulo_eleitor,chave,cpf)
         if validacao == True:
             opcao_abrirSistemaVotacao()
+        
         else:
             return
     
@@ -251,9 +286,9 @@ def editarEleitor(): #OPÇÃO QUE POSSIBILITA A MUDANÇA DE INFORMAÇÕES DO ELE
     chave_acesso=input("\nDigite a chave de acesso do eleitor: ")
     validacao = v.validarChaveAcesso(chave_acesso)
 
-    #corrigir validacao 
     while validacao == False:
-        print("*ERRO: Chave de acesso inexistente, tente novamente.")
+        limpar()
+        print("\n\t-- EDIÇÃO DE DADOS DO ELEITOR --\n\n*ERRO: Chave de acesso inexistente, tente novamente.")
         chave_acesso=input("\nDigite a chave de acesso do eleitor: ")
         validacao = v.validarChaveAcesso(chave_acesso)
 
@@ -265,43 +300,92 @@ def editarEleitor(): #OPÇÃO QUE POSSIBILITA A MUDANÇA DE INFORMAÇÕES DO ELE
     for nome in bd.cursor.fetchall():
         print(f"\n\t| Usuário encontrado - {nome[0]} |\nSelecione o que você deseja alterar no seu cadastro:\n\n1 - Nome\n2 - CPF\n3 - Título de Eleitor\n4 - Mesário\n5 - Retornar ao menu Gerenciamento")
         opcao=int(input("\nEscolha uma opção: "))
+        
         match opcao:
-            case 1:
+            case 1: #ALTERA O NOME DO ELEITOR
                 limpar()
-                print("\n\t-- ALTERANDO NOME --")
-                alteracao = str(input("\n\nDigite o novo nome: "))
+                print("\n\t-- EDIÇÃO DE DADOS DO ELEITOR --")
+                alteracao = str(input("\nDigite o novo nome: "))
+                
+                partes_nome = alteracao.strip().split()
+                while len(partes_nome) < 2:
+                    limpar()
+                    print("\n\t-- EDIÇÃO DE DADOS DO ELEITOR --\n\n*ERRO: O nome deve conter pelo menos nome e sobrenome, tente novamente.")
+                    alteracao=str(input("\nDigite seu Nome: "))
+                    partes_nome = alteracao.strip().split()
+
                 mudandoDados(1 , alteracao, chave_acesso)
-                input("*ATUALIZAÇÃO: Nome alterado com sucesso.\n\nAperte ENTER para prosseguir...")
                 limpar()
-            case 2: #falta
-                alteracao = int(input("Digite o novo CPF: "))
+                input("\n\t-- EDIÇÃO DE DADOS DO ELEITOR --\n\n*ATUALIZAÇÃO: Nome alterado com sucesso.\n\nAperte ENTER para prosseguir...")
+                limpar()
+
+            case 2: # ALTERA O CPF DO ELEITOR 
+                limpar()
+                print("\n\t-- EDIÇÃO DE DADOS DO ELEITOR --")
+                alteracao = int(input("\nDigite o novo CPF: "))
                 validacao = v.validacaoCPF(alteracao)
                 while validacao == False:
-                    print("Este CPF é inválido ou já está sendo usado, tente novamente.")
-                    alteracao = int(input("Digite o novo CPF: "))
+                    limpar()
+                    print("\n\t-- EDIÇÃO DE DADOS DO ELEITOR --\n\n*ERRO: Este CPF é inválido ou já está sendo usado, tente novamente.")
+                    alteracao = int(input("\nDigite o novo CPF: "))
                     validacao = v.validacaoCPF(alteracao)
+                
                 mudandoDados(2, alteracao, chave_acesso)
-            case 3: #falta
-                mudandoDados
-            case 4:
                 limpar()
-                print("\n\t-- ALTERANDO OPÇÃO MESÁRIO --")
-                alteracao = str(input("\n\nVocê deseja atuar como mesário? (s/n): "))
+                input("\n\t-- EDIÇÃO DE DADOS DO ELEITOR --\n\n*ATUALIZAÇÃO: CPF alterado com sucesso.\n\nAperte ENTER para prosseguir...")
+                limpar()
+
+            case 3: # ALTERA O TÍTULO DE ELEITOR
+                limpar()
+                print("\n\t-- EDIÇÃO DE DADOS DO ELEITOR --")
+                alteracao = int(input("\nDigite o novo título de eleitor: "))
+                validacao = v.validacaoTituloEleitor(alteracao)
+                while validacao == False:
+                    limpar()
+                    print("\n\t-- EDIÇÃO DE DADOS DO ELEITOR --\n\n*ERRO: Este título de eleitor é inválido ou já está sendo usado, tente novamente.")
+                    alteracao = int(input("\nDigite o novo título de eleitor: "))
+                    validacao = v.validacaoTituloEleitor(alteracao)
+                mudandoDados(3, alteracao, chave_acesso)
+                limpar()
+                input("\n\t-- EDIÇÃO DE DADOS DO ELEITOR --\n\n*ATUALIZAÇÃO: Título de eleitor alterado com sucesso.\n\nAperte ENTER para prosseguir...")
+                limpar()
+
+            case 4: #ALTERA A OPÇÃO DE SER MESÁRIO DO ELEITOR
+                limpar()
+                print("\n\t-- EDIÇÃO DE DADOS DO ELEITOR --")
+                alteracao = str(input("\nVocê deseja atuar como mesário? (s/n): "))
                 while alteracao != "s" and alteracao != "n":
-                    print("*ERRO: Digite 's' para sim e 'n' para não, tente novamente.")
+                    limpar()
+                    print("\n\t-- EDIÇÃO DE DADOS DO ELEITOR--\n\n*ERRO: Digite 's' para sim e 'n' para não, tente novamente.")
                     alteracao=str(input("\nVocê deseja atuar como mesário? (s/n): "))
                 if alteracao == "s":
                     alteracao = 1
                 else:
                     alteracao = 0
                 mudandoDados(4, alteracao, chave_acesso)
-                input("*ATUALIZAÇÃO: Opção Mesário alterado com sucesso.\n\nAperte ENTER para prosseguir...")
                 limpar()
-            case 5:
+                input("\n\t-- AEDIÇÃO DE DADOS DO ELEITOR --\n\n*ATUALIZAÇÃO: Opção Mesário alterado com sucesso.\n\nAperte ENTER para prosseguir...")
                 limpar()
-                opcao_gerenciamento()    
+
+            case 5: #VOLTA PARA A ABA GERENCIAMENTO
+                limpar()
+                opcao_gerenciamento()
+            
+            case _:
+                limpar()
     
 def limpar(): #LIMPA O TERMINAL PARA MANTER O SISTEMA ORGANIZADO
     os.system('cls' if os.name == 'nt' else 'clear')
 
 
+def arquivoTXT(acao, arquivo, mensagem): #REGISTRA (acao = 0) OU LÊ (acao = 1) UM ARQUIVO TXT
+    momento = datetime.datetime.now()
+    momento = momento.strftime("%d/%m/%Y %H:%M:%S")
+    if acao == 0:
+        with open (f"Arquivos TXT\{arquivo}.txt", "a", encoding="utf-8") as arq:
+            arq.write(f"\n{momento} - {mensagem}")
+        
+    if acao == 1:
+        with open (f"Arquivos TXT\{arquivo}.txt", "r", encoding="utf-8") as arq:
+            conteudo = arq.read()
+            return conteudo

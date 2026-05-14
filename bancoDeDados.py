@@ -1,5 +1,5 @@
-import mysql.connector
-# Conexão com o banco
+import mysql.connector # Conexão com o banco
+
 conexao = mysql.connector.connect(
 host='localhost',
 user='root',
@@ -32,7 +32,6 @@ def buscarEleitor(nome): #FUNÇÃO QUE BUSCA E MOSTRA OS ELEITORES FILTRADOS
             print(f"Nome: {nome}, Cpf: {cpf}, Mesario: Sim")
         else:
             print(f"Nome: {nome}, Cpf: {cpf}, Mesario: Não")
-
         
 def validarEleitor(titulo_eleitor,Chave,cpf):
     cursor.execute(f"SELECT titulo_eleitor,cpf,chave_acesso,mesario FROM eleitores WHERE cpf LIKE '{cpf}%'")

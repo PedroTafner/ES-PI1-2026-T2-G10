@@ -1,5 +1,6 @@
 import opcoes
 
+opcoes.limpar()
 opcao=0
 while opcao != 3:
     opcoes.limpar()
@@ -12,9 +13,12 @@ while opcao != 3:
     match opcao:
         case 1: #OPÇÃO GERENCIAMENTO
             opcoes.opcao_gerenciamento()
+        
         case 2: #OPÇÃO VOTAÇÃO
             opcoes.opcao_votacao()
+        
         case 3:
-            input("\nPrograma finalizado.\n")
+            input("\nPrograma finalizado, tecle ENTER para fechar.")
+        
         case _:
-            print("Opção Inválida")
+            opcoes.limpar()
