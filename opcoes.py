@@ -394,16 +394,8 @@ def arquivoTXT(acao, arquivo, mensagem): #REGISTRA (acao = 0) OU LÊ (acao = 1) 
 def listaEleitores():
 
     print(f"\n\t-- LISTAGEM DOS ELEITORES --")
-    validacaoCA = False
-
-    while validacaoCA == False:
-        chave_acessoLE = input("\nDigite a chave de acesso do eleitor: ")
-        validacaoCA = v.validarChaveAcesso(chave_acessoLE)
-     
-    limpar()
-    print(f"\n\t-- LISTAGEM DOS ELEITORES --")
     bd.listar_usuarios()
 
     input("\nAperte ENTER para continuar...")
     limpar()
-    
+

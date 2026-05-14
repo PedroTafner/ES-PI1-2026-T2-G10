@@ -15,14 +15,10 @@ def inserir_eleitores(nome, titulo_eleitor,cpf, mesario, chave_acesso, status_vo
     conexao.commit()
 
 def listar_usuarios(): #FUNÇÃO QUE LISTA INFORMAÇÕES DOS ELEITORES
-    
+
     cursor.execute("SELECT  nome, titulo_eleitor,cpf, mesario, chave_acesso FROM eleitores")
     for (nome, titulo_eleitor, cpf, mesario, chave_acesso) in cursor.fetchall():
-        if mesario ==1:
-            print(f"\nNome: {nome}, Titulo Eleitor: {titulo_eleitor}, CPF: {cpf}, Mesario: Sim, Chave de Acesso: {chave_acesso}")
-
-        else: 
-            print(f"\nNome: {nome}, Titulo Eleitor: {titulo_eleitor}, CPF: {cpf}, Mesario: Não, Chave de Acesso: {chave_acesso}")
+            print(f"Nome: {nome}, CPF: {cpf}")
 
 
 
