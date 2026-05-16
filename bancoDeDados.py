@@ -20,8 +20,6 @@ def listar_usuarios(): #FUNÇÃO QUE LISTA INFORMAÇÕES DOS ELEITORES
     for (nome, titulo_eleitor, cpf, mesario, chave_acesso) in cursor.fetchall():
             print(f"Nome: {nome}, CPF: {cpf}")
 
-
-
 def buscarEleitor(nome): #FUNÇÃO QUE BUSCA E MOSTRA OS ELEITORES FILTRADOS
     
     cursor.execute(f"SELECT nome, cpf, mesario FROM eleitores WHERE nome LIKE '%{nome}%'")
@@ -43,14 +41,12 @@ def validarEleitor(titulo_eleitor,Chave,cpf):
     for titulo_eleitor,cpf,chave,mesario in resultadoTC:
         if chave == Chave:
             if mesario == 0:
-                print("\n\tErro! Mesários não podem abrir o sistema de votação.")
-                return
+                return input("\n*ERRO: Somente mesários podem abrir o sistema de votação.\n\nAperte ENTER para continuar...")
+                
             else:
                 if str(titulo_eleitor) and str(chave) in resultadoTC[0]:
                     return True
                 else:
-                    return False
+                    return input("\n*ERRO: Dados inválida, tente novamente\n\nAperte ENTER para continuar...")
         else:
-            print("\n\tErro! Chave de acesso errada, tente novamente.")
-            return
-    
+            return input("\n*ERRO: Chave de acesso inválida, tente novamente\n\nAperte ENTER para continuar...")

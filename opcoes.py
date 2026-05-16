@@ -63,12 +63,12 @@ def opcao_votacao(): #OPÇÃO VOTAÇÃO
                 limpar()
 
 def opcao_abrirSistemaVotacao(): #OPÇÃO ABRIR SISTEMA DE VOTAÇÃO
+    arquivoTXT(0, 0, 'ABERTURA: Votação iniciada com sucesso. Total de votos zerado.')
     opcasv=0
     while opcasv != 2:
         print("\n\t-- SISTEMA DE VOTAÇÃO --")
         print("\n1 - Votar")
         print("2 - Encerrar Votação")
-        print("3 - Voltar")
 
         opcasv=int(input("\nEscolha uma opção: "))
 
@@ -76,9 +76,9 @@ def opcao_abrirSistemaVotacao(): #OPÇÃO ABRIR SISTEMA DE VOTAÇÃO
             case 1: #OPÇÃO VOTAR
                 pass
             case 2: #OPÇÃO ENCERRAR VOTAÇÃO
+                arquivoTXT(0, 0, 'ENCERRAMENTO: Votação finalizada com sucesso')
+                limpar()
                 pass
-            case 3: #OPÇÃO VOLTAR
-                return
             case _: #OPÇÃO INVÁLIDA
                 print("Opção Inválida")
 
@@ -97,14 +97,14 @@ def opcao_auditoriaSistemaVotacao(): #OPÇÃO AUDITORIA DO SISTEMA DE VOTAÇÃO
             case 1: #OPÇÃO LOG DE OCORRÊNCIAS
                 limpar()
                 print("\n-- Log de Ocorrências --")
-                conteudo = arquivoTXT(1, 'logOcorrências', 'lendo')
+                conteudo = arquivoTXT(1, 0, 'lendo')
                 print(conteudo)
                 input("\nAperte ENTER para retornar...")
             
             case 2: #OPÇÃO PROTOCOLOS DE VOTAÇÃO
                 limpar()
                 print("\n-- Protocolos de Votação --")
-                conteudo = arquivoTXT(1, 'protocoloVotação', 'lendo')
+                conteudo = arquivoTXT(1, 1, 'lendo')
                 print(conteudo)
                 input("\nAperte ENTER para retornar...")
             
@@ -197,7 +197,7 @@ def opcao_cadastro(): #OPÇÃO CADASTRO
     print("\n\t-- CADASTRO REALIZADO COM SUCESSO!!! --")
     chave_acesso = gerar_chave_acesso(nome)
     print(f"\nSUA CHAVE DE ACESSO É {chave_acesso} ")
-    input("\nDigite ENTER para prosseguir...")
+    input("\Aperte ENTER para prosseguir...")
     bd.inserir_eleitores(nome,titulo_eleitor,cpf,mesario,chave_acesso)
     limpar()
 
@@ -237,32 +237,45 @@ def buscaEleitores(): #BUSCA OS ELEITORES CADASTRADOS
     input("\nAperte ENTER para continuar...")
     limpar()
 
-def abrirSistemaVotacao():
+def abrirSistemaVotacao(): #OPÇÃO ABERTURA DE SISTEMA DE VOTAÇÃO
+    limpar()
+    print("\n\t-- ABRINDO SISTEMA DE VOTAÇÃO --")
     validacao=False
     while validacao != True:
         
-        titulo_eleitor=int(input("Digite seu título de eleitor: "))
+        titulo_eleitor=int(input("\nDigite seu título de eleitor: "))
         valTitulo=v.validacaoTituloEleitor(titulo_eleitor)
         while valTitulo != True:
-            print("\n\tErro! Título de eleitor inválido, digite novamente.\n")
-            titulo_eleitor=int(input("Digite seu título de eleitor: "))
+            limpar()
+            print("\n\t-- ABRINDO SISTEMA DE VOTAÇÃO --\n\n*ERRO: Título de eleitor inválido, digite novamente.")
+            titulo_eleitor=int(input("\nDigite seu título de eleitor: "))
             valTitulo=v.validacaoTituloEleitor(titulo_eleitor)
 
-        cpf=int(input("Digite os 4 primeiros dígitos do seu CPF: "))
+        limpar()
+        print("\n\t-- ABRINDO SISTEMA DE VOTAÇÃO --")
+        cpf=int(input("\nDigite os 4 primeiros dígitos do seu CPF: "))
         while len(str(cpf))<4 or len(str(cpf))>4:
-            print("\n\tErro! Digite os 4 primeiros caracteres do seu CPF, tente novamente.\n")
-            cpf=int(input("Digite os 4 primeiros dígitos do seu CPF: "))
+            limpar()
+            print("\n\t-- ABRINDO SISTEMA DE VOTAÇÃO --\n\n*ERRO: Digite os 4 primeiros caracteres do seu CPF, tente novamente.")
+            cpf=int(input("\nDigite os 4 primeiros dígitos do seu CPF: "))
         
-        chave=input("Digite a sua chave de acesso: ")
+        limpar()
+        print("\n\t-- ABRINDO SISTEMA DE VOTAÇÃO --")
+        chave=input("\nDigite a sua chave de acesso: ")
         while len(str(chave))<7 or len(str(chave))>7:
-            print("\n\tErro! A chave de acesso precisa ter 7 valores, tente novamente.\n")
-            chave=input("Digite a sua chave de acesso: ")
+            limpar()
+            print("\n\t-- ABRINDO SISTEMA DE VOTAÇÃO --\n\n*ERRO: A chave de acesso precisa ter 7 valores, tente novamente.")
+            chave=input("\nDigite a sua chave de acesso: ")
         
         validacao=bd.validarEleitor(titulo_eleitor,chave,cpf)
+        limpar()
         if validacao == True:
             opcao_abrirSistemaVotacao()
         
         else:
+            limpar()
+            validacao
+            arquivoTXT(0,0,'ALERTA: Tentativa de acesso negado.')
             return
     
 def mudandoDados(opc, mudanca, chave_acesso): #FUNÇÃO FEITA PARA FACILITAR A TROCA DE DADOS NO EDITARELEITOR
@@ -364,7 +377,7 @@ def editarEleitor(): #OPÇÃO QUE POSSIBILITA A MUDANÇA DE INFORMAÇÕES DO ELE
                     alteracao = 0
                 mudandoDados(4, alteracao, chave_acesso)
                 limpar()
-                input("\n\t-- AEDIÇÃO DE DADOS DO ELEITOR --\n\n*ATUALIZAÇÃO: Opção Mesário alterado com sucesso.\n\nAperte ENTER para prosseguir...")
+                input("\n\t-- EDIÇÃO DE DADOS DO ELEITOR --\n\n*ATUALIZAÇÃO: Opção Mesário alterado com sucesso.\n\nAperte ENTER para prosseguir...")
                 limpar()
 
             case 5: #VOLTA PARA A ABA GERENCIAMENTO
@@ -377,25 +390,31 @@ def editarEleitor(): #OPÇÃO QUE POSSIBILITA A MUDANÇA DE INFORMAÇÕES DO ELE
 def limpar(): #LIMPA O TERMINAL PARA MANTER O SISTEMA ORGANIZADO
     os.system('cls' if os.name == 'nt' else 'clear')
 
-
 def arquivoTXT(acao, arquivo, mensagem): #REGISTRA (acao = 0) OU LÊ (acao = 1) UM ARQUIVO TXT
-    momento = datetime.datetime.now()
-    momento = momento.strftime("%d/%m/%Y %H:%M:%S")
+    momento = datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+    #momento = momento.strftime("%d/%m/%Y %H:%M:%S")
+    if arquivo == 0:
+        arquivo = 'logOcorrencias'
+    else:
+        arquivo = 'protocoloVotacao'
+    
     if acao == 0:
-        with open (f"Arquivos TXT\{arquivo}.txt", "a", encoding="utf-8") as arq:
-            arq.write(f"\n{momento} - {mensagem}")
-        
+        with open (f"Arquivos TXT/{arquivo}.txt", "a", encoding="utf-8") as arq:
+            arq.write(f"\n({momento}) - {mensagem}")
+
     if acao == 1:
-        with open (f"Arquivos TXT\{arquivo}.txt", "r", encoding="utf-8") as arq:
+        with open (f"Arquivos TXT/{arquivo}.txt", "r", encoding="utf-8") as arq:
             conteudo = arq.read()
             return conteudo
-
+            
+    if acao == 2:
+        with open(f"Arquivos TXT/{arquivo}.txt", "w") as arq:
+            arq.write("")
 
 def listaEleitores():
-
-    print(f"\n\t-- LISTAGEM DOS ELEITORES --")
+    limpar()
+    print(f"\n\t-- LISTAGEM DOS ELEITORES --\n")
     bd.listar_usuarios()
 
     input("\nAperte ENTER para continuar...")
     limpar()
-

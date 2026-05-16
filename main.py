@@ -1,6 +1,7 @@
 import opcoes
 
 opcoes.limpar()
+opcoes.arquivoTXT(2,0, 'apagando log')
 opcao=0
 while opcao != 3:
     opcoes.limpar()
