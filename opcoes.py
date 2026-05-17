@@ -82,6 +82,59 @@ def opcao_abrirSistemaVotacao(): #OPÇÃO ABRIR SISTEMA DE VOTAÇÃO
             case _: #OPÇÃO INVÁLIDA
                 print("Opção Inválida")
 
+def sist_votacao():
+
+ candidato1="Antonio Luiz Beline"
+ candidato2="João Inacio da Silva"
+ candidato3="Luiz Paganine de Castro"
+ candidato4="José Marchioretto"
+ candidato5="Pedro de Oliveira"
+
+ votos1=0
+ votos2=0
+ votos3=0
+ votos4=0
+ votos5=0
+ 
+ continuar="s"
+
+ while continuar == "s":
+
+    print("SISTEMA DE VOTAÇÃO")
+    print("1", candidato1)
+    print("2", candidato2)
+    print("3", candidato3)
+    print("4", candidato4)
+    print("5", candidato5)
+
+    voto = int(input("Digite seu voto: "))
+
+    if voto == 1:
+        votos1 += 1
+        print("Voto computado para", candidato1)
+
+    elif voto == 2:
+        votos2 += 1
+        print("Voto computado para", candidato2)
+
+    elif voto == 3:
+        votos3 += 1
+        print("Voto computado para", candidato3)
+    
+    elif voto == 4:
+        votos3 += 1
+        print("Voto computado para", candidato4)
+    
+    elif voto == 5:
+        votos3 += 1
+        print("Voto computado para", candidato5)
+
+    else:
+       print("Voto inválido!")
+    continuar = input("Deseja continuar? (s/n): ")
+
+sist_votacao ()
+
 def opcao_auditoriaSistemaVotacao(): #OPÇÃO AUDITORIA DO SISTEMA DE VOTAÇÃO
     opcaud=0
     while opcaud != 3:
