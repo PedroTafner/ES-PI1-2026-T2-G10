@@ -54,7 +54,7 @@ def opcao_votacao(): #OPÇÃO VOTAÇÃO
             case 1: #OPÇÃO ABRIR SISTEMA DE VOTAÇÃO
                 abrirSistemaVotacao()
             case 2:
-                opcao_abrirSistemaVotacao()
+                abrirVotacao()
             case 3: #OPÇÃO AUDITORIA DO SISTEMA DE VOTAÇÃO
                 opcao_auditoriaSistemaVotacao()
             case 4: #OPÇÃO RESULTADO DA VOTAÇÃO
@@ -65,17 +65,21 @@ def opcao_votacao(): #OPÇÃO VOTAÇÃO
             case _: #OPÇÃO INVÁLIDA
                 limpar()
 
-def opcao_abrirSistemaVotacao(): #OPÇÃO ABRIR SISTEMA DE VOTAÇÃO
+def abrirVotacao(): #OPÇÃO ABRIR SISTEMA DE VOTAÇÃO
     arquivoTXT(0, 0, 'ABERTURA: Votação iniciada com sucesso. Total de votos zerado.')
     opcasv=0
+    permicao=abrirSistemaVotacao()
     if permicao == 0:
+        print(permicao)
         print("NÃO É POSSIVEL REALIZAR A VOTAÇÃO NO MOMENTO\nÉ NECESSÁRIO ABRIR O SISTEMA DE VOTAÇÃO")
         input("\nAperte ENTER para retornar...")
+        limpar()
     else:
         while opcasv != 2:
             print("\n\t-- SISTEMA DE VOTAÇÃO --")
             print("\n1 - Votar")
             print("2 - Encerrar Votação")
+            print("3 - Sair do Sistema de Votação")
 
             opcasv=int(input("\nEscolha uma opção: "))
 
@@ -86,6 +90,8 @@ def opcao_abrirSistemaVotacao(): #OPÇÃO ABRIR SISTEMA DE VOTAÇÃO
                     arquivoTXT(0, 0, 'ENCERRAMENTO: Votação finalizada com sucesso')
                     limpar()
                     pass
+                case 3:
+                    return
                 case _: #OPÇÃO INVÁLIDA
                     print("Opção Inválida")
 
@@ -250,6 +256,13 @@ def abrirSistemaVotacao(): #OPÇÃO ABERTURA DE SISTEMA DE VOTAÇÃO
     print("\n\t-- ABRINDO SISTEMA DE VOTAÇÃO --")
     validacao=False
     while validacao != True:
+
+        mesario=input("\nVocê é mesário? (s/n): ")
+        if mesario == "n":
+            print("\n\t*ERRO: Para entrar no sistema de votação é preciso ser mesário.")
+            break
+        else:
+            pass
         
         titulo_eleitor=int(input("\nDigite seu título de eleitor: "))
         valTitulo=v.validacaoTituloEleitor(titulo_eleitor)
@@ -284,6 +297,7 @@ def abrirSistemaVotacao(): #OPÇÃO ABERTURA DE SISTEMA DE VOTAÇÃO
             listarCandidatos = bd.listar_candidatos_zerezima()
             print(listarCandidatos) 
             permicao = 1
+            print(permicao)
             return permicao
 
         
@@ -457,4 +471,21 @@ def retirarEleitor():
         input("Aperte ENTER para continuar...")
         limpar()
 
-    
+def add_candidato():
+    limpar()
+    print("\n\t-- CADASTRO DE CANDIDATOS --\n")
+    opcao=False
+    while opcao==False:
+        nomeEleitor=input("Digite seu nome e sobrenome: ")
+        opcao=bd.buscar_eleitorCandidato(nomeEleitor)
+        if opcao==False:
+            print("\n\t*Erro: Você não está cadastrado, faça o cadastro e tente novamente.\n")
+        else:
+            pass
+
+    limpar()
+    print("\n\t-- CADASTRO DE CANDIDATOS --\n")
+    nome=input("Digite o nome do candidato: ")
+    num_vot=int(input("Digite o número de votação do candidato: "))
+    partido=input("Digite o partido do candidato: ")
+    bd.inserir_candidato(nome,num_vot,partido)

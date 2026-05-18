@@ -20,6 +20,7 @@ while opcao != 3:
         
         case 3:
             input("\nPrograma finalizado, tecle ENTER para fechar.")
+            opcoes.limpar()
         
         case _:
             opcoes.limpar()
