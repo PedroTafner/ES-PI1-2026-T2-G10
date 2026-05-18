@@ -50,3 +50,14 @@ def validarEleitor(titulo_eleitor,Chave,cpf):
                     return input("\n*ERRO: Dados inválida, tente novamente\n\nAperte ENTER para continuar...")
         else:
             return input("\n*ERRO: Chave de acesso inválida, tente novamente\n\nAperte ENTER para continuar...")
+        
+
+def removerEleitor(cpf):
+    cursor.execute(f"DELETE FROM eleitores WHERE cpf= {cpf}")
+    resultadoDEL = cursor.rowcount
+    return resultadoDEL
+    
+   
+
+
+    

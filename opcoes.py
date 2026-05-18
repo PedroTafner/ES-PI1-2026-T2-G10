@@ -25,7 +25,7 @@ def opcao_gerenciamento(): #OPÇÃO GERENCIAMENTO
             case 2: #OPÇÃO EDIÇÃO DE DADOS
                 editarEleitor()
             case 3: #OPÇÃO REMOÇÃO DE ELEITOR
-                pass
+                retirarEleitor()
             case 4: #OPÇÃO BUSCA POR ELEITOR
                 buscaEleitores()
             case 5: #OPÇÃO LISTAGEM DE ELEITOR
@@ -82,58 +82,6 @@ def opcao_abrirSistemaVotacao(): #OPÇÃO ABRIR SISTEMA DE VOTAÇÃO
             case _: #OPÇÃO INVÁLIDA
                 print("Opção Inválida")
 
-def sist_votacao():
-
- candidato1="Antonio Luiz Beline"
- candidato2="João Inacio da Silva"
- candidato3="Luiz Paganine de Castro"
- candidato4="José Marchioretto"
- candidato5="Pedro de Oliveira"
-
- votos1=0
- votos2=0
- votos3=0
- votos4=0
- votos5=0
- 
- continuar="s"
-
- while continuar == "s":
-
-    print("SISTEMA DE VOTAÇÃO")
-    print("1", candidato1)
-    print("2", candidato2)
-    print("3", candidato3)
-    print("4", candidato4)
-    print("5", candidato5)
-
-    voto = int(input("Digite seu voto: "))
-
-    if voto == 1:
-        votos1 += 1
-        print("Voto computado para", candidato1)
-
-    elif voto == 2:
-        votos2 += 1
-        print("Voto computado para", candidato2)
-
-    elif voto == 3:
-        votos3 += 1
-        print("Voto computado para", candidato3)
-    
-    elif voto == 4:
-        votos3 += 1
-        print("Voto computado para", candidato4)
-    
-    elif voto == 5:
-        votos3 += 1
-        print("Voto computado para", candidato5)
-
-    else:
-       print("Voto inválido!")
-    continuar = input("Deseja continuar? (s/n): ")
-
-sist_votacao ()
 
 def opcao_auditoriaSistemaVotacao(): #OPÇÃO AUDITORIA DO SISTEMA DE VOTAÇÃO
     opcaud=0
@@ -463,6 +411,7 @@ def arquivoTXT(acao, arquivo, mensagem): #REGISTRA (acao = 0) OU LÊ (acao = 1) 
     if acao == 2:
         with open(f"Arquivos TXT/{arquivo}.txt", "w") as arq:
             arq.write("")
+3
 
 def listaEleitores():
     limpar()
@@ -473,61 +422,24 @@ def listaEleitores():
     limpar()
 
 
-def remover_eleitor():
-    conexao, cursor = criar_conexao()
-
-    if conexao is None:
-        return 0
-
-    try:
-        id_eleitor = int(input("\nDigite o ID do eleitor: "))
-
-        eleitor = buscar_por_id(cursor, id_eleitor)
-
-        if eleitor is None:
-            print("Nenhum eleitor encontrado com esse ID.")
-            return 0
-
-        print("\nEleitor encontrado:")
-        mostrar_eleitor(eleitor)
-
-        confirmar = ""
-
-        while confirmar not in ["S", "N"]:
-            confirmar = input("\nConfirmar remoção? (S/N): ").upper()
-
-            if confirmar not in ["S", "N"]:
-                print("[ERRO] Digite apenas S ou N.")
-
-        if confirmar == "S":
-            nome = eleitor[1]
-            titulo_eleitor = eleitor[2]
-
-            tipo = "mesario" if eleitor[3] == 1 else "eleitor"
-
-            cursor.execute(
-                "DELETE FROM eleitores WHERE id = ?",
-                (id_eleitor,)
-            )
-
-            conexao.commit()
-
-            registrar_exclusao_usuario(
-                nome,
-                titulo_eleitor,
-                tipo
-            )
-
-            print("Eleitor removido com sucesso!")
-            return 1
-
+def retirarEleitor():
+    limpar()
+    print(f"\n\t-- REMOÇÃO ELEITOR --\n")
+    cpf = input(f"DIGITE O CPF DO ELEITOR: ")
+    remocao = bd.removerEleitor(cpf)
+    while remocao <= 0:
+        print("\nELEITOR NÃO ENCONTRADO")
+        continuar = input("QUER REALIZAR NOVAMENTE(s/n): ")
+        if continuar == "s":
+            cpf = input(f"DIGITE O CPF DO ELEITOR: ")
+            remocao = bd.removerEleitor(cpf)
         else:
-            print("Remoção cancelada.")
-            return 0
+            input("\nAperte ENTER para continuar...")
+            limpar()
+            break
+    if remocao > 0:
+        print("\nELEITOR REMOVIDO COM SUCESSO!")
+        input("Aperte ENTER para continuar...")
+        limpar()
 
-    except Exception as e:
-        print("Ocorreu um erro ao remover o eleitor:", e)
-        return 0
-
-    finally:
-        fechar_conexao(conexao, cursor)
+    
