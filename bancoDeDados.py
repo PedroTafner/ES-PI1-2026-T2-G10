@@ -57,7 +57,25 @@ def removerEleitor(cpf):
     resultadoDEL = cursor.rowcount
     return resultadoDEL
     
-   
+   def inserir_candidato(nome,num_vot,partido):
+    sql = "INSERT INTO candidatos (nome,num_votacao,partido) VALUES (%s, %s, %s)"
+    valores = (nome,num_vot,partido)
+    cursor.execute(sql, valores)
+    conexao.commit()
+
+def buscar_eleitorCandidato(nome):
+    cursor.execute(f"SELECT nome FROM eleitores WHERE nome LIKE '{nome}'")
+    resultado = cursor.fetchall()
+    for nome in resultado:
+        if resultado == None:
+            return False
+        else:
+            return True
+    return False
+
+def buscar_statusVoto(nome):
+    cursor.execute(f"SELECT status_voto FROM eleitores WHERE nome LIKE '%{nome}%'")
+    return cursor.fetchall()[0][0]
 
 
     
