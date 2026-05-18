@@ -57,7 +57,7 @@ def removerEleitor(cpf):
     resultadoDEL = cursor.rowcount
     return resultadoDEL
     
-   def inserir_candidato(nome,num_vot,partido):
+def inserir_candidato(nome,num_vot,partido):
     sql = "INSERT INTO candidatos (nome,num_votacao,partido) VALUES (%s, %s, %s)"
     valores = (nome,num_vot,partido)
     cursor.execute(sql, valores)
@@ -77,5 +77,15 @@ def buscar_statusVoto(nome):
     cursor.execute(f"SELECT status_voto FROM eleitores WHERE nome LIKE '%{nome}%'")
     return cursor.fetchall()[0][0]
 
+
+def zerezima():
+    cursor.execute(f"UPDATE eleitores SET status_voto = 0")
+
+
+def listar_candidatos_zerezima():
+
+    cursor.execute("SELECT nome, num_votacao, partido FROM candidatos")
+    for (nome, num_votacao, partido) in cursor.fetchall():
+            print(f"Nome: {nome}, Numero de Votação: {num_votacao}, Partido: {partido} ")
 
     

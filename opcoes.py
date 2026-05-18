@@ -3,7 +3,7 @@ import random as r
 import validacoes as v
 import os
 import datetime
-
+permicao = 0
 def opcao_gerenciamento(): #OPÇÃO GERENCIAMENTO
     opcger=0
     limpar()
@@ -44,19 +44,22 @@ def opcao_votacao(): #OPÇÃO VOTAÇÃO
     while opcvot != 4:
         print("\n\t-- VOTAÇÃO --")
         print("\n1 - Abrir Sistema de Votação")
-        print("2 - Auditoria do Sistema de Votação")
-        print("3 - Resultado da Votação")
-        print("4 - Voltar para o Menu Principal")
+        print("2 - Realizar Votação")
+        print("3 - Auditoria do Sistema de Votação")
+        print("4 - Resultado da Votação")
+        print("5 - Voltar para o Menu Principal")
 
         opcvot=int(input("\nEscolha uma opção: "))
         match opcvot:
             case 1: #OPÇÃO ABRIR SISTEMA DE VOTAÇÃO
                 abrirSistemaVotacao()
-            case 2: #OPÇÃO AUDITORIA DO SISTEMA DE VOTAÇÃO
+            case 2:
+                opcao_abrirSistemaVotacao()
+            case 3: #OPÇÃO AUDITORIA DO SISTEMA DE VOTAÇÃO
                 opcao_auditoriaSistemaVotacao()
-            case 3: #OPÇÃO RESULTADO DA VOTAÇÃO
+            case 4: #OPÇÃO RESULTADO DA VOTAÇÃO
                 opcao_resultadoVotacao()
-            case 4: #OPÇÃO SAIR
+            case 5: #OPÇÃO SAIR
                 limpar()
                 return
             case _: #OPÇÃO INVÁLIDA
@@ -65,22 +68,26 @@ def opcao_votacao(): #OPÇÃO VOTAÇÃO
 def opcao_abrirSistemaVotacao(): #OPÇÃO ABRIR SISTEMA DE VOTAÇÃO
     arquivoTXT(0, 0, 'ABERTURA: Votação iniciada com sucesso. Total de votos zerado.')
     opcasv=0
-    while opcasv != 2:
-        print("\n\t-- SISTEMA DE VOTAÇÃO --")
-        print("\n1 - Votar")
-        print("2 - Encerrar Votação")
+    if permicao == 0:
+        print("NÃO É POSSIVEL REALIZAR A VOTAÇÃO NO MOMENTO\nÉ NECESSÁRIO ABRIR O SISTEMA DE VOTAÇÃO")
+        input("\nAperte ENTER para retornar...")
+    else:
+        while opcasv != 2:
+            print("\n\t-- SISTEMA DE VOTAÇÃO --")
+            print("\n1 - Votar")
+            print("2 - Encerrar Votação")
 
-        opcasv=int(input("\nEscolha uma opção: "))
+            opcasv=int(input("\nEscolha uma opção: "))
 
-        match opcasv:
-            case 1: #OPÇÃO VOTAR
-                pass
-            case 2: #OPÇÃO ENCERRAR VOTAÇÃO
-                arquivoTXT(0, 0, 'ENCERRAMENTO: Votação finalizada com sucesso')
-                limpar()
-                pass
-            case _: #OPÇÃO INVÁLIDA
-                print("Opção Inválida")
+            match opcasv:
+                case 1: #OPÇÃO VOTAR
+                    pass
+                case 2: #OPÇÃO ENCERRAR VOTAÇÃO
+                    arquivoTXT(0, 0, 'ENCERRAMENTO: Votação finalizada com sucesso')
+                    limpar()
+                    pass
+                case _: #OPÇÃO INVÁLIDA
+                    print("Opção Inválida")
 
 
 def opcao_auditoriaSistemaVotacao(): #OPÇÃO AUDITORIA DO SISTEMA DE VOTAÇÃO
@@ -271,7 +278,14 @@ def abrirSistemaVotacao(): #OPÇÃO ABERTURA DE SISTEMA DE VOTAÇÃO
         validacao=bd.validarEleitor(titulo_eleitor,chave,cpf)
         limpar()
         if validacao == True:
-            opcao_abrirSistemaVotacao()
+            print("ABERTURA DO SISTEMA DE VOTAÇÃO REALIZADA COM SUCESSO!\n")
+            print("\t-- ZEREZIMA --")
+            bd.zerezima()
+            listarCandidatos = bd.listar_candidatos_zerezima()
+            print(listarCandidatos) 
+            permicao = 1
+            return permicao
+
         
         else:
             limpar()
@@ -439,6 +453,7 @@ def retirarEleitor():
             break
     if remocao > 0:
         print("\nELEITOR REMOVIDO COM SUCESSO!")
+        arquivoTXT(0,0,f'REMOÇÃO DE ELEITOR DO CPF {cpf}')
         input("Aperte ENTER para continuar...")
         limpar()
 
