@@ -471,3 +471,63 @@ def listaEleitores():
 
     input("\nAperte ENTER para continuar...")
     limpar()
+
+
+def remover_eleitor():
+    conexao, cursor = criar_conexao()
+
+    if conexao is None:
+        return 0
+
+    try:
+        id_eleitor = int(input("\nDigite o ID do eleitor: "))
+
+        eleitor = buscar_por_id(cursor, id_eleitor)
+
+        if eleitor is None:
+            print("Nenhum eleitor encontrado com esse ID.")
+            return 0
+
+        print("\nEleitor encontrado:")
+        mostrar_eleitor(eleitor)
+
+        confirmar = ""
+
+        while confirmar not in ["S", "N"]:
+            confirmar = input("\nConfirmar remoção? (S/N): ").upper()
+
+            if confirmar not in ["S", "N"]:
+                print("[ERRO] Digite apenas S ou N.")
+
+        if confirmar == "S":
+            nome = eleitor[1]
+            titulo_eleitor = eleitor[2]
+
+            tipo = "mesario" if eleitor[3] == 1 else "eleitor"
+
+            cursor.execute(
+                "DELETE FROM eleitores WHERE id = ?",
+                (id_eleitor,)
+            )
+
+            conexao.commit()
+
+            registrar_exclusao_usuario(
+                nome,
+                titulo_eleitor,
+                tipo
+            )
+
+            print("Eleitor removido com sucesso!")
+            return 1
+
+        else:
+            print("Remoção cancelada.")
+            return 0
+
+    except Exception as e:
+        print("Ocorreu um erro ao remover o eleitor:", e)
+        return 0
+
+    finally:
+        fechar_conexao(conexao, cursor)
