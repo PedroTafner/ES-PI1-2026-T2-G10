@@ -65,6 +65,7 @@ def validarEleitor(texto, funcao):
 
     cursor.execute(f"SELECT titulo_eleitor,cpf,chave_acesso,mesario,status_voto FROM eleitores WHERE cpf LIKE '{cpf}%'")
     resultadoTC=cursor.fetchall()
+    
 
     for titulo_eleitor,cpf,chaveValida,mesario,status_voto in resultadoTC:
         if funcao == 0:
@@ -85,31 +86,41 @@ def validarEleitor(texto, funcao):
             
         if funcao == 1:
             if status_voto == 1:
-                input("\n*ERRO: Você já realizou seu foto.\n\nAperte ENTER para voltar...")
+                input("\n*ERRO: Você já realizou seu voto.\n\nAperte ENTER para voltar...")
                 o.arquivoTXT(0,0,'ALERTA: Tentativa de voto duplo')
+                o.limpar()
                 return
             
             else:
+                
                 o.limpar()
                 print(f"-- {texto} --")
+                
                 listar_candidatos()
 
                 voto = int(input("\nDigite para quem você vota: "))
-                cursor.execute(f"SELECT id_canditado FROM candidatos WHERE num_votacao = {voto}")
+                cursor.execute(f"SELECT num_votacao FROM candidatos WHERE num_votacao = {voto}")
                 validacaoCandidato = cursor.fetchall() 
 
-                while validacaoCandidato == None:
+                while validacaoCandidato == []:
                     o.limpar()
+                    print("COLOQUE UM NÚMERO DE VOTAÇÃO VALIDO!")
                     print(f"\n\t-- {texto} --")
                     listar_candidatos()
                     voto = int(input("\nDigite para quem você vota: "))
+                    cursor.execute(f"SELECT num_votacao FROM candidatos WHERE num_votacao = {voto}")
+                    validacaoCandidato = cursor.fetchall() 
+
 
                 o.limpar()
                 o.arquivoTXT(0,0,'SUCESSO: Voto realizado com sucesso.')
-                cursor.execute(f"UPDATE eleitores SET status_voto = 1 WHERE cpf = {cpf}; UPDATE candidatos SET votos = votos + 1 WHERE num_votacao = {voto}") 
+                cursor.execute(f"UPDATE eleitores SET status_voto = 1 WHERE cpf = {cpf}")
+                cursor.execute(f"UPDATE candidatos SET votos = votos + 1 WHERE num_votacao = {voto}") 
+             
                 conexao.commit()  
                 print(f"\n\t-- {texto} --")
                 input("\n*ATUALIZAÇÃO: Voto confirmado com sucesso.\n\nAperte ENTER para continuar...")
+                o.limpar()
                 return   
 
 def removerEleitor(cpf):
@@ -118,7 +129,7 @@ def removerEleitor(cpf):
     return resultadoDEL
     
 def inserir_candidato(nome,num_vot,partido):
-    sql = "INSERT INTO candidatos (nome,num_votacao,partido) VALUES (%s, %s, %s)"
+    sql = "INSERT INTO candidatos (nome,num_votacao,partido, votos) VALUES (%s, %s, %s, 0)"
     valores = (nome,num_vot,partido)
     cursor.execute(sql, valores)
     conexao.commit()
@@ -137,8 +148,13 @@ def buscar_statusVoto(nome):
     cursor.execute(f"SELECT status_voto FROM eleitores WHERE nome LIKE '%{nome}%'")
     return cursor.fetchall()[0][0]
 
-def zerezima():
+def zeresima():
     cursor.execute(f"UPDATE eleitores SET status_voto = 0")
+    cursor.execute(f"UPDATE candidatos SET votos = 0")
+    conexao.commit()
+    cursor.execute("SELECT nome, num_votacao, partido FROM candidatos")
+    for (nome, num_votacao, partido) in cursor.fetchall():
+        return print(f"{num_votacao} - {partido} - {nome} - votos = 0")
 
 def listar_candidatos():
     cursor.execute("SELECT nome, num_votacao, partido FROM candidatos")

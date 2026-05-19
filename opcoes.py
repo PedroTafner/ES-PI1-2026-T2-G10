@@ -32,7 +32,7 @@ def opcao_gerenciamento(): #OPÇÃO GERENCIAMENTO
             case 5: #OPÇÃO LISTAGEM DE ELEITOR
                 listaEleitores()
             case 6: #OPÇÃO ADICIONAR CANDIDATO
-                pass
+                add_candidato()
             case 7: #OPÇÃO VOLTAR PARA O MENU PRINCIPAL
                 limpar()
                 return
@@ -242,6 +242,11 @@ def buscaEleitores(): #BUSCA OS ELEITORES CADASTRADOS
 def abrirSistemaVotacao(): #OPÇÃO ABERTURA DE SISTEMA DE VOTAÇÃO
     limpar()
     validacao = bd.validarEleitor('ABERTURA DE SISTEMA DE VOTAÇÃO', 0)
+    limpar()
+    print("\t-- ZERÉSIMA -- ")
+    print("Zerésima realizada com sucesso")
+    bd.zeresima()
+    input( "\nAperte ENTER para dar continuidade a votação...")
         
     limpar()
     if validacao == True:
@@ -436,7 +441,7 @@ def add_candidato():
     partido=input("Digite o partido do candidato: ")
     bd.inserir_candidato(nome,num_vot,partido)
 
-def votar():
+def votar():  
     limpar()
     bd.validarEleitor('URNA DE VOTAÇÃO', 1)
     
