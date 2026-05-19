@@ -1,8 +1,10 @@
 import opcoes
 
 opcoes.limpar()
-opcoes.arquivoTXT(2,0, 'apagando log')
+opcoes.arquivoTXT(2,'apagando log')
+opcoes.resetProtocoloVotação()
 opcao=0
+
 while opcao != 3:
     opcoes.limpar()
     print("\n\t-- MENU PRINCIPAL --")

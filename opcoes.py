@@ -67,6 +67,7 @@ def votacao(): #OPÇÃO ABRIR SISTEMA DE VOTAÇÃO
     opcasv=0
     
     while opcasv != 2:
+        limpar()
         print("\n\t-- SISTEMA DE VOTAÇÃO --")
         print("\n1 - Votar")
         print("2 - Encerrar Votação")
@@ -78,11 +79,16 @@ def votacao(): #OPÇÃO ABRIR SISTEMA DE VOTAÇÃO
                 limpar()
                 votar()
             case 2: #OPÇÃO ENCERRAR VOTAÇÃO
-                arquivoTXT(0, 0, 'ENCERRAMENTO: Votação finalizada com sucesso')
                 limpar()
-                pass
+                validacao = bd.validarEleitor('FECHANDO URNA DE VOTAÇÃO', 0)
+                if validacao == True:
+                    arquivoTXT(0,'ENCERRAMENTO: Votação finalizada com sucesso')
+                    limpar()
+                    pass
+                else:
+                    votacao()
             case _: #OPÇÃO INVÁLIDA
-                print("Opção Inválida")
+                limpar()
 
 def opcao_auditoriaSistemaVotacao(): #OPÇÃO AUDITORIA DO SISTEMA DE VOTAÇÃO
     opcaud=0
@@ -99,15 +105,16 @@ def opcao_auditoriaSistemaVotacao(): #OPÇÃO AUDITORIA DO SISTEMA DE VOTAÇÃO
             case 1: #OPÇÃO LOG DE OCORRÊNCIAS
                 limpar()
                 print("\n-- Log de Ocorrências --")
-                conteudo = arquivoTXT(1, 0, 'lendo')
+                conteudo = arquivoTXT(1,'lendo')
                 print(conteudo)
                 input("\nAperte ENTER para retornar...")
             
             case 2: #OPÇÃO PROTOCOLOS DE VOTAÇÃO
                 limpar()
-                print("\n-- Protocolos de Votação --")
-                conteudo = arquivoTXT(1, 1, 'lendo')
-                print(conteudo)
+                print("\n-- Protocolos de Votação --\n")
+                bd.cursor.execute("SELECT r.protocolo_votacao, e.nome FROM resultado as r JOIN eleitores as e ON e.id_eleitor = r.id_eleitor ORDER BY nome")
+                for (protocolo, nome) in bd.cursor.fetchall():
+                    print(f"{nome} - {protocolo} - Voto Confirmado")
                 input("\nAperte ENTER para retornar...")
             
             case 3: #OPÇÃO VOLTAR
@@ -242,22 +249,20 @@ def buscaEleitores(): #BUSCA OS ELEITORES CADASTRADOS
 def abrirSistemaVotacao(): #OPÇÃO ABERTURA DE SISTEMA DE VOTAÇÃO
     limpar()
     validacao = bd.validarEleitor('ABERTURA DE SISTEMA DE VOTAÇÃO', 0)
-    limpar()
-    print("\t-- ZERÉSIMA -- ")
-    print("Zerésima realizada com sucesso")
-    bd.zeresima()
-    input( "\nAperte ENTER para dar continuidade a votação...")
         
     limpar()
     if validacao == True:
         limpar()
-        arquivoTXT(0, 0, 'ABERTURA: Votação iniciada com sucesso. Total de votos zerado.')
+        print("\t-- ZERÉSIMA -- \n")
+        bd.zeresima()
+        input( "\n*ATUALIZAÇÃO: Zerésima realizada com sucesso\n\nAperte ENTER para dar continuidade a votação...")
+        arquivoTXT(0,'ABERTURA: Votação iniciada com sucesso. Total de votos zerado.')
         votacao()
 
     else:
         limpar()
         validacao
-        arquivoTXT(0,0,'ALERTA: Tentativa de acesso negado.')
+        arquivoTXT(0,'ALERTA: Tentativa de acesso negado.')
         return
     
 def mudandoDados(opc, mudanca, chave_acesso): #FUNÇÃO FEITA PARA FACILITAR A TROCA DE DADOS NO EDITARELEITOR
@@ -372,28 +377,23 @@ def editarEleitor(): #OPÇÃO QUE POSSIBILITA A MUDANÇA DE INFORMAÇÕES DO ELE
 def limpar(): #LIMPA O TERMINAL PARA MANTER O SISTEMA ORGANIZADO
     os.system('cls' if os.name == 'nt' else 'clear')
 
-def arquivoTXT(acao, arquivo, mensagem): #REGISTRA (acao = 0) OU LÊ (acao = 1) UM ARQUIVO TXT
+def arquivoTXT(acao, mensagem): #REGISTRA (acao = 0) OU LÊ (acao = 1) UM ARQUIVO TXT
     momento = datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S")
-    #momento = momento.strftime("%d/%m/%Y %H:%M:%S")
-    if arquivo == 0:
-        arquivo = 'logOcorrencias'
-    else:
-        arquivo = 'protocoloVotacao'
-    
+
     if acao == 0:
-        with open (f"Arquivos TXT/{arquivo}.txt", "a", encoding="utf-8") as arq:
+        with open (f"Arquivos TXT/logOcorrencias.txt", "a", encoding="utf-8") as arq:
             arq.write(f"\n({momento}) - {mensagem}")
 
     if acao == 1:
-        with open (f"Arquivos TXT/{arquivo}.txt", "r", encoding="utf-8") as arq:
+        with open (f"Arquivos TXT/logOcorrencias.txt", "r", encoding="utf-8") as arq:
             conteudo = arq.read()
             return conteudo
             
     if acao == 2:
-        with open(f"Arquivos TXT/{arquivo}.txt", "w") as arq:
+        with open(f"Arquivos TXT/logOcorrencias.txt", "w") as arq:
             arq.write("")
 
-def listaEleitores():
+def listaEleitores(): # FUNÇÃO FEITA PARA LISTAR OS ELEITORES 
     limpar()
     print(f"\n\t-- LISTAGEM DOS ELEITORES --\n")
     bd.listar_usuarios()
@@ -401,7 +401,7 @@ def listaEleitores():
     input("\nAperte ENTER para continuar...")
     limpar()
 
-def retirarEleitor():
+def retirarEleitor(): # REMOVE CERTO ELEITOR DE UM SISTEMA DE VOTAÇÃO
     limpar()
     print(f"\n\t-- REMOÇÃO ELEITOR --\n")
     cpf = input(f"DIGITE O CPF DO ELEITOR: ")
@@ -418,11 +418,11 @@ def retirarEleitor():
             break
     if remocao > 0:
         print("\nELEITOR REMOVIDO COM SUCESSO!")
-        arquivoTXT(0,0,f'REMOÇÃO DE ELEITOR DO CPF {cpf}')
+        arquivoTXT(0,f'REMOÇÃO DE ELEITOR DO CPF {cpf}')
         input("Aperte ENTER para continuar...")
         limpar()
 
-def add_candidato():
+def add_candidato(): # ADICIONA CANDIDATOS AO SISTEMA
     limpar()
     print("\n\t-- CADASTRO DE CANDIDATOS --\n")
     opcao=False
@@ -441,9 +441,29 @@ def add_candidato():
     partido=input("Digite o partido do candidato: ")
     bd.inserir_candidato(nome,num_vot,partido)
 
-def votar():  
+def votar(): # MOSTRA AS OPÇÕES DE VOTAR E ENCERRAR VOTAÇÃO APÓS A ABERTURA DA URNA
     limpar()
     bd.validarEleitor('URNA DE VOTAÇÃO', 1)
-    
-        
-    
+
+def geradorProtocolo(numero_candidato):
+    protocolo = 'V'
+    for i in range(2):
+        alfabeto = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z']
+        letras = r.randint(0,25)
+        letras = alfabeto.pop(letras)
+        protocolo += str(letras)
+    protocolo += '26'
+    if numero_candidato < 10:
+        protocolo += '0' + str(numero_candidato)
+    else:
+        protocolo += str(numero_candidato)
+    for i in range(5):
+        alfabeto = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z']
+        letras = r.randint(0,25)
+        letras = alfabeto.pop(letras)
+        protocolo += str(letras)
+    return protocolo
+
+def resetProtocoloVotação():
+    bd.cursor.execute(f"DELETE from resultado")
+    bd.conexao.commit()
