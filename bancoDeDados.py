@@ -48,9 +48,16 @@ def validarEleitor(texto, funcao): # VALIDA SE AS INFORMAÇÕES DO ELEITOR ESTÃ
         valTitulo=v.validacaoTituloEleitor(titulo_eleitor)
 
     o.limpar()
+    cursor.execute(
+    "SELECT cpf FROM eleitores WHERE titulo_eleitor = %s",
+    (titulo_eleitor,)
+)
+    resultado = cursor.fetchone()
+    valCPF = str(resultado[0])[:4]
+    
     print(f"\n\t-- {texto} --")
     cpf=int(input("\nDigite os 4 primeiros dígitos do seu CPF: "))
-    while len(str(cpf))<4 or len(str(cpf))>4:
+    while len(str(cpf)) != 4 or str(cpf) != valCPF:
         o.limpar()
         print(f"\n\t-- {texto} --\n\n*ERRO: Digite os 4 primeiros caracteres do seu CPF, tente novamente.")
         cpf=int(input("\nDigite os 4 primeiros dígitos do seu CPF: "))
@@ -86,7 +93,7 @@ def validarEleitor(texto, funcao): # VALIDA SE AS INFORMAÇÕES DO ELEITOR ESTÃ
                 if funcao == 1: 
                     if Status_voto == 1:
                         input("\n*ERRO: Você já realizou seu voto.\n\nAperte ENTER para voltar...")
-                        o.arquivoTXT(0,'ALERTA: Tentativa de voto duplo')
+                        o.arquivoTXT(0,'ALERTA: Tentativa de voto duplo.')
                         o.limpar()
                         return
                     
@@ -134,6 +141,7 @@ def validarEleitor(texto, funcao): # VALIDA SE AS INFORMAÇÕES DO ELEITOR ESTÃ
 
 def removerEleitor(cpf): #FUNÇÃO PARA EXECUTAR NO BANCO DE DADOS A REMOÇÃO DE CERTO ELEITOR
     cursor.execute(f"DELETE FROM eleitores WHERE cpf= {cpf}")
+    conexao.commit()
     resultadoDEL = cursor.rowcount
     return resultadoDEL
     

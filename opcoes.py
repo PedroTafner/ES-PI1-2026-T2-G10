@@ -82,7 +82,7 @@ def votacao(): #OPÇÃO ABRIR SISTEMA DE VOTAÇÃO
                 limpar()
                 validacao = bd.validarEleitor('FECHANDO URNA DE VOTAÇÃO', 0)
                 if validacao == True:
-                    arquivoTXT(0,'ENCERRAMENTO: Votação finalizada com sucesso')
+                    arquivoTXT(0,'ENCERRAMENTO: Votação finalizada com sucesso.')
                     limpar()
                     pass
                 else:
@@ -262,7 +262,6 @@ def abrirSistemaVotacao(): #OPÇÃO ABERTURA DE SISTEMA DE VOTAÇÃO
     else:
         limpar()
         validacao
-        arquivoTXT(0,'ALERTA: Tentativa de acesso negado.')
         return
     
 def mudandoDados(opc, mudanca, chave_acesso): #FUNÇÃO FEITA PARA FACILITAR A TROCA DE DADOS NO EDITARELEITOR
