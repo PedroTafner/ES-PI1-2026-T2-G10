@@ -1,4 +1,6 @@
 import mysql.connector # Conexão com o banco
+import validacoes as v
+import opcoes as o
 
 conexao = mysql.connector.connect(
 host='localhost',
@@ -34,23 +36,81 @@ def buscarEleitor(nome): #FUNÇÃO QUE BUSCA E MOSTRA OS ELEITORES FILTRADOS
         else:
             print(f"Nome: {nome}, Cpf: {cpf}, Mesario: Não")
         
-def validarEleitor(titulo_eleitor,Chave,cpf):
-    cursor.execute(f"SELECT titulo_eleitor,cpf,chave_acesso,mesario FROM eleitores WHERE cpf LIKE '{cpf}%'")
+def validarEleitor(texto, funcao):
+    print(f"\n\t-- {texto} --")
+
+    titulo_eleitor=int(input("\nDigite seu título de eleitor: "))
+    valTitulo=v.validacaoTituloEleitor(titulo_eleitor)
+    while valTitulo != True:
+        o.limpar()
+        print(f"\n\t-- {texto} --\n\n*ERRO: Título de eleitor inválido, digite novamente.")
+        titulo_eleitor=int(input("\nDigite seu título de eleitor: "))
+        valTitulo=v.validacaoTituloEleitor(titulo_eleitor)
+
+    o.limpar()
+    print(f"\n\t-- {texto} --")
+    cpf=int(input("\nDigite os 4 primeiros dígitos do seu CPF: "))
+    while len(str(cpf))<4 or len(str(cpf))>4:
+        o.limpar()
+        print(f"\n\t-- {texto} --\n\n*ERRO: Digite os 4 primeiros caracteres do seu CPF, tente novamente.")
+        cpf=int(input("\nDigite os 4 primeiros dígitos do seu CPF: "))
+    
+    o.limpar()
+    print(f"\n\t-- {texto} --")
+    chave=input("\nDigite a sua chave de acesso: ")
+    while len(str(chave))<7 or len(str(chave))>7:
+        o.limpar()
+        print(f"\n\t-- {texto} --\n\n*ERRO: A chave de acesso precisa ter 7 valores, tente novamente.")
+        chave=input("\nDigite a sua chave de acesso: ")
+
+    cursor.execute(f"SELECT titulo_eleitor,cpf,chave_acesso,mesario,status_voto FROM eleitores WHERE cpf LIKE '{cpf}%'")
     resultadoTC=cursor.fetchall()
 
-    for titulo_eleitor,cpf,chave,mesario in resultadoTC:
-        if chave == Chave:
-            if mesario == 0:
-                return input("\n*ERRO: Somente mesários podem abrir o sistema de votação.\n\nAperte ENTER para continuar...")
-                
-            else:
-                if str(titulo_eleitor) and str(chave) in resultadoTC[0]:
-                    return True
+    for titulo_eleitor,cpf,chaveValida,mesario,status_voto in resultadoTC:
+        if funcao == 0:
+            if chave == chaveValida:
+                if mesario == 0:
+                    input("\n*ERRO: Somente mesários podem abrir o sistema de votação.\n\nAperte ENTER para continuar...")
+                    return
+                    
                 else:
-                    return input("\n*ERRO: Dados inválida, tente novamente\n\nAperte ENTER para continuar...")
-        else:
-            return input("\n*ERRO: Chave de acesso inválida, tente novamente\n\nAperte ENTER para continuar...")
-        
+                    if str(titulo_eleitor) and str(chave) in resultadoTC[0]:
+                        return True
+                    else:
+                        input("\n*ERRO: Dados inválida, tente novamente\n\nAperte ENTER para continuar...")
+                        return
+            else:
+                input("\n*ERRO: Chave de acesso inválida, tente novamente\n\nAperte ENTER para continuar...")
+                return
+            
+        if funcao == 1:
+            if status_voto == 1:
+                input("\n*ERRO: Você já realizou seu foto.\n\nAperte ENTER para voltar...")
+                o.arquivoTXT(0,0,'ALERTA: Tentativa de voto duplo')
+                return
+            
+            else:
+                o.limpar()
+                print(f"-- {texto} --")
+                listar_candidatos()
+
+                voto = int(input("\nDigite para quem você vota: "))
+                cursor.execute(f"SELECT id_canditado FROM candidatos WHERE num_votacao = {voto}")
+                validacaoCandidato = cursor.fetchall() 
+
+                while validacaoCandidato == None:
+                    o.limpar()
+                    print(f"\n\t-- {texto} --")
+                    listar_candidatos()
+                    voto = int(input("\nDigite para quem você vota: "))
+
+                o.limpar()
+                o.arquivoTXT(0,0,'SUCESSO: Voto realizado com sucesso.')
+                cursor.execute(f"UPDATE eleitores SET status_voto = 1 WHERE cpf = {cpf}; UPDATE candidatos SET votos = votos + 1 WHERE num_votacao = {voto}") 
+                conexao.commit()  
+                print(f"\n\t-- {texto} --")
+                input("\n*ATUALIZAÇÃO: Voto confirmado com sucesso.\n\nAperte ENTER para continuar...")
+                return   
 
 def removerEleitor(cpf):
     cursor.execute(f"DELETE FROM eleitores WHERE cpf= {cpf}")
@@ -77,15 +137,10 @@ def buscar_statusVoto(nome):
     cursor.execute(f"SELECT status_voto FROM eleitores WHERE nome LIKE '%{nome}%'")
     return cursor.fetchall()[0][0]
 
-
 def zerezima():
     cursor.execute(f"UPDATE eleitores SET status_voto = 0")
 
-
-def listar_candidatos_zerezima():
-
+def listar_candidatos():
     cursor.execute("SELECT nome, num_votacao, partido FROM candidatos")
     for (nome, num_votacao, partido) in cursor.fetchall():
-            print(f"Nome: {nome}, Numero de Votação: {num_votacao}, Partido: {partido} ")
-
-    
+        return print(f"{num_votacao} - {partido} - {nome}")
