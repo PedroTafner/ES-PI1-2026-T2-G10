@@ -1,6 +1,7 @@
 import mysql.connector # Conexão com o banco
 import validacoes as v
 import opcoes as o
+import datetime
 
 conexao = mysql.connector.connect(
 host='localhost',
@@ -120,8 +121,10 @@ def validarEleitor(texto, funcao): # VALIDA SE AS INFORMAÇÕES DO ELEITOR ESTÃ
                     o.arquivoTXT(0,'SUCESSO: Voto realizado com sucesso.')
                     cursor.execute(f"UPDATE eleitores SET status_voto = status_voto + 1 WHERE cpf = {cpfValido}")
                     conexao.commit()
-                    cursor.execute(f"UPDATE candidatos SET votos = votos + 1 WHERE num_votacao = {voto}") 
-                    cursor.execute(f"INSERT INTO resultado (protocolo_votacao, id_eleitor) VALUES ('{protocolo}', {id})")
+                    cursor.execute(f"SELECT id_candidato FROM candidatos WHERE num_votacao = {voto}")
+                    id_candidato = cursor.fetchone()[0]
+                    horario = datetime.datetime.now()
+                    cursor.execute("INSERT INTO resultado (protocolo_votacao, horario_votacao, id_candidato) VALUES (%s, %s, %s)",(protocolo, horario, id_candidato))
                     conexao.commit()
                     
                     print(f"\n\t-- {texto} --")

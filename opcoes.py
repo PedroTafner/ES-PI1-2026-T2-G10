@@ -466,3 +466,6 @@ def geradorProtocolo(numero_candidato):
 def resetProtocoloVotação():
     bd.cursor.execute(f"DELETE from resultado")
     bd.conexao.commit()
+
+
+
