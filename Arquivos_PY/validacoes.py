@@ -1,4 +1,7 @@
 import Arquivos_PY.bancoDeDados as bd
+import Arquivos_PY.gerenciamento as ger
+import Arquivos_PY.votacao as vot
+
 
 
 def validacaoCPF(cpf): #VERIFICA SE O CPF INSERIDO CORRESPONDE AOS REQUISITOS DE VALIDAÇÃO
@@ -66,7 +69,6 @@ def validacaoTituloEleitor(NUMTIT): #VERIFICA SE O TÍTULO DE ELEITOR INSERIDO C
     return True
 
 def validarChaveAcesso(chave): #VERIFICA SE A CHAVE DE ACESSO INSERIDA EXISTE
-
     if len(chave) != 7:
         return False
     bd.cursor.execute(f"SELECT id_eleitor FROM eleitores WHERE chave_acesso = '{chave}'")
@@ -76,3 +78,83 @@ def validarChaveAcesso(chave): #VERIFICA SE A CHAVE DE ACESSO INSERIDA EXISTE
         return True
     else:
         return False
+    
+def validarEleitor(texto, funcao): # VALIDA SE AS INFORMAÇÕES DO ELEITOR ESTÃO CORRETAS DIANTE DO BANCO DE DADOS
+    print(f"\n\t-- {texto} --")
+
+    titulo=int(input("\nDigite seu título de eleitor: "))
+    validacao=validacaoTituloEleitor(titulo)
+    while validacao != True:
+        ger.limpar()
+        print(f"\n\t-- {texto} --\n\n*ERRO: Título de eleitor inválido, digite novamente.")
+        titulo=int(input("\nDigite seu título de eleitor: "))
+        validacao=val.validacaoTituloEleitor(titulo)
+
+    ger.limpar()
+    bd.cursor.execute("SELECT cpf FROM eleitores WHERE titulo_eleitor = %s", (titulo,))
+    resultado = bd.cursor.fetchone()
+    validacao = str(resultado[0])[:4]
+    
+    print(f"\n\t-- {texto} --")
+    cpf=int(input("\nDigite os 4 primeiros dígitos do seu CPF: "))
+    while len(str(cpf)) != 4 or str(cpf) != validacao:
+        ger.limpar()
+        print(f"\n\t-- {texto} --\n\n*ERRO: Digite os 4 primeiros caracteres do seu CPF, tente novamente.")
+        cpf=int(input("\nDigite os 4 primeiros dígitos do seu CPF: "))
+    
+    ger.limpar()
+    bd.cursor.execute(f"SELECT chave_acesso FROM eleitores WHERE cpf LIKE '{cpf}%'")
+    resultado=bd.cursor.fetchone()
+    validacao = str(resultado[0])
+
+    print(f"\n\t-- {texto} --")
+    chave=input("\nDigite a sua chave de acesso: ")
+    while len(str(chave)) != 7 or str(chave) != validacao:
+        ger.limpar()
+        print(f"\n\t-- {texto} --\n\n*ERRO: A chave de acesso é inválida, tente novamente.")
+        chave=input("\nDigite a sua chave de acesso: ")
+
+    bd.cursor.execute(f"SELECT cpf,mesario,status_voto FROM eleitores WHERE cpf LIKE '{cpf}%'")
+    resultado=bd.cursor.fetchall()
+    
+    for cpfValido,mesario, status_voto in resultado:
+        if funcao == 0:
+            if mesario == 0:
+                input("\n*ERRO: Somente mesários podem abrir/encerrar o sistema de votação.\n\nAperte ENTER para continuar...")
+                vot.arquivoTXT(0,'ALERTA: Tentativa de acesso negado.')
+                return False
+        
+            else:
+                return True
+        
+        if funcao == 1: 
+            if status_voto == 1:
+                input("\n*ERRO: Você já realizou seu voto.\n\nAperte ENTER para voltar...")
+                vot.arquivoTXT(0,'ALERTA: Tentativa de voto duplo.')
+                ger.limpar()
+                return
+            
+            else:
+                ger.limpar()
+                print(f"\n\t-- {texto} --\n")
+
+                voto = int(input("\nDigite para quem você vota: "))
+                bd.cursor.execute(f"SELECT num_votacao FROM candidatos WHERE num_votacao = {voto}")
+                validacaoCandidato = bd.cursor.fetchall() 
+
+                while validacaoCandidato == []:
+                    ger.limpar()
+                    print(f"\n\t-- {texto} --\n")
+                    print("\n*ERRO: O número de partido inserido é inexistente.")
+                    voto_nulo = input("Deseja que seu voto seja nulo?(s/n): ")
+                    if voto_nulo == "s":
+                        bd.votoNulo(cpfValido,texto)
+                        return
+                    ger.limpar()  
+                    print(f"\n\t-- {texto} --\n")
+                    voto = int(input("\nDigite para quem você vota: "))
+                    bd.cursor.execute(f"SELECT num_votacao FROM candidatos WHERE num_votacao = {voto}")
+                    validacaoCandidato = bd.cursor.fetchall() 
+                
+                bd.votoRealizado(voto,cpfValido,texto)
+                return
