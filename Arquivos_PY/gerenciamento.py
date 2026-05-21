@@ -231,8 +231,8 @@ def alteracao_mysql(opc, mudanca, chave_acesso): #FUNÇÃO FEITA PARA FACILITAR 
 def retirar_eleitor(): # REMOVE CERTO ELEITOR DE UM SISTEMA DE VOTAÇÃO
     limpar()
     print(f"\n\t-- REMOÇÃO ELEITOR --\n")
-    cpf = input(f"DIGITE O CPF DO ELEITOR: ")
-    remocao = bd.removerEleitor(cpf)
+    chave = input(f"DIGITE A CHAVE DE ACESSO DO ELEITOR: ")
+    remocao = bd.removerEleitor(chave)
     while remocao <= 0:
         print("\nELEITOR NÃO ENCONTRADO")
         continuar = input("QUER REALIZAR NOVAMENTE(s/n): ")
@@ -287,6 +287,7 @@ def add_candidato(): # ADICIONA CANDIDATOS AO SISTEMA
     num_vot=int(input("Digite o número de votação do candidato: "))
     partido=input("Digite o partido do candidato: ")
     bd.inserir_candidato(nome,num_vot,partido)
+    limpar()
 
 def limpar(): #LIMPA O TERMINAL PARA MANTER O SISTEMA ORGANIZADO
     os.system('cls' if os.name == 'nt' else 'clear')

@@ -36,7 +36,7 @@ def opcao_votacao(): #OPÇÃO VOTAÇÃO
 
 def abertura(): #OPÇÃO ABERTURA DE SISTEMA DE VOTAÇÃO
     limpar()
-    validacao = bd.validarEleitor('ABERTURA DE SISTEMA DE VOTAÇÃO', 0)
+    validacao = val.validarEleitor('ABERTURA DE SISTEMA DE VOTAÇÃO', 0)
         
     limpar()
     if validacao == True:
@@ -68,11 +68,11 @@ def votacao(): #OPÇÃO ABRIR SISTEMA DE VOTAÇÃO
         match opcao:
             case 1: #OPÇÃO VOTAR
                 limpar()
-                bd.validarEleitor('URNA DE VOTAÇÃO', 1)
+                val.validarEleitor('URNA DE VOTAÇÃO', 1)
 
             case 2: #OPÇÃO ENCERRAR VOTAÇÃO
                 limpar()
-                validacao = bd.validarEleitor('FECHANDO URNA DE VOTAÇÃO', 0)
+                validacao = val.validarEleitor('FECHANDO URNA DE VOTAÇÃO', 0)
 
                 if validacao == True:
                     arquivoTXT(0,'ENCERRAMENTO: Votação finalizada com sucesso.')

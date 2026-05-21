@@ -39,14 +39,14 @@ def buscarEleitor(nome): #FUNÇÃO QUE BUSCA E MOSTRA OS ELEITORES FILTRADOS
         else:
             print(f"Nome: {nome}, Cpf: {cpf}, Mesario: Não")                          
 
-def removerEleitor(cpf): #FUNÇÃO PARA EXECUTAR NO BANCO DE DADOS A REMOÇÃO DE CERTO ELEITOR
-    cursor.execute(f"DELETE FROM eleitores WHERE cpf= {cpf}")
+def removerEleitor(chave): #FUNÇÃO PARA EXECUTAR NO BANCO DE DADOS A REMOÇÃO DE CERTO ELEITOR
+    cursor.execute(f"DELETE FROM eleitores WHERE chave_acesso = '{chave}'")
     conexao.commit()
     resultadoDEL = cursor.rowcount
     return resultadoDEL
     
 def inserir_candidato(nome,num_vot,partido): #FUNÇÃO PARA EXECUTAR NO BANCO DE DADOS A ADICAÇÃO DE UM CERTO CANDIDATO
-    sql = "INSERT INTO candidatos (nome,num_votacao,partido, votos) VALUES (%s, %s, %s, 0)"
+    sql = "INSERT INTO candidatos (nome,num_votacao,partido) VALUES (%s, %s, %s)"
     valores = (nome,num_vot,partido)
     cursor.execute(sql, valores)
     conexao.commit()

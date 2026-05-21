@@ -139,6 +139,10 @@ def validarEleitor(texto, funcao): # VALIDA SE AS INFORMAÇÕES DO ELEITOR ESTÃ
                 print(f"\n\t-- {texto} --\n")
 
                 voto = int(input("\nDigite para quem você vota: "))
+                confirmacao=input("Você tem certeza do seu voto(s/n): ")
+                while confirmacao != "s":
+                    voto = int(input("\nDigite para quem você vota: "))
+                    confirmacao=input("Você tem certeza do seu voto(s/n): ")
                 bd.cursor.execute(f"SELECT num_votacao FROM candidatos WHERE num_votacao = {voto}")
                 validacaoCandidato = bd.cursor.fetchall() 
 
