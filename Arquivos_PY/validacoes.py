@@ -1,4 +1,5 @@
-import bancoDeDados as bd
+import Arquivos_PY.bancoDeDados as bd
+
 
 def validacaoCPF(cpf): #VERIFICA SE O CPF INSERIDO CORRESPONDE AOS REQUISITOS DE VALIDAÇÃO
     stringCPF=str(cpf)
@@ -75,4 +76,3 @@ def validarChaveAcesso(chave): #VERIFICA SE A CHAVE DE ACESSO INSERIDA EXISTE
         return True
     else:
         return False
-

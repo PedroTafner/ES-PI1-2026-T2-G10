@@ -10,8 +10,7 @@ CREATE TABLE candidatos (
     id_candidato INT PRIMARY KEY AUTO_INCREMENT,
     nome VARCHAR(100) NOT NULL,
     partido VARCHAR(50) NOT NULL,
-    num_votacao INT NOT NULL,
-    votos INT DEFAULT 0
+    num_votacao INT NOT NULL
 );
 
 CREATE TABLE eleitores (
@@ -28,8 +27,8 @@ CREATE TABLE resultado (
     id_resultado INT PRIMARY KEY AUTO_INCREMENT,
     protocolo_votacao VARCHAR(75),
     horario_votacao DATETIME,
-    id_eleitor INT NOT NULL,
+    id_candidato INT NOT NULL,
 
-    FOREIGN KEY (id_eleitor)
-        REFERENCES eleitores(id_eleitor)
+    FOREIGN KEY (id_candidato)
+        REFERENCES candidatos(id_candidato)
 );

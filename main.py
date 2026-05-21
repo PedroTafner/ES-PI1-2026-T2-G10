@@ -1,12 +1,13 @@
-import opcoes
+import Arquivos_PY.gerenciamento as ger
+import Arquivos_PY.votacao as vot
 
-opcoes.limpar()
-opcoes.arquivoTXT(2,'apagando log')
-opcoes.resetProtocoloVotação()
+ger.limpar()
+vot.arquivoTXT(2,'apagando log')
+vot.reset_protocolo()
 opcao=0
 
 while opcao != 3:
-    opcoes.limpar()
+    ger.limpar()
     print("\n\t-- MENU PRINCIPAL --")
     print("\n1 - Gerenciamento")
     print("2 - Votação")
@@ -15,14 +16,14 @@ while opcao != 3:
     opcao=int(input("\nEscolha uma opção: "))
     match opcao:
         case 1: #OPÇÃO GERENCIAMENTO
-            opcoes.opcao_gerenciamento()
+            ger.opcao_gerenciamento()
         
         case 2: #OPÇÃO VOTAÇÃO
-            opcoes.opcao_votacao()
+            vot.opcao_votacao()
         
         case 3:
             input("\nPrograma finalizado, tecle ENTER para fechar.")
-            opcoes.limpar()
+            ger.limpar()
         
         case _:
-            opcoes.limpar()
+            ger.limpar()
