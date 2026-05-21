@@ -112,7 +112,7 @@ def opcao_auditoriaSistemaVotacao(): #OPÇÃO AUDITORIA DO SISTEMA DE VOTAÇÃO
             case 2: #OPÇÃO PROTOCOLOS DE VOTAÇÃO
                 limpar()
                 print("\n-- Protocolos de Votação --\n")
-                bd.cursor.execute("SELECT r.protocolo_votacao, e.nome FROM resultado as r JOIN eleitores as e ON e.id_eleitor = r.id_eleitor ORDER BY nome")
+                bd.cursor.execute("SELECT r.protocolo_votacao, e.nome FROM resultado as r JOIN eleitores as e ON e.id_eleitor = r.id_candidato ORDER BY nome")
                 for (protocolo, nome) in bd.cursor.fetchall():
                     print(f"{nome} - {protocolo} - Voto Confirmado")
                 input("\nAperte ENTER para retornar...")

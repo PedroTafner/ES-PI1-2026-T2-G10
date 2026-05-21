@@ -101,8 +101,6 @@ def validarEleitor(texto, funcao): # VALIDA SE AS INFORMAÇÕES DO ELEITOR ESTÃ
                     else:
                         o.limpar()
                         print(f"\n\t-- {texto} --\n")
-                        
-                        listar_candidatos()
 
                         voto = int(input("\nDigite para quem você vota: "))
                         cursor.execute(f"SELECT num_votacao FROM candidatos WHERE num_votacao = {voto}")
@@ -111,27 +109,22 @@ def validarEleitor(texto, funcao): # VALIDA SE AS INFORMAÇÕES DO ELEITOR ESTÃ
                         while validacaoCandidato == []:
                             o.limpar()
                             print(f"\n\t-- {texto} --\n")
-                            listar_candidatos()
-                            voto = int(input("\n*ERRO: O número de partido inserido é inexistente, tente novamente.\n\nDigite para quem você vota: "))
+                            print("\n*ERRO: O número de partido inserido é inexistente, tente novamente.")
+                            voto_nulo = input("Deseja que seu voto seja nulo?(s/n): ")
+                            if voto_nulo == "s":
+                                votoNulo(cpfValido,texto)
+                                return
+                            o.limpar()  
+                            voto = int(input("\nDigite para quem você vota: "))
                             cursor.execute(f"SELECT num_votacao FROM candidatos WHERE num_votacao = {voto}")
                             validacaoCandidato = cursor.fetchall() 
+                        
+                        votoRealizado(voto,cpfValido,texto)
+                        return
+                        
 
-                    o.limpar()
-                    protocolo = o.geradorProtocolo(voto)
-                    o.arquivoTXT(0,'SUCESSO: Voto realizado com sucesso.')
-                    cursor.execute(f"UPDATE eleitores SET status_voto = status_voto + 1 WHERE cpf = {cpfValido}")
-                    conexao.commit()
-                    cursor.execute(f"SELECT id_candidato FROM candidatos WHERE num_votacao = {voto}")
-                    id_candidato = cursor.fetchone()[0]
-                    horario = datetime.datetime.now()
-                    cursor.execute("INSERT INTO resultado (protocolo_votacao, horario_votacao, id_candidato) VALUES (%s, %s, %s)",(protocolo, horario, id_candidato))
-                    conexao.commit()
-                    
-                    print(f"\n\t-- {texto} --")
-                    input(f"\n*ATUALIZAÇÃO: Voto confirmado com sucesso.\nSeu protocolo de votação é {protocolo}\n\nAperte ENTER para continuar...")
-                    o.limpar()
-                    return
-            
+
+ 
             else:
                 input("\n*ERRO: CPF inválido, tente novamente\n\nAperte ENTER para continuar...")
                 o.arquivoTXT(0,'ALERTA: Tentativa de acesso negado.')
@@ -182,3 +175,36 @@ def listar_candidatos(): #LISTA TODOS OS CANDIDATOS DISPONÍVEIS NO BANCO DE DAD
     for (nome, num_votacao, partido) in cursor.fetchall():
         print(f"{num_votacao} - {partido} - {nome}")
     return
+
+def votoRealizado(voto,cpfValido,texto):
+    o.limpar()
+    protocolo = o.geradorProtocolo(voto)
+    o.arquivoTXT(0,'SUCESSO: Voto realizado com sucesso.')
+    cursor.execute(f"UPDATE eleitores SET status_voto = status_voto + 1 WHERE cpf = {cpfValido}")
+    conexao.commit()
+    cursor.execute(f"SELECT id_candidato FROM candidatos WHERE num_votacao = {voto}")
+    id_candidato = cursor.fetchone()[0]
+    horario = datetime.datetime.now()
+    cursor.execute("INSERT INTO resultado (protocolo_votacao, horario_votacao, id_candidato) VALUES (%s, %s, %s)",(protocolo, horario, id_candidato))
+    conexao.commit()
+    print(f"\n\t-- {texto} --")
+    input(f"\n*ATUALIZAÇÃO: Voto confirmado com sucesso.\nSeu protocolo de votação é {protocolo}\n\nAperte ENTER para continuar...")
+    o.limpar()
+   
+
+
+def votoNulo(cpfValido,texto):
+    o.limpar()
+    protocolo = o.geradorProtocolo(2)
+    o.arquivoTXT(0,'SUCESSO: Voto realizado com sucesso.')
+    cursor.execute(f"UPDATE eleitores SET status_voto = status_voto + 1 WHERE cpf = {cpfValido}")
+    conexao.commit()
+    horario = datetime.datetime.now()
+    cursor.execute("INSERT INTO resultado (protocolo_votacao, horario_votacao, id_candidato) VALUES (%s, %s, %s)",(protocolo, horario, 2))
+    conexao.commit()
+    print(f"\n\t-- {texto} --")
+    input(f"\n*ATUALIZAÇÃO: Voto confirmado com sucesso.\nSeu protocolo de votação é {protocolo}\n\nAperte ENTER para continuar...")
+    o.limpar()
+    
+
+        
