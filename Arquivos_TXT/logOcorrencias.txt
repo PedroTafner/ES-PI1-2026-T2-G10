@@ -1,4 +1,4 @@
 
-(21/05/2026 17:59:06) - ABERTURA: Votação iniciada com sucesso. Total de votos zerado.
-(21/05/2026 18:13:59) - SUCESSO: Voto realizado com sucesso.
-(21/05/2026 18:14:17) - ENCERRAMENTO: Votação finalizada com sucesso.
+(22/05/2026 15:15:27) - ABERTURA: Votação iniciada com sucesso. Total de votos zerado.
+(22/05/2026 15:15:44) - SUCESSO: Voto realizado com sucesso.
+(22/05/2026 15:15:54) - ENCERRAMENTO: Votação finalizada com sucesso.

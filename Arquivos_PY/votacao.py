@@ -3,6 +3,7 @@ import random as r
 import Arquivos_PY.validacoes as val
 import os
 import datetime
+import Arquivos_PY.resultado as res
 permicao = 0
 
 
@@ -134,13 +135,15 @@ def resultado(): #OPÇÃO RESULTADO DA VOTAÇÃO
 
         match opcao:
             case 1: #OPÇÃO BOLETIM DE URNA
-                pass
+                res.boletimUrna()
+                
 
             case 2: #OPÇÃO ESTATÍSTICA DE COMPARECIMENTO
                 pass
 
             case 3: #OPÇÃO VOTOS POR PARTIDO
-                pass
+                res.votosPartidos()
+            
 
             case 4: #OPÇÃO VALIDAÇÃO DE INTEGRIDADE
                 pass

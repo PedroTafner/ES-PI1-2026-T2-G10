@@ -106,3 +106,9 @@ def votoNulo(cpfValido,texto):
     print(f"\n\t-- {texto} --")
     input(f"\n*ATUALIZAÇÃO: Voto confirmado com sucesso.\nSeu protocolo de votação é {protocolo}\n\nAperte ENTER para continuar...")
     ger.limpar()
+
+
+def somarVotos():
+    cursor.execute(f"SELECT c.nome, COUNT(r.id_candidato) AS total_votos FROM candidatos c JOIN resultado r ON c.id_candidato = r.id_candidato GROUP BY c.id_candidato, c.nome;")
+    soma = cursor.fetchone()
+    return soma

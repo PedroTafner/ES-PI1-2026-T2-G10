@@ -88,7 +88,7 @@ def validarEleitor(texto, funcao): # VALIDA SE AS INFORMAÇÕES DO ELEITOR ESTÃ
         ger.limpar()
         print(f"\n\t-- {texto} --\n\n*ERRO: Título de eleitor inválido, digite novamente.")
         titulo=int(input("\nDigite seu título de eleitor: "))
-        validacao=val.validacaoTituloEleitor(titulo)
+        validacao= validacaoTituloEleitor(titulo)
 
     ger.limpar()
     bd.cursor.execute("SELECT cpf FROM eleitores WHERE titulo_eleitor = %s", (titulo,))
