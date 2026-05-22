@@ -70,7 +70,8 @@ def zeresima(): #ZERA VOTOS DE CANDIDATOS E O STATUS DE VOTO DO ELEITOR PARA REI
     conexao.commit()
     cursor.execute("SELECT nome, num_votacao, partido FROM candidatos")
     for (nome, num_votacao, partido) in cursor.fetchall():
-        print(f"{num_votacao} - {nome} | {partido}: votos = 0")
+        if nome != "Voto Nulo":
+            print(f"{num_votacao} - {nome} | {partido}: votos = 0")
     return
 
 def listar_candidatos(): #LISTA TODOS OS CANDIDATOS DISPONÍVEIS NO BANCO DE DADOS
@@ -96,12 +97,13 @@ def votoRealizado(voto,cpfValido,texto):
 
 def votoNulo(cpfValido,texto):
     ger.limpar()
-    protocolo = vot.gerador_protocolo(2)
+    id_nulo= ("SELECT id_candidato FROM candidatos WHERE nome = “Voto Nulo”")
+    protocolo = vot.gerador_protocolo(id_nulo)
     vot.arquivoTXT(0,'SUCESSO: Voto realizado com sucesso.')
     cursor.execute(f"UPDATE eleitores SET status_voto = status_voto + 1 WHERE cpf = {cpfValido}")
     conexao.commit()
     horario = datetime.datetime.now()
-    cursor.execute("INSERT INTO resultado (protocolo_votacao, horario_votacao, id_candidato) VALUES (%s, %s, %s)",(protocolo, horario, 2))
+    cursor.execute("INSERT INTO resultado (protocolo_votacao, horario_votacao, id_candidato) VALUES (%s, %s, %s)",(protocolo, horario, id_nulo))
     conexao.commit()
     print(f"\n\t-- {texto} --")
     input(f"\n*ATUALIZAÇÃO: Voto confirmado com sucesso.\nSeu protocolo de votação é {protocolo}\n\nAperte ENTER para continuar...")

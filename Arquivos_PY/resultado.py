@@ -7,7 +7,10 @@ def boletimUrna():
     print("\n\t-- BOLETIM DE URNA --")
     bd.cursor.execute("SELECT c.nome, c.num_votacao, c.partido, COUNT(r.id_candidato) AS total_votos FROM candidatos c JOIN resultado r ON c.id_candidato = r.id_candidato GROUP BY c.id_candidato, c.nome, c.num_votacao, c.partido ORDER BY total_votos DESC LIMIT 1;")   
     ganhador = bd.cursor.fetchone()
-    print(f"CANDIDATO: {ganhador[0]} | NÚMERO: {ganhador[1]} | PARTIDO: {ganhador[2]} | TOTAL DE VOTOS: {ganhador[3]}")
+    if ganhador is not None:
+        print(f"\nCADIDATO: {ganhador[0]}  |  NÚMERO: {ganhador[1]}  |  PARTIDO: {ganhador[2]}  |  TOTAL DE VOTOS: {ganhador[3]}")
+    else:
+        print("\nNenhum voto registrado.")
     input("\nAperte ENTER para continuar...")
     ger.limpar()
 
