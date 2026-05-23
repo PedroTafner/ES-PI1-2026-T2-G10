@@ -28,6 +28,22 @@ def votosPartidos():
     ger.limpar()  
 
 
+def valIntegridade():
+    ger.limpar()
+    print("\n\t-- VALIDAÇÃO DA INTEGRIDADE --")
+    bd.cursor.execute("SELECT COUNT(*) FROM eleitores WHERE status_voto = 1")
+    eleitoresVotaram = bd.cursor.fetchone()[0]
+    bd.cursor.execute("SELECTI COUNT(*) FROM resultado")
+    votosRealizados = bd.cursor.fetchone()[0]
+    if eleitoresVotaram == votosRealizados:
+        print("A ELEIÇÃO FOI INTEGRA.")
+    
+    else:
+        print("ERRO: A ELEIÇÃO NÃO FOI INTEGRA")
+
+    input("\nAperte ENTER para continuar...")
+    ger.limpar()
+
      
 
 

@@ -146,7 +146,7 @@ def resultado(): #OPÇÃO RESULTADO DA VOTAÇÃO
             
 
             case 4: #OPÇÃO VALIDAÇÃO DE INTEGRIDADE
-                pass
+                res.valIntegridade()
 
             case 5: #OPÇÃO INVÁLIDA
                 limpar()
