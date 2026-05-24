@@ -183,6 +183,7 @@ def gerador_protocolo(numero_candidato):
         protocolo += str(letras)
 
     protocolo += '26'
+
     if numero_candidato < 10:
         protocolo += '0' + str(numero_candidato)
 
@@ -190,7 +191,7 @@ def gerador_protocolo(numero_candidato):
         protocolo += str(numero_candidato)
 
     for i in range(5):
-        protocolo += str(r.randint(0,25))
+        protocolo += str(r.randint(0,9))
 
     return protocolo
 
