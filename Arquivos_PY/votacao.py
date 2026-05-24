@@ -190,10 +190,7 @@ def gerador_protocolo(numero_candidato):
         protocolo += str(numero_candidato)
 
     for i in range(5):
-        alfabeto = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z']
-        letras = r.randint(0,25)
-        letras = alfabeto.pop(letras)
-        protocolo += str(letras)
+        protocolo += str(r.randint(0,25))
 
     return protocolo
 
