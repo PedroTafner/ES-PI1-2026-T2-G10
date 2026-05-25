@@ -97,13 +97,18 @@ def votoRealizado(voto,cpfValido,texto):
 
 def votoNulo(cpfValido,texto):
     ger.limpar()
-    cursor.execute("SELECT id_candidato FROM candidatos WHERE nome = “Voto Nulo”")
-    id_nulo= cursor.fetchone()
-    if id_nulo == None:
+    cursor.execute("SELECT id_candidato FROM candidatos WHERE nome = 'Voto Nulo'")
+    resultado = cursor.fetchone()
+
+    if resultado == None:
+        id_nulo = None
         cursor.execute("INSERT INTO candidatos(nome,partido, num_votacao) values(%s,%s,%s)", ("Voto Nulo", "Nulo", 0))
         conexao.commit()
-        cursor.execute("SELECT id_candidato FROM candidatos WHERE nome = “Voto Nulo”")
-        id_nulo= cursor.fetchone()
+        cursor.execute("SELECT id_candidato FROM candidatos WHERE nome = 'Voto Nulo'")
+        id_nulo= cursor.fetchone()[0]
+    else:
+        id_nulo = resultado[0]
+     
     protocolo = vot.gerador_protocolo(id_nulo)
     vot.arquivoTXT(0,'SUCESSO: Voto realizado com sucesso.')
     cursor.execute(f"UPDATE eleitores SET status_voto = status_voto + 1 WHERE cpf = {cpfValido}")
