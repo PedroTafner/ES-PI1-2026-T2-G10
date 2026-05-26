@@ -388,3 +388,46 @@ def list_candidadatos():
     conexao.close()
 
 list_candidadatos()
+
+import mysql.connector
+
+def buscar_candidato():
+
+    conexao=mysql.connector.connect(
+        host="localhost",
+        user="root",
+        password="Zxxyf1",
+        database="pi1_2026"
+    )
+
+    cursor=conexao.cursor()
+
+    continuar="s"
+
+    while continuar == "s":
+
+        numero=int(input("Digite o número da votação: "))
+        sql="SELECT * FROM candidatos WHERE num_votacao = %s"
+        valores=(numero,)
+
+        cursor.execute(sql, valores)
+
+        resultado=cursor.fetchall()
+
+        if resultado:
+
+            print("===Candidato Encontrado===")
+
+            for candidato in resultado:
+                print("Nome:", candidato[1])
+                print("Partido:", candidato[2])
+             
+        else:
+            print("Candidato não encontrado.")
+
+        continuar=input("Deseja continuar? (s/n): ")
+
+    cursor.close()
+    conexao.close()
+
+buscar_candidato()
