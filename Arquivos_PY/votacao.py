@@ -4,6 +4,8 @@ import Arquivos_PY.validacoes as val
 import os
 import datetime
 import Arquivos_PY.resultado as res
+import Arquivos_PY.criptografia as c
+import Arquivos_PY.descriptografia as d
 permicao = 0
 
 
@@ -110,6 +112,7 @@ def auditoria(): #OPÇÃO AUDITORIA DO SISTEMA DE VOTAÇÃO
                 print("\n-- Protocolos de Votação --\n")
                 bd.cursor.execute("SELECT protocolo_votacao, horario_votacao FROM resultado ORDER BY horario_votacao")
                 for (protocolo, horario) in bd.cursor.fetchall():
+                    protocolo = d.descriptografia(2,protocolo)
                     print(f"({horario}) - {protocolo} - Voto Confirmado")
                 input("\nAperte ENTER para retornar...")
             
@@ -136,7 +139,6 @@ def resultado(): #OPÇÃO RESULTADO DA VOTAÇÃO
         match opcao:
             case 1: #OPÇÃO BOLETIM DE URNA
                 res.boletimUrna()
-                
 
             case 2: #OPÇÃO ESTATÍSTICA DE COMPARECIMENTO
                 pass

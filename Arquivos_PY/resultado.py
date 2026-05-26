@@ -14,8 +14,6 @@ def boletimUrna():
     input("\nAperte ENTER para continuar...")
     ger.limpar()
 
-
-
 def votosPartidos():
     ger.limpar()
     print("\n\t-- VOTOS POR PARTIDO --")
@@ -26,7 +24,6 @@ def votosPartidos():
         
     input("\nAperte ENTER para continuar...")
     ger.limpar()  
-
 
 def valIntegridade():
     ger.limpar()
@@ -43,10 +40,3 @@ def valIntegridade():
 
     input("\nAperte ENTER para continuar...")
     ger.limpar()
-
-     
-
-
-
-    
-        

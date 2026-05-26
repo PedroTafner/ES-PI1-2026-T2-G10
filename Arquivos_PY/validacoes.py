@@ -1,6 +1,8 @@
 import Arquivos_PY.bancoDeDados as bd
 import Arquivos_PY.gerenciamento as ger
 import Arquivos_PY.votacao as vot
+import Arquivos_PY.criptografia as c
+import Arquivos_PY.descriptografia as d
 
 
 
@@ -71,6 +73,8 @@ def validacaoTituloEleitor(NUMTIT): #VERIFICA SE O TÍTULO DE ELEITOR INSERIDO C
 def validarChaveAcesso(chave): #VERIFICA SE A CHAVE DE ACESSO INSERIDA EXISTE
     if len(chave) != 7:
         return False
+    
+    chave = c.criptografia(1,chave)
     bd.cursor.execute(f"SELECT id_eleitor FROM eleitores WHERE chave_acesso = '{chave}'")
     resultado = bd.cursor.fetchone()
 
@@ -93,19 +97,26 @@ def validarEleitor(texto, funcao): # VALIDA SE AS INFORMAÇÕES DO ELEITOR ESTÃ
     ger.limpar()
     bd.cursor.execute("SELECT cpf FROM eleitores WHERE titulo_eleitor = %s", (titulo,))
     resultado = bd.cursor.fetchone()
-    validacao = str(resultado[0])[:4]
-    
+    validacao = str(resultado[0])
+
+    validacao = d.descriptografia(0,validacao)
+    cpf_4digitos = validacao[:4]
+
     print(f"\n\t-- {texto} --")
     cpf=int(input("\nDigite os 4 primeiros dígitos do seu CPF: "))
-    while len(str(cpf)) != 4 or str(cpf) != validacao:
+    while len(str(cpf)) != 4 or str(cpf) != cpf_4digitos:
         ger.limpar()
         print(f"\n\t-- {texto} --\n\n*ERRO: Digite os 4 primeiros caracteres do seu CPF, tente novamente.")
         cpf=int(input("\nDigite os 4 primeiros dígitos do seu CPF: "))
     
+    cpf = c.criptografia(0,validacao)
+
     ger.limpar()
     bd.cursor.execute(f"SELECT chave_acesso FROM eleitores WHERE cpf LIKE '{cpf}%'")
     resultado=bd.cursor.fetchone()
     validacao = str(resultado[0])
+
+    validacao = d.descriptografia(1,validacao)
 
     print(f"\n\t-- {texto} --")
     chave=input("\nDigite a sua chave de acesso: ")
@@ -118,6 +129,7 @@ def validarEleitor(texto, funcao): # VALIDA SE AS INFORMAÇÕES DO ELEITOR ESTÃ
     resultado=bd.cursor.fetchall()
     
     for cpfValido,mesario, status_voto in resultado:
+
         if funcao == 0:
             if mesario == 0:
                 input("\n*ERRO: Somente mesários podem abrir/encerrar o sistema de votação.\n\nAperte ENTER para continuar...")

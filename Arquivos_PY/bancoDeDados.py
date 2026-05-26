@@ -1,7 +1,9 @@
-import mysql.connector # Conexão com o banco
 import Arquivos_PY.validacoes as val
 import Arquivos_PY.gerenciamento as ger
 import Arquivos_PY.votacao as vot
+import Arquivos_PY.criptografia as c
+import Arquivos_PY.descriptografia as d
+import mysql.connector # Conexão com o banco
 import datetime
 
 conexao = mysql.connector.connect(
@@ -20,16 +22,18 @@ def inserir_eleitores(nome, titulo_eleitor,cpf, mesario, chave_acesso, status_vo
     conexao.commit()
 
 def listar_usuarios(): #FUNÇÃO QUE LISTA INFORMAÇÕES DOS ELEITORES
-    cursor.execute("SELECT  nome, titulo_eleitor,cpf, mesario, chave_acesso FROM eleitores")
+    cursor.execute("SELECT  nome, cpf FROM eleitores")
     
-    for (nome, titulo_eleitor, cpf, mesario, chave_acesso) in cursor.fetchall():
-            print(f"Nome: {nome}, CPF: {cpf}")
+    for (nome, cpf) in cursor.fetchall():
+        cpf = d.descriptografia(0,cpf)
+        print(f"Nome: {nome}, CPF: {cpf}")
 
 def buscarEleitor(nome): #FUNÇÃO QUE BUSCA E MOSTRA OS ELEITORES FILTRADOS
     cursor.execute(f"SELECT nome, cpf, mesario FROM eleitores WHERE nome LIKE '%{nome}%'")
     resultado = cursor.fetchall()
 
     for (nome,  cpf, mesario) in resultado:
+        cpf = d.descriptografia(0,cpf)
         if resultado == None:
             break
 
@@ -83,16 +87,17 @@ def listar_candidatos(): #LISTA TODOS OS CANDIDATOS DISPONÍVEIS NO BANCO DE DAD
 def votoRealizado(voto,cpfValido,texto):
     ger.limpar()
     protocolo = vot.gerador_protocolo(voto)
+    print(f"\n\t-- {texto} --")
+    input(f"\n*ATUALIZAÇÃO: Voto confirmado com sucesso.\nSeu protocolo de votação é {protocolo}\n\nAperte ENTER para continuar...")
+    protocolo = c.criptografia(2,protocolo)
     vot.arquivoTXT(0,'SUCESSO: Voto realizado com sucesso.')
-    cursor.execute(f"UPDATE eleitores SET status_voto = status_voto + 1 WHERE cpf = {cpfValido}")
+    cursor.execute(f"UPDATE eleitores SET status_voto = status_voto + 1 WHERE cpf = '{cpfValido}'")
     conexao.commit()
     cursor.execute(f"SELECT id_candidato FROM candidatos WHERE num_votacao = {voto}")
     id_candidato = cursor.fetchone()[0]
     horario = datetime.datetime.now()
     cursor.execute("INSERT INTO resultado (protocolo_votacao, horario_votacao, id_candidato) VALUES (%s, %s, %s)",(protocolo, horario, id_candidato))
     conexao.commit()
-    print(f"\n\t-- {texto} --")
-    input(f"\n*ATUALIZAÇÃO: Voto confirmado com sucesso.\nSeu protocolo de votação é {protocolo}\n\nAperte ENTER para continuar...")
     ger.limpar()
 
 def votoNulo(cpfValido,texto):
@@ -119,7 +124,6 @@ def votoNulo(cpfValido,texto):
     print(f"\n\t-- {texto} --")
     input(f"\n*ATUALIZAÇÃO: Voto confirmado com sucesso.\nSeu protocolo de votação é {protocolo}\n\nAperte ENTER para continuar...")
     ger.limpar()
-
 
 def somarVotos():
     cursor.execute(f"SELECT c.nome, COUNT(r.id_candidato) AS total_votos FROM candidatos c JOIN resultado r ON c.id_candidato = r.id_candidato GROUP BY c.id_candidato, c.nome;")

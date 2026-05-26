@@ -102,13 +102,3 @@ def criptografia(opcao,dado):
         dado_criptografado += str(linhas_dado[0][i]) + str(linhas_dado[1][i])
         
     return dado_criptografado
-
-
-cpf= '12345678901'
-print(criptografia(0,cpf))
-
-chave='ABCD'
-print(criptografia(1,chave))
-
-protocolo = 'ABCD'
-print(criptografia(2,protocolo))
