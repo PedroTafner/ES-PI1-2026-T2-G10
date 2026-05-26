@@ -357,3 +357,34 @@ def add_candidato(): # ADICIONA CANDIDATOS AO SISTEMA
 
 def limpar(): #LIMPA O TERMINAL PARA MANTER O SISTEMA ORGANIZADO
     os.system('cls' if os.name == 'nt' else 'clear')
+
+import mysql.connector
+
+def list_candidadatos():  
+    conexao=mysql.connector.connect(
+        host='localhost',
+        user="root",
+        password="Zxxxyf1",
+        database="pi1_2026"
+    )
+
+    cursor=conexao.cursor()
+
+    sql="SELECT id_canditado,nome,partido, num_votacao FROM candidatos"
+
+    cursor.execute(sql)
+
+    resultado=cursor.fetchall()
+
+    print("===Lista de Candidatos===")
+
+    for candidato in resultado:
+        print(f"Nome: {candidato [1]}")
+        print(f"Partido: {candidato [2]}")
+        print(f"Numero: {candidato [3]}")
+        print()
+
+    cursor.close()
+    conexao.close()
+
+list_candidadatos()
