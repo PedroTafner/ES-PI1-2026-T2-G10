@@ -141,11 +141,10 @@ def resultado(): #OPÇÃO RESULTADO DA VOTAÇÃO
                 res.boletimUrna()
 
             case 2: #OPÇÃO ESTATÍSTICA DE COMPARECIMENTO
-                pass
+                res.estatistica_comparecimento()
 
             case 3: #OPÇÃO VOTOS POR PARTIDO
                 res.votosPartidos()
-            
 
             case 4: #OPÇÃO VALIDAÇÃO DE INTEGRIDADE
                 res.valIntegridade()

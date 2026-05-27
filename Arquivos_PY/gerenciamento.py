@@ -11,14 +11,15 @@ def opcao_gerenciamento(): #OPÇÃO GERENCIAMENTO
     while opcao != 7:
         print("\n\t-- GERENCIAMENTO --")
         print("\n1 - Cadastro")
-        print("2 - Edição de dados")
+        print("2 - Edição de dados do Eleitor")
         print("3 - Remoção de Eleitor")
         print("4 - Busca por Eleitor")
         print("5 - Listagem de Eleitor")
-        print("\n6 - Adicionar Candidato")
-        print("7 - Busca de Candidator")
-        print("8 - Listagem de Candidator")
-        print("9 - Voltar para o Menu Principal")
+        print("6 - Adicionar Candidato")
+        print("7 - Remoção de Candidatos")
+        print("8 - Busca de Candidatos")
+        print("9 - Listagem de Candidatos")
+        print("10 - Voltar para o Menu Principal")
 
         opcao=int(input("\nEscolha uma opção: "))
 
@@ -36,10 +37,12 @@ def opcao_gerenciamento(): #OPÇÃO GERENCIAMENTO
             case 6: #OPÇÃO ADICIONAR CANDIDATO
                 add_candidato()
             case 7:
-                buscar_candidato()
+                remocao_candidato()
             case 8:
+                buscar_candidato()
+            case 9:
                 list_candidatos()
-            case 9: #OPÇÃO VOLTAR PARA O MENU PRINCIPAL
+            case 10: #OPÇÃO VOLTAR PARA O MENU PRINCIPAL
                 limpar()
                 return
             case _: #OPÇÃO INVÁLIDA
@@ -84,7 +87,7 @@ def cadastro_eleitor(): #OPÇÃO CADASTRO
     cpf=int(input("\nDigite seu CPF, sem pontuação: "))
 
     cpf_crip=c.criptografia(0,cpf)
-    bd.cursor.execute(f"SELECT id_eleitor FROM eleitores WHERE cpf = {cpf_crip}")
+    bd.cursor.execute(f"SELECT id_eleitor FROM eleitores WHERE cpf = '{cpf_crip}'")
     resultado = bd.cursor.fetchone()
     if resultado:
         aprovacao=False
@@ -95,7 +98,7 @@ def cadastro_eleitor(): #OPÇÃO CADASTRO
         limpar()
         print("\n\t-- CADASTRANDO ELEITOR --\n\n*ERRO: O CPF informado não é válido, tente novamente.")
         cpf=int(input("\nDigite seu CPF, sem pontuação: "))
-        bd.cursor.execute(f"SELECT id_eleitor FROM eleitores WHERE cpf = {cpf}")
+        bd.cursor.execute(f"SELECT id_eleitor FROM eleitores WHERE cpf = '{cpf}'")
         resultado = bd.cursor.fetchone()
         if resultado:
             aprovacao=False
@@ -343,22 +346,31 @@ def listagem_eleitores(): # FUNÇÃO FEITA PARA LISTAR OS ELEITORES
 
 def add_candidato(): # ADICIONA CANDIDATOS AO SISTEMA
     limpar()
+    
     print("\n\t-- CADASTRO DE CANDIDATOS --\n")
-    opcao=False
-    while opcao==False:
-        nomeEleitor=input("Digite seu nome e sobrenome: ")
-        opcao=bd.buscar_eleitorCandidato(nomeEleitor)
-        if opcao==False:
-            print("\n\t*Erro: Você não está cadastrado, faça o cadastro e tente novamente.\n")
-        else:
-            pass
+    nome=input("Digite o nome do candidato: ")
 
     limpar()
     print("\n\t-- CADASTRO DE CANDIDATOS --\n")
-    nome=input("Digite o nome do candidato: ")
     num_vot=int(input("Digite o número de votação do candidato: "))
+    bd.cursor.execute(f"SELECT id_candidato FROM candidatos WHERE num_votacao = {num_vot}")
+    resultado=bd.cursor.fetchone()
+    while len(str(num_vot)) != 2 or resultado:
+        limpar()
+        print("\n\t-- CADASTRO DE CANDIDATOS --")
+        print("\n*ERRO: Número de votação inválida, tente novamente.")
+        num_vot=int(input("\nDigite o número de votação do candidato: "))
+        bd.cursor.execute(f"SELECT id_candidato FROM candidatos WHERE num_votacao = {num_vot}")
+        resultado=bd.cursor.fetchone()
+
+    limpar()
+    print("\n\t-- CADASTRO DE CANDIDATOS --\n")
     partido=input("Digite o partido do candidato: ")
     bd.inserir_candidato(nome,num_vot,partido)
+
+    limpar()
+    print("\n\t-- CADASTRO DE CANDIDATOS --\n")
+    input("*ATUALIZAÇÃO: O candidato foi cadastrado com sucesso!\n\nAperte ENTER para retornar...")
     limpar()
 
 def limpar(): #LIMPA O TERMINAL PARA MANTER O SISTEMA ORGANIZADO
@@ -369,10 +381,11 @@ def list_candidatos():
     bd.cursor.execute("SELECT id_candidato, nome, partido, num_votacao FROM candidatos")
     resultado=bd.cursor.fetchall()
 
-    print("\n\t-- Lista de Candidatos --")
+    print("\n\t-- Lista de Candidatos --\n")
 
     for candidato in resultado:
-        print(f"Nome: {candidato [1]} | Partido: {candidato[2]} | Número: {candidato[3]}")
+        if candidato[1] != 'Voto Nulo':
+            print(f"Nome: {candidato [1]} | Partido: {candidato[2]} | Número: {candidato[3]}")
     
     input("\nAperte ENTER para retornar...")
     opcao_gerenciamento()
@@ -398,3 +411,33 @@ def buscar_candidato():
 
     input("\nAperte ENTER para retornar...")
     opcao_gerenciamento()
+
+def remocao_candidato():
+    limpar()
+    print("\n\t-- REMOÇÃO DE CANDIDATOS --")
+    num_candidato = input("\nDigite o número do candidato que deseja deletar: ")
+    confirmacao = input(f"Tem certeza que deseja deletar o candidato nº {num_candidato}? (s/n): ")
+    confirmacao = confirmacao.lower()
+
+    while confirmacao != "s" and confirmacao != "n":
+        limpar()
+        print("\n\t-- REMOÇÃO DE CANDIDATOS --\n\n*ERRO: Digite 's' para sim e 'n' para não, tente novamente.")
+        num_candidato = input("\nDigite o número do candidato que deseja deletar: ")
+        confirmacao = input(f"Tem certeza que deseja deletar o candidato nº {num_candidato}? (s/n): ")
+
+    if confirmacao == "s": 
+        limpar()
+        print("\n\t-- REMOÇÃO DE CANDIDATOS --")
+        input("\nCandidato removido com sucesso!\n\nAperte ENTER para retornar...")
+        bd.cursor.execute(f"DELETE FROM candidatos WHERE num_votacao = {num_candidato}")
+        bd.conexao.commit()
+        limpar()
+        opcao_gerenciamento()
+
+    if confirmacao == "n":
+        limpar()
+        print("\n\t-- REMOÇÃO DE CANDIDATOS --")
+        input("\nOperação cancelada!\n\nAperte ENTER para retornar...")
+        limpar()
+        opcao_gerenciamento()
+
