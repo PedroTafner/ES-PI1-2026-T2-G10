@@ -115,8 +115,9 @@ def votoNulo(cpfValido,texto):
         id_nulo = resultado[0]
      
     protocolo = vot.gerador_protocolo(id_nulo)
+    protocolo = c.criptografia(2,protocolo)
     vot.arquivoTXT(0,'SUCESSO: Voto realizado com sucesso.')
-    cursor.execute(f"UPDATE eleitores SET status_voto = status_voto + 1 WHERE cpf = {cpfValido}")
+    cursor.execute(f"UPDATE eleitores SET status_voto = status_voto + 1 WHERE cpf = '{cpfValido}'")
     conexao.commit()
     horario = datetime.datetime.now()
     cursor.execute("INSERT INTO resultado (protocolo_votacao, horario_votacao, id_candidato) VALUES (%s, %s, %s)",(protocolo, horario, id_nulo))

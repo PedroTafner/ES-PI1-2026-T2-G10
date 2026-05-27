@@ -17,10 +17,10 @@ def boletimUrna():
 def votosPartidos():
     ger.limpar()
     print("\n\t-- VOTOS POR PARTIDO --")
-    bd.cursor.execute("SELECT c.nome, COUNT(r.id_candidato) AS total_voto FROM candidatos c JOIN resultado r ON c.id_candidato = r.id_candidato GROUP BY c.id_candidato, c.nome")
+    bd.cursor.execute("SELECT c.partido, COUNT(r.id_candidato) AS total_voto FROM candidatos c JOIN resultado r ON c.id_candidato = r.id_candidato GROUP BY c.id_candidato, c.partido")
     resultado = bd.cursor.fetchall()
-    for candidato,votos in resultado:
-        print(f"\nCADIDATO: {candidato}  |   VOTOS: {votos} ")
+    for partido,votos in resultado:
+        print(f"\nPartido: {partido} | VOTOS: {votos} ")
         
     input("\nAperte ENTER para continuar...")
     ger.limpar()  

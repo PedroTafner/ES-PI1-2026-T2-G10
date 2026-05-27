@@ -15,8 +15,10 @@ def opcao_gerenciamento(): #OPÇÃO GERENCIAMENTO
         print("3 - Remoção de Eleitor")
         print("4 - Busca por Eleitor")
         print("5 - Listagem de Eleitor")
-        print("6 - Adicionar Candidato")
-        print("7 - Voltar para o Menu Principal")
+        print("\n6 - Adicionar Candidato")
+        print("7 - Busca de Candidator")
+        print("8 - Listagem de Candidator")
+        print("9 - Voltar para o Menu Principal")
 
         opcao=int(input("\nEscolha uma opção: "))
 
@@ -33,7 +35,11 @@ def opcao_gerenciamento(): #OPÇÃO GERENCIAMENTO
                 listagem_eleitores()
             case 6: #OPÇÃO ADICIONAR CANDIDATO
                 add_candidato()
-            case 7: #OPÇÃO VOLTAR PARA O MENU PRINCIPAL
+            case 7:
+                buscar_candidato()
+            case 8:
+                list_candidatos()
+            case 9: #OPÇÃO VOLTAR PARA O MENU PRINCIPAL
                 limpar()
                 return
             case _: #OPÇÃO INVÁLIDA
@@ -196,7 +202,7 @@ def edicao_eleitor(): #OPÇÃO QUE POSSIBILITA A MUDANÇA DE INFORMAÇÕES DO EL
                 else:
                     cpf_crip=c.criptografia(0,cpf_novo)
                     bd.cursor.execute(f"SELECT id_eleitor FROM eleitores WHERE cpf = '{cpf_crip}'")
-                    resultado = bd.cursor.fetchone()
+                    resultado = bd.cursor.fetchone()[0]
                     if resultado:
                         validacao=False
                     else:
@@ -358,76 +364,37 @@ def add_candidato(): # ADICIONA CANDIDATOS AO SISTEMA
 def limpar(): #LIMPA O TERMINAL PARA MANTER O SISTEMA ORGANIZADO
     os.system('cls' if os.name == 'nt' else 'clear')
 
-import mysql.connector
+def list_candidatos(): 
+    limpar()
+    bd.cursor.execute("SELECT id_candidato, nome, partido, num_votacao FROM candidatos")
+    resultado=bd.cursor.fetchall()
 
-def list_candidadatos():  
-    conexao=mysql.connector.connect(
-        host='localhost',
-        user="root",
-        password="Zxxxyf1",
-        database="pi1_2026"
-    )
-
-    cursor=conexao.cursor()
-
-    sql="SELECT id_canditado,nome,partido, num_votacao FROM candidatos"
-
-    cursor.execute(sql)
-
-    resultado=cursor.fetchall()
-
-    print("===Lista de Candidatos===")
+    print("\n\t-- Lista de Candidatos --")
 
     for candidato in resultado:
-        print(f"Nome: {candidato [1]}")
-        print(f"Partido: {candidato [2]}")
-        print(f"Numero: {candidato [3]}")
-        print()
-
-    cursor.close()
-    conexao.close()
-
-list_candidadatos()
-
-import mysql.connector
+        print(f"Nome: {candidato [1]} | Partido: {candidato[2]} | Número: {candidato[3]}")
+    
+    input("\nAperte ENTER para retornar...")
+    opcao_gerenciamento()
 
 def buscar_candidato():
+    limpar()
+    print("\n\t-- BUSCA DE CANDIDATOS --")
+    numero=int(input("\nDigite o número da votação: "))
 
-    conexao=mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="Zxxyf1",
-        database="pi1_2026"
-    )
+    bd.cursor.execute(f"SELECT nome, partido FROM candidatos WHERE num_votacao = {numero}")
 
-    cursor=conexao.cursor()
+    resultado=bd.cursor.fetchall()
 
-    continuar="s"
+    limpar()
+    print("\n\t-- BUSCA DE CANDIDATOS --\n")
 
-    while continuar == "s":
+    if resultado:
+        for nome, partido in resultado:
+            print(f"Nome: {nome} | Partido: {partido}")
+            
+    else:
+        print("Candidato não encontrado.")
 
-        numero=int(input("Digite o número da votação: "))
-        sql="SELECT * FROM candidatos WHERE num_votacao = %s"
-        valores=(numero,)
-
-        cursor.execute(sql, valores)
-
-        resultado=cursor.fetchall()
-
-        if resultado:
-
-            print("===Candidato Encontrado===")
-
-            for candidato in resultado:
-                print("Nome:", candidato[1])
-                print("Partido:", candidato[2])
-             
-        else:
-            print("Candidato não encontrado.")
-
-        continuar=input("Deseja continuar? (s/n): ")
-
-    cursor.close()
-    conexao.close()
-
-buscar_candidato()
+    input("\nAperte ENTER para retornar...")
+    opcao_gerenciamento()
