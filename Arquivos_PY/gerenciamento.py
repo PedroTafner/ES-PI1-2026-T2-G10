@@ -1,5 +1,6 @@
 import Arquivos_PY.bancoDeDados as bd
 import Arquivos_PY.criptografia as c
+import Arquivos_PY.descriptografia as d
 import Arquivos_PY.validacoes as v
 import random as r
 import os
@@ -195,41 +196,38 @@ def edicao_eleitor(): #OPÇÃO QUE POSSIBILITA A MUDANÇA DE INFORMAÇÕES DO EL
                 input("\n\t-- EDIÇÃO DE DADOS DO ELEITOR --\n\n*ATUALIZAÇÃO: Nome alterado com sucesso.\n\nAperte ENTER para prosseguir...")
                 limpar()
 
-            case 2: # ALTERA O CPF DO ELEITOR 
-                limpar()
-                print("\n\t-- EDIÇÃO DE DADOS DO ELEITOR --")
-                cpf_novo = int(input("\nDigite o novo CPF: "))
-
-                if len(str(cpf_novo)) != 7:
-                    validacao = False
-                else:
-                    cpf_crip=c.criptografia(0,cpf_novo)
-                    bd.cursor.execute(f"SELECT id_eleitor FROM eleitores WHERE cpf = '{cpf_crip}'")
-                    resultado = bd.cursor.fetchone()[0]
-                    if resultado:
-                        validacao=False
-                    else:
-                        validacao=v.validacaoCPF(cpf_novo)
-
+            case 2: # ALTERA O CPF DO ELEITOR
+                validacao = False
                 while validacao == False:
                     limpar()
-                    print("\n\t-- EDIÇÃO DE DADOS DO ELEITOR --\n\n*ERRO: Este CPF é inválido ou já está sendo usado, tente novamente.")
+                    print("\n\t-- EDIÇÃO DE DADOS DO ELEITOR --")
                     cpf_novo = int(input("\nDigite o novo CPF: "))
 
-                    if len(str(cpf_novo)) != 7:
-                        validacao = False
-                    else:
-                        cpf_crip=c.criptografia(0,cpf_novo)
-                        bd.cursor.execute(f"SELECT id_eleitor FROM eleitores WHERE cpf = '{cpf_crip}'")
-                        resultado = bd.cursor.fetchone()
-                        if resultado:
-                            validacao=False
-                        else:
-                            validacao=v.validacaoCPF(cpf_novo)
-                
-                cpf_novo = c.criptografia(0,cpf_novo)
+                    while len(str(cpf_novo)) != 11:
+                        limpar()
+                        print("\n\t-- EDIÇÃO DE DADOS DO ELEITOR --")
+                        print("\n*ERRO: O CPF precisa conter 11 dígitos.")
+                        cpf_novo = int(input("\nDigite o novo CPF: "))
 
-                alteracao_mysql(2, cpf_novo, chave_acesso)
+                    cpf_crip = c.criptografia(0, cpf_novo)
+                    bd.cursor.execute(f"SELECT id_eleitor FROM eleitores WHERE cpf = '{cpf_crip}'")
+                    resultado = bd.cursor.fetchone()
+
+                    if resultado:
+                        limpar()
+                        print("\n\t-- EDIÇÃO DE DADOS DO ELEITOR --")
+                        print("\n*ERRO: Este CPF já está sendo usado.")
+                        input("\nPressione Enter para tentar novamente...")
+                        continue
+
+                    else:
+                        validacao = v.validacaoCPF(cpf_novo)
+                        if validacao == False:
+                            print("\n*ERRO: Este CPF é inválido.")
+                            input("\nPressione Enter para tentar novamente...")
+                            continue
+                            
+                alteracao_mysql(2, cpf_crip, chave_acesso)
                 limpar()
                 input("\n\t-- EDIÇÃO DE DADOS DO ELEITOR --\n\n*ATUALIZAÇÃO: CPF alterado com sucesso.\n\nAperte ENTER para prosseguir...")
                 limpar()

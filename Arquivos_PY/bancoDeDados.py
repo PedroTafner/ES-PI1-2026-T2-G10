@@ -115,6 +115,8 @@ def votoNulo(cpfValido,texto):
         id_nulo = resultado[0]
      
     protocolo = vot.gerador_protocolo(id_nulo)
+    print(f"\n\t-- {texto} --")
+    input(f"\n*ATUALIZAÇÃO: Voto confirmado com sucesso.\nSeu protocolo de votação é {protocolo}\n\nAperte ENTER para continuar...")
     protocolo = c.criptografia(2,protocolo)
     vot.arquivoTXT(0,'SUCESSO: Voto realizado com sucesso.')
     cursor.execute(f"UPDATE eleitores SET status_voto = status_voto + 1 WHERE cpf = '{cpfValido}'")
@@ -122,8 +124,6 @@ def votoNulo(cpfValido,texto):
     horario = datetime.datetime.now()
     cursor.execute("INSERT INTO resultado (protocolo_votacao, horario_votacao, id_candidato) VALUES (%s, %s, %s)",(protocolo, horario, id_nulo))
     conexao.commit()
-    print(f"\n\t-- {texto} --")
-    input(f"\n*ATUALIZAÇÃO: Voto confirmado com sucesso.\nSeu protocolo de votação é {protocolo}\n\nAperte ENTER para continuar...")
     ger.limpar()
 
 def somarVotos():
