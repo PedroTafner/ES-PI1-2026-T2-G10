@@ -11,14 +11,17 @@ def boletimUrna():
     if candidatos:
         for nome, votos in candidatos:
             if nome != 'Voto Nulo':
-                print(f"CANDIDATO: {nome} | TOTAL DE VOTOS: {votos}")
+                print(f"Candidato: {nome} | Total de Votos: {votos}")
             else:
                 print(f"Votos Nulos: {votos}")
 
         bd.cursor.execute("SELECT c.nome, c.num_votacao, c.partido, COUNT(r.id_candidato) AS total_votos FROM candidatos c JOIN resultado r ON c.id_candidato = r.id_candidato GROUP BY c.id_candidato, c.nome, c.num_votacao, c.partido ORDER BY total_votos DESC LIMIT 1;")   
         ganhador = bd.cursor.fetchone()
 
-        print(f"\nVENCEDOR: {ganhador[0]}  |  NÚMERO: {ganhador[1]}  |  PARTIDO: {ganhador[2]}  |  TOTAL DE VOTOS: {ganhador[3]}")
+        if ganhador[0] == 'Voto Nulo':
+            print("\nNão houve vencedor, pois houve mais votos nulos.")
+        else:
+            print(f"\nVencedor: {ganhador[0]}  |  N.º {ganhador[1]}  |  Partido: {ganhador[2]}  |  Total de Votos: {ganhador[3]}")
         
         input("\nAperte ENTER para continuar...")
 
@@ -33,7 +36,10 @@ def votosPartidos():
     bd.cursor.execute("SELECT c.partido, COUNT(r.id_candidato) AS total_voto FROM candidatos c JOIN resultado r ON c.id_candidato = r.id_candidato GROUP BY c.id_candidato, c.partido")
     resultado = bd.cursor.fetchall()
     for partido,votos in resultado:
-        print(f"\nPartido: {partido} | VOTOS: {votos} ")
+        if partido != 'Nulo':
+            print(f"\nPartido: {partido} | Votos: {votos} ")
+        else:
+            print(f"\nVotos nulos: {votos}")
         
     input("\nAperte ENTER para continuar...")
     ger.limpar()  
@@ -48,10 +54,10 @@ def valIntegridade():
 
     print(f"\nVotos computados: {votosRealizados}\nEleitores que votaram: {eleitoresVotaram}")
     if eleitoresVotaram == votosRealizados:
-        print("\nA ELEIÇÃO FOI INTEGRA.")
+        print("\n*SUCESSO: A Eleição foi integra.")
     
     else:
-        print("\n*ERRO: A ELEIÇÃO NÃO FOI INTEGRA")
+        print("\n*ERRO: A Eleição não foi integra")
 
     input("\nAperte ENTER para continuar...")
     ger.limpar()
@@ -73,6 +79,7 @@ def estatistica_comparecimento():
 
     percentual = (total_votaram / total_eleitores) * 100
 
+    print(f"Total de eleitores: {total_eleitores}")
     print(f"Total que votaram: {total_votaram}")
     print(f"Percentual de comparecimento: {percentual:.2f}%")
     input("\nAperte ENTER para retornar...")

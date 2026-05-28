@@ -11,16 +11,34 @@ def opcao_gerenciamento(): #OPÇÃO GERENCIAMENTO
     limpar()
     while opcao != 7:
         print("\n\t-- GERENCIAMENTO --")
+        print("\n1 - Eleitores")
+        print("2 - Candidatos")
+        print("3 - Voltar para o Menu Principal")
+
+        opcao=int(input("\nEscolha uma opção: "))
+
+        match opcao:
+            case 1: #OPÇÃO CADASTRO
+                gerenciamento_eleitor()
+            case 2: #OPÇÃO EDIÇÃO DE DADOS
+                gerenciamento_candidato()
+            case 3: #OPÇÃO VOLTAR PARA O MENU PRINCIPAL
+                limpar()
+                return
+            case _: #OPÇÃO INVÁLIDA
+                limpar()
+
+def gerenciamento_eleitor():
+    opcao=0
+    limpar()
+    while opcao != 7:
+        print("\n\t-- GERENCIAMENTO --")
         print("\n1 - Cadastro")
         print("2 - Edição de dados do Eleitor")
         print("3 - Remoção de Eleitor")
         print("4 - Busca por Eleitor")
         print("5 - Listagem de Eleitor")
-        print("6 - Adicionar Candidato")
-        print("7 - Remoção de Candidatos")
-        print("8 - Busca de Candidatos")
-        print("9 - Listagem de Candidatos")
-        print("10 - Voltar para o Menu Principal")
+        print("6 - Voltar")
 
         opcao=int(input("\nEscolha uma opção: "))
 
@@ -35,15 +53,35 @@ def opcao_gerenciamento(): #OPÇÃO GERENCIAMENTO
                 busca_eleitores()
             case 5: #OPÇÃO LISTAGEM DE ELEITOR
                 listagem_eleitores()
-            case 6: #OPÇÃO ADICIONAR CANDIDATO
+            case 6: #OPÇÃO VOLTAR PARA O MENU PRINCIPAL
+                limpar()
+                return
+            case _: #OPÇÃO INVÁLIDA
+                limpar()
+            
+def gerenciamento_candidato():
+    opcao=0
+    limpar()
+    while opcao != 7:
+        print("\n\t-- GERENCIAMENTO --")
+        print("\n1 - Adicionar Candidato")
+        print("2 - Remoção de Candidatos")
+        print("3 - Busca de Candidatos")
+        print("4 - Listagem de Candidatos")
+        print("5 - Voltar para o Menu Principal")
+
+        opcao=int(input("\nEscolha uma opção: "))
+
+        match opcao:
+            case 1: #OPÇÃO ADICIONAR CANDIDATO
                 add_candidato()
-            case 7:
+            case 2:
                 remocao_candidato()
-            case 8:
+            case 3:
                 buscar_candidato()
-            case 9:
+            case 4:
                 list_candidatos()
-            case 10: #OPÇÃO VOLTAR PARA O MENU PRINCIPAL
+            case 5: #OPÇÃO VOLTAR PARA O MENU PRINCIPAL
                 limpar()
                 return
             case _: #OPÇÃO INVÁLIDA
@@ -123,9 +161,10 @@ def cadastro_eleitor(): #OPÇÃO CADASTRO
         mesario=0
     
     limpar()
-    print("\n\t-- CADASTRO REALIZADO COM SUCESSO!!! --")
+    print("\n\t-- CADASTRO ELEITOR --")
     chave_acesso = gerar_chave_acesso(nome)
-    print(f"\nSUA CHAVE DE ACESSO É {chave_acesso} ")
+    print("\n*ATUALIZAÇÃO: Cadastro realizado com sucesso.")
+    print(f"\nSua chave de acesso é {chave_acesso}.")
 
     cpf = c.criptografia(0,cpf)
     chave_acesso = c.criptografia(1,chave_acesso)
