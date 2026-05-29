@@ -141,36 +141,52 @@ def validarEleitor(texto, funcao): # VALIDA SE AS INFORMAÇÕES DO ELEITOR ESTÃ
         
         if funcao == 1: 
             if status_voto == 1:
+                ger.limpar()
+                print(f"\n\t-- {texto} --")
                 input("\n*ERRO: Você já realizou seu voto.\n\nAperte ENTER para voltar...")
                 vot.arquivoTXT(0,'ALERTA: Tentativa de voto duplo.')
                 ger.limpar()
                 return
             
             else:
-                ger.limpar()
-                print(f"\n\t-- {texto} --\n")
-
-                voto = int(input("\nDigite para quem você vota: "))
-                confirmacao=input("Você tem certeza do seu voto(s/n): ")
-                while confirmacao != "s":
-                    voto = int(input("\nDigite para quem você vota: "))
-                    confirmacao=input("Você tem certeza do seu voto(s/n): ")
-                bd.cursor.execute(f"SELECT num_votacao FROM candidatos WHERE num_votacao = {voto}")
-                validacaoCandidato = bd.cursor.fetchall() 
-
-                while validacaoCandidato == []:
+                voto_realizado = False
+                while voto_realizado == False:
                     ger.limpar()
-                    print(f"\n\t-- {texto} --\n")
-                    print("\n*ERRO: O número de partido inserido é inexistente.")
-                    voto_nulo = input("Deseja que seu voto seja nulo?(s/n): ")
-                    if voto_nulo == "s":
-                        bd.votoNulo(cpfValido,texto)
-                        return
-                    ger.limpar()  
-                    print(f"\n\t-- {texto} --\n")
+                    print(f"\n\t-- {texto} --")
                     voto = int(input("\nDigite para quem você vota: "))
-                    bd.cursor.execute(f"SELECT num_votacao FROM candidatos WHERE num_votacao = {voto}")
-                    validacaoCandidato = bd.cursor.fetchall() 
-                
-                bd.votoRealizado(voto,cpfValido,texto)
+                    bd.cursor.execute(f'SELECT nome, partido FROM candidatos WHERE num_votacao = {voto}')
+                    resultado = bd.cursor.fetchall()
+                    ger.limpar()
+                    if resultado:
+                        print(f"\n\t-- {texto} --")
+                        for (nome, partido) in resultado:
+                            print(f"\n Candidato: {nome} | Partido: {partido}")
+                            confirmacao=input("\nVocê tem certeza do seu voto? (s/n): ")
+                            confirmacao = confirmacao.lower()
+                            while confirmacao != "s" and confirmacao != "n":
+                                ger.limpar()
+                                print(f"\n\t-- {texto} --\n\n*ERRO: Digite 's' para sim e 'n' para não, tente novamente.")
+                                print(f"\nCandidato: {nome} | Partido: {partido}")
+                                confirmacao=input("\nVocê tem certeza do seu voto? (s/n): ")
+                                confirmacao = confirmacao.lower()
+                            if confirmacao == 'n':
+                                continue
+                            else:
+                                bd.votoRealizado(voto,cpfValido,texto)
+                                voto_realizado=True
+                    else:
+                        ger.limpar()
+                        print(f"\n\t-- {texto} --")
+                        print("\n*ERRO: O número de partido inserido é inexistente.")
+                        voto_nulo = input("\nDeseja que seu voto seja nulo?(s/n): ")
+                        while voto_nulo != "s" and voto_nulo != "n":
+                            ger.limpar()
+                            print(f"\n\t-- {texto} --\n\n*ERRO: Digite 's' para sim e 'n' para não, tente novamente.")
+                            print("\n*ERRO: O número de partido inserido é inexistente.")
+                            voto_nulo = input("Deseja que seu voto seja nulo?(s/n): ")
+                        if voto_nulo == "s":
+                            bd.votoNulo(cpfValido,texto)
+                            voto_realizado=True
+                        else:
+                            continue
                 return

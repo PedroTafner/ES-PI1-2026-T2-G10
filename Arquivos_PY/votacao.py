@@ -104,16 +104,23 @@ def auditoria(): #OPÇÃO AUDITORIA DO SISTEMA DE VOTAÇÃO
                 limpar()
                 print("\n-- Log de Ocorrências --")
                 conteudo = arquivoTXT(1,'lendo')
-                print(conteudo)
+                if conteudo:
+                    print(conteudo)
+                else:
+                    print("\nNenhum log foi registrado.")
                 input("\nAperte ENTER para retornar...")
             
             case 2: #OPÇÃO PROTOCOLOS DE VOTAÇÃO
                 limpar()
                 print("\n-- Protocolos de Votação --\n")
                 bd.cursor.execute("SELECT protocolo_votacao, horario_votacao FROM resultado ORDER BY horario_votacao")
-                for (protocolo, horario) in bd.cursor.fetchall():
-                    protocolo = d.descriptografia(2,protocolo)
-                    print(f"({horario}) - {protocolo} - Voto Confirmado")
+                protocolos = bd.cursor.fetchall()
+                if protocolos:
+                    for (protocolo, horario) in protocolos:
+                        protocolo = d.descriptografia(2,protocolo)
+                        print(f"({horario}) - {protocolo} - Voto Confirmado")
+                else:
+                    print("Nenhum protocolo registrado.")
                 input("\nAperte ENTER para retornar...")
             
             case 3: #OPÇÃO VOLTAR
@@ -198,4 +205,6 @@ def gerador_protocolo(numero_candidato):
 
 def reset_protocolo():
     bd.cursor.execute(f"DELETE from resultado")
+    bd.conexao.commit()
+    bd.cursor.execute(f"UPDATE eleitores SET status_voto = 0")
     bd.conexao.commit()

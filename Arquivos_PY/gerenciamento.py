@@ -32,7 +32,7 @@ def gerenciamento_eleitor():
     opcao=0
     limpar()
     while opcao != 7:
-        print("\n\t-- GERENCIAMENTO --")
+        print("\n\t-- GERENCIAMENTO DO ELEITOR--")
         print("\n1 - Cadastro")
         print("2 - Edição de dados do Eleitor")
         print("3 - Remoção de Eleitor")
@@ -63,12 +63,12 @@ def gerenciamento_candidato():
     opcao=0
     limpar()
     while opcao != 7:
-        print("\n\t-- GERENCIAMENTO --")
+        print("\n\t-- GERENCIAMENTO DO CANDIDATO --")
         print("\n1 - Adicionar Candidato")
         print("2 - Remoção de Candidatos")
         print("3 - Busca de Candidatos")
         print("4 - Listagem de Candidatos")
-        print("5 - Voltar para o Menu Principal")
+        print("5 - Voltar")
 
         opcao=int(input("\nEscolha uma opção: "))
 
@@ -341,24 +341,36 @@ def alteracao_mysql(opc, mudanca, chave_acesso): #FUNÇÃO FEITA PARA FACILITAR 
 
 def retirar_eleitor(): # REMOVE CERTO ELEITOR DE UM SISTEMA DE VOTAÇÃO
     limpar()
-    print(f"\n\t-- REMOÇÃO ELEITOR --\n")
-    chave = input(f"DIGITE A CHAVE DE ACESSO DO ELEITOR: ")
-    chave = c.criptografia(1,chave)
-    remocao = bd.removerEleitor(chave)
-    while remocao <= 0:
-        print("\nELEITOR NÃO ENCONTRADO")
-        continuar = input("QUER REALIZAR NOVAMENTE(s/n): ")
-        if continuar == "s":
-            cpf = input(f"DIGITE O CPF DO ELEITOR: ")
-            remocao = bd.removerEleitor(cpf)
-        else:
-            input("\nAperte ENTER para continuar...")
+    remocao=False
+    while remocao == False:
+        print(f"\n\t-- REMOÇÃO ELEITOR --\n")
+        chave = input(f"Digite a chave de acesso do eleitor: ")
+        chave = c.criptografia(1,chave)
+        remocao = bd.removerEleitor(chave)
+        while remocao <= 0:
             limpar()
-            break
-    if remocao > 0:
-        print("\nELEITOR REMOVIDO COM SUCESSO!")
-        input("Aperte ENTER para continuar...")
-        limpar()
+            print(f"\n\t-- REMOÇÃO ELEITOR --")
+            print("\n*ERRO: Eleitor não encontrado.")
+            continuar = input("\nDeseja tentar novamente? (s/n): ")
+            continuar=continuar.lower()
+            while continuar != "s" and continuar != "n":
+                limpar()
+                print(f"\n\t-- REMOÇÃO ELEITOR --\n\n*ERRO: Digite 's' para sim e 'n' para não, tente novamente.")
+                print("\n*ERRO: Eleitor não encontrado.")
+                continuar = input("\nDeseja tentar novamente? (s/n): ")
+                continuar = continuar.lower()
+                                
+            if continuar == "s":
+                retirar_eleitor() 
+            else:
+                remocao=True
+    
+        if remocao > 0:
+            print("\n*ATUALIZAÇÃO: Eleitor removido com sucesso.")
+            remocao = True
+            
+    input("Aperte ENTER para continuar...")
+    return
 
 def busca_eleitores(): #BUSCA OS ELEITORES CADASTRADOS
     limpar()

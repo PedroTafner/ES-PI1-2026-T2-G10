@@ -26,20 +26,24 @@ def boletimUrna():
         input("\nAperte ENTER para continuar...")
 
     else:
-        print("\nNenhum voto registrado.")
+        print("Nenhum voto registrado.")
+        input("\nAperte ENTER para retornar...")
 
     ger.limpar()
 
 def votosPartidos():
     ger.limpar()
-    print("\n\t-- VOTOS POR PARTIDO --")
+    print("\n\t-- VOTOS POR PARTIDO --\n")
     bd.cursor.execute("SELECT c.partido, COUNT(r.id_candidato) AS total_voto FROM candidatos c JOIN resultado r ON c.id_candidato = r.id_candidato GROUP BY c.id_candidato, c.partido")
     resultado = bd.cursor.fetchall()
-    for partido,votos in resultado:
-        if partido != 'Nulo':
-            print(f"\nPartido: {partido} | Votos: {votos} ")
-        else:
-            print(f"\nVotos nulos: {votos}")
+    if resultado:
+        for partido,votos in resultado:
+            if partido != 'Nulo':
+                print(f"Partido: {partido} | Votos: {votos} ")
+            else:
+                print(f"\nVotos nulos: {votos}")
+    else:
+        print("\nNenhum voto registrado.")
         
     input("\nAperte ENTER para continuar...")
     ger.limpar()  
@@ -52,12 +56,15 @@ def valIntegridade():
     bd.cursor.execute("SELECT COUNT(*) FROM resultado")
     votosRealizados = bd.cursor.fetchone()[0]
 
-    print(f"\nVotos computados: {votosRealizados}\nEleitores que votaram: {eleitoresVotaram}")
-    if eleitoresVotaram == votosRealizados:
-        print("\n*SUCESSO: A Eleição foi integra.")
-    
+    if votosRealizados:
+        print(f"\nVotos computados: {votosRealizados}\nEleitores que votaram: {eleitoresVotaram}")
+        if eleitoresVotaram == votosRealizados:
+            print("\n*SUCESSO: A Eleição foi integra.")
+        
+        else:
+            print("\n*ERRO: A Eleição não foi integra")
     else:
-        print("\n*ERRO: A Eleição não foi integra")
+        print("\nNenhum voto registrado.")
 
     input("\nAperte ENTER para continuar...")
     ger.limpar()
@@ -74,13 +81,16 @@ def estatistica_comparecimento():
     total_votaram = bd.cursor.fetchone()[0]
 
     if total_eleitores == 0:
-        print("Nenhum eleitor cadastrado!")
+        print("\nNenhum eleitor cadastrado!")
         return
 
     percentual = (total_votaram / total_eleitores) * 100
 
-    print(f"Total de eleitores: {total_eleitores}")
-    print(f"Total que votaram: {total_votaram}")
-    print(f"Percentual de comparecimento: {percentual:.2f}%")
+    if total_votaram:
+        print(f"\nTotal de eleitores: {total_eleitores}")
+        print(f"Total que votaram: {total_votaram}")
+        print(f"Percentual de comparecimento: {percentual:.2f}%")
+    else:
+        print("\nNenhum voto registrado.")
     input("\nAperte ENTER para retornar...")
     ger.limpar()

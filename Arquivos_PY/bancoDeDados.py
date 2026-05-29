@@ -56,7 +56,7 @@ def inserir_candidato(nome,num_vot,partido): #FUNÇÃO PARA EXECUTAR NO BANCO DE
     conexao.commit()
 
 def buscar_eleitorCandidato(nome): #VERIFICA NO BANCO DE DADOS SE UM ELEITOR EXISTE
-    cursor.execute(f"SELECT nome FROM eleitores WHERE nome LIKE '{nome}'")
+    cursor.execute(f"SELECT nome FROM eleitores WHERE nome LIKE '{nome}' ORDER BY na")
     resultado = cursor.fetchall()
     for nome in resultado:
         if resultado == None:
@@ -79,7 +79,7 @@ def zeresima(): #ZERA VOTOS DE CANDIDATOS E O STATUS DE VOTO DO ELEITOR PARA REI
     return
 
 def listar_candidatos(): #LISTA TODOS OS CANDIDATOS DISPONÍVEIS NO BANCO DE DADOS
-    cursor.execute("SELECT nome, num_votacao, partido FROM candidatos")
+    cursor.execute("SELECT nome, num_votacao, partido FROM candidatos ORDER BY name")
     for (nome, num_votacao, partido) in cursor.fetchall():
         print(f"{num_votacao} - {partido} - {nome}")
     return
