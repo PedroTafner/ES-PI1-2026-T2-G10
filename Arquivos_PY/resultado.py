@@ -2,7 +2,19 @@ import Arquivos_PY.bancoDeDados as bd
 import Arquivos_PY.gerenciamento as ger
 
 
-def boletimUrna(): # FUNÇÃO PARA MOSTRAR O BOLETIM DE URNA NO RESULTADO DA VOTAÇÃO
+def boletimUrna():
+    
+    """
+    Gera e exibe o Boletim de Urna na tela, consolidando a votação de cada 
+    candidato, votos nulos, votos em branco e o total geral de votos apurados.
+
+    Args:
+        Não recebe parâmetros de entrada.
+
+    Returns:
+        Nenhum valor é retornado (None).
+    """
+
     ger.limpar()
     print("\n\t-- BOLETIM DE URNA --\n")
 
@@ -39,7 +51,19 @@ def boletimUrna(): # FUNÇÃO PARA MOSTRAR O BOLETIM DE URNA NO RESULTADO DA VOT
 
     ger.limpar()
 
-def votosPartidos(): # FUNÇÃO PARA MOSTRAR A QUANTIDADE DE VOTOS POR PARTIDO
+def votosPartidos(): 
+    
+    """
+    Agrupa, contabiliza e exibe a somatória de votos válidos associados 
+    a cada partido registrado na eleição.
+
+    Args:
+        Não recebe parâmetros de entrada.
+
+    Returns:
+        Nenhum valor é retornado (None).
+    """
+
     ger.limpar()
     print("\n\t-- VOTOS POR PARTIDO --\n")
     
@@ -71,7 +95,20 @@ def votosPartidos(): # FUNÇÃO PARA MOSTRAR A QUANTIDADE DE VOTOS POR PARTIDO
     input("\nAperte ENTER para continuar...")
     ger.limpar()
 
-def valIntegridade(): # FUNÇÃO PARA VERIFICAR SE A ELEIÇÃO REALIZADA FOI INTEGRA OU NÃO
+def valIntegridade(): 
+    
+    """
+    Realiza a validação de integridade do sistema, confrontando 
+    a quantidade de eleitores que votaram com a 
+    quantidade de protocolos registrados na tabela resultados.
+
+    Args:
+        Não recebe parâmetros de entrada.
+
+    Returns:
+        Nenhum valor é retornado (None).
+    """
+
     ger.limpar()
     print("\n\t-- VALIDAÇÃO DA INTEGRIDADE --")
     bd.cursor.execute("SELECT COUNT(*) FROM eleitores WHERE status_voto = 1")
@@ -94,7 +131,19 @@ def valIntegridade(): # FUNÇÃO PARA VERIFICAR SE A ELEIÇÃO REALIZADA FOI INT
     input("\nAperte ENTER para continuar...")
     ger.limpar()
 
-def estatistica_comparecimento(): # FUNÇÃO PARA MOSTRAR A ESTATÍSTICA DE COMPARECIMENTO DA VOTAÇÃO REALIZADA
+def estatistica_comparecimento(): 
+    
+    """
+    Calcula e exibe os dados percentuais e absolutos de comparecimento e 
+    abstenção dos eleitores aptos com base no status de voto gravado no banco.
+
+    Args:
+        Não recebe parâmetros de entrada.
+
+    Returns:
+        Nenhum valor é retornado (None).
+    """
+
     ger.limpar()
     print("\n\t-- ESTATÍSTICA DE COMPARECIMENTO --")
 

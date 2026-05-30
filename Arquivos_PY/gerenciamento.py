@@ -6,7 +6,19 @@ import random as r
 import os
 
 
-def opcao_gerenciamento(): # OPÇÃO GERENCIAMENTO
+def opcao_gerenciamento(): 
+
+    """
+    Exibe o menu base de gerenciamento para gerenciar 
+    eleitores ou candidatos.
+
+    Args:
+        Não recebe parâmetros.
+
+    Returns:
+        Nenhum valor retornado (None).
+    """
+
     opcao=0
     limpar()
     while opcao != 7:
@@ -31,7 +43,18 @@ def opcao_gerenciamento(): # OPÇÃO GERENCIAMENTO
             case _: #OPÇÃO INVÁLIDA
                 limpar()
 
-def gerenciamento_eleitor(): # OPÇÃO GERENCIAMENTO DO ELEITOR
+def gerenciamento_eleitor(): 
+    
+    """
+    Menu central para cadastro, edição, remoção, busca e listagem de eleitores.
+
+    Args:
+        Não recebe parâmetros.
+
+    Returns:
+        Nenhum valor retornado (None).
+    """
+
     opcao=0
     limpar()
     while opcao != 7:
@@ -68,7 +91,18 @@ def gerenciamento_eleitor(): # OPÇÃO GERENCIAMENTO DO ELEITOR
             case _: #OPÇÃO INVÁLIDA
                 limpar()
             
-def gerenciamento_candidato(): # OPÇÃO GERENCIAMENTO DO CANDIDATO
+def gerenciamento_candidato(): 
+    
+    """
+    Menu central para cadastro, remoção, busca e listagem de candidatos.
+
+    Args:
+        Não recebe parâmetros.
+
+    Returns:
+        Nenhum valor retornado (None).
+    """
+
     opcao=0
     limpar()
     while opcao != 7:
@@ -101,7 +135,20 @@ def gerenciamento_candidato(): # OPÇÃO GERENCIAMENTO DO CANDIDATO
             case _: #OPÇÃO INVÁLIDA
                 limpar()
 
-def cadastro_eleitor(): # OPÇÃO CADASTRO DO ELEITOR
+def cadastro_eleitor(): 
+    
+    """
+    Cadastra um eleitor, requisitando informações, 
+    aplicando as validações de Título e CPF 
+    e gerando a chave de acesso criptografada.
+
+    Args:
+        Não recebe parâmetros.
+
+    Returns:
+        Nenhum valor retornado (None).
+    """
+
     limpar()
     print("\n\t-- CADASTRANDO ELEITOR --")
     nome=str(input("\nDigite seu Nome: "))
@@ -200,7 +247,19 @@ def cadastro_eleitor(): # OPÇÃO CADASTRO DO ELEITOR
     bd.inserir_eleitores(nome,titulo,cpf,mesario,chave_acesso) # INSERE TUDO NO BANCO DE DADOS
     limpar()
 
-def gerar_chave_acesso(nome): # GERAR CHAVE DE ACESSO
+def gerar_chave_acesso(nome): 
+
+    """
+    Gera uma chave de acesso de 7 caracteres para o eleitor.
+    Regra: 2 primeiras letras do nome + 1 primeira letra do sobrenome + 4 dígitos aleatórios.
+
+    Args:
+        nome (str): O nome completo do eleitor recém-cadastrado.
+
+    Returns:
+        str: A chave de acesso estruturada gerada.
+    """
+
     partes_nome = nome.strip().split() # DIVIDE O NOME EM PARTES
 
     if len(partes_nome) < 2: # CASO NÃO TENHA 2 NOMES OU NOME+SOBRENOME, UM ERRO É GERADO
@@ -224,7 +283,19 @@ def gerar_chave_acesso(nome): # GERAR CHAVE DE ACESSO
 
     return chave_acesso
 
-def edicao_eleitor():  # OPÇÃO QUE POSSIBILITA A MUDANÇA DE INFORMAÇÕES DO ELEITOR
+def edicao_eleitor(): 
+
+    """
+    Acessa o cadastro de um eleitor através de sua chave de acesso, 
+    permitindo edições nos dados pessoais e validando novamente qualquer modificação.
+
+    Args:
+        Não recebe parâmetros.
+
+    Returns:
+        Nenhum valor retornado (None).
+    """
+
     limpar()
     print("\n\t-- EDIÇÃO DE DADOS DO ELEITOR --")
 
@@ -367,7 +438,20 @@ def edicao_eleitor():  # OPÇÃO QUE POSSIBILITA A MUDANÇA DE INFORMAÇÕES DO 
         limpar()
         return
 
-def alteracao_mysql(opc, mudanca, chave_acesso): # FUNÇÃO FEITA PARA FACILITAR A TROCA DE DADOS DO ELEITOR
+def alteracao_mysql(opc, mudanca, chave_acesso): 
+
+    """
+    Função de facilitar a atualização de dados no banco 
+
+    Args:
+        opc (int): Identificador numérico da coluna que vai ser alterada (1: Nome, 2: CPF, 3: Título, 4: Mesário).
+        mudanca (str/int): O novo valor que será inserido na tabela.
+        chave_acesso (str): A chave criptografada usada para filtrar o eleitor.
+
+    Returns:
+        Nenhum valor retornado (None).
+    """
+
     match opc:
         case 1: #nome
             bd.cursor.execute(f"UPDATE eleitores SET nome = '{mudanca}' WHERE chave_acesso = '{chave_acesso}'")
@@ -382,7 +466,18 @@ def alteracao_mysql(opc, mudanca, chave_acesso): # FUNÇÃO FEITA PARA FACILITAR
             bd.cursor.execute(f"UPDATE eleitores SET mesario = {mudanca} WHERE chave_acesso = '{chave_acesso}'")
             bd.conexao.commit()
 
-def retirar_eleitor(): # REMOVE CERTO ELEITOR DE UM SISTEMA DE VOTAÇÃO
+def retirar_eleitor(): 
+
+    """
+    Remove o cadastro de um eleitor do banco de dados.
+
+    Args:
+        Não recebe parâmetros.
+
+    Returns:
+        Nenhum valor retornado (None).
+    """
+
     limpar()
     remocao=False
     print(f"\n\t-- REMOÇÃO ELEITOR --\n")
@@ -431,7 +526,18 @@ def retirar_eleitor(): # REMOVE CERTO ELEITOR DE UM SISTEMA DE VOTAÇÃO
         limpar()
         return
 
-def busca_eleitores(): # BUSCA OS ELEITORES CADASTRADOS
+def busca_eleitores(): 
+
+    """
+    Busca por nome os eleitores presentes na base de dados.
+
+    Args:
+        Não recebe parâmetros.
+
+    Returns:
+        Nenhum valor retornado (None).
+    """
+
     limpar()
     print("\n\t-- BUSCA DE ELEITOR --")
 
@@ -454,7 +560,18 @@ def busca_eleitores(): # BUSCA OS ELEITORES CADASTRADOS
     input("\nAperte ENTER para continuar...")
     limpar()
 
-def listagem_eleitores(): # FUNÇÃO FEITA PARA LISTAR OS ELEITORES 
+def listagem_eleitores(): 
+    
+    """
+    Exibe a listagem de todos os eleitores cadastrados.
+
+    Args:
+        Não recebe parâmetros.
+
+    Returns:
+        Nenhum valor retornado (None).
+    """
+
     limpar()
     print(f"\n\t-- LISTAGEM DOS ELEITORES --\n")
 
@@ -468,7 +585,19 @@ def listagem_eleitores(): # FUNÇÃO FEITA PARA LISTAR OS ELEITORES
     input("\nAperte ENTER para continuar...")
     limpar()
 
-def add_candidato(): # ADICIONA CANDIDATOS AO SISTEMA
+def add_candidato(): 
+    
+    """
+    Registra um novo candidato eleitoral, incluindo verificação 
+    de unicidade do número de votação.
+
+    Args:
+        Não recebe parâmetros.
+
+    Returns:
+        Nenhum valor retornado (None).
+    """
+
     limpar()
     
     print("\n\t-- CADASTRO DE CANDIDATOS --\n")
@@ -498,10 +627,32 @@ def add_candidato(): # ADICIONA CANDIDATOS AO SISTEMA
     input("*ATUALIZAÇÃO: O candidato foi cadastrado com sucesso!\n\nAperte ENTER para retornar...")
     limpar()
 
-def limpar(): # LIMPA O TERMINAL PARA MANTER O SISTEMA ORGANIZADO
+def limpar():
+    
+    """
+    Limpa as mensagens do terminal para a organização visual do sistema.
+
+    Args:
+        Não recebe parâmetros de entrada.
+
+    Returns:
+        Nenhum valor é retornado (None).
+    """
+
     os.system('cls' if os.name == 'nt' else 'clear')
 
-def list_candidatos(): # FUNÇÃO QUE VISA ORDENAR TODOS OS CANDIDATOS REGISTRADOS NO BANCO DE DADOS POR ORDEM ALFABÉTICAs
+def list_candidatos(): 
+
+    """
+    Exibe a listagem de todos os candidatos cadastrados.
+
+    Args:
+        Não recebe parâmetros.
+
+    Returns:
+        Nenhum valor retornado (None).
+    """
+
     limpar()
     print("\n\t-- LISTAGEM DOS CANDIDATOS --\n")
 
@@ -523,6 +674,17 @@ def list_candidatos(): # FUNÇÃO QUE VISA ORDENAR TODOS OS CANDIDATOS REGISTRAD
     return
 
 def buscar_candidato(): # FUNÇÃO PARA BUSCAR UM CANDIDATO PELO SEU NÚMERO DE VOTAÇÃO
+    
+    """
+    Busca por número de votação o candidato presentes na base de dados.
+
+    Args:
+        Não recebe parâmetros.
+
+    Returns:
+        Nenhum valor retornado (None).
+    """
+
     limpar()
     print("\n\t-- BUSCA DE CANDIDATOS --")
 
@@ -555,6 +717,17 @@ def buscar_candidato(): # FUNÇÃO PARA BUSCAR UM CANDIDATO PELO SEU NÚMERO DE 
         return
 
 def remocao_candidato(): # FUNÇÃO PARA REMOVER UM CANDIDATO DO BANCO DE DADOS
+    
+    """
+    Remove o cadastro de um candidato do banco de dados.
+
+    Args:
+        Não recebe parâmetros.
+
+    Returns:
+        Nenhum valor retornado (None).
+    """
+
     limpar()
     print("\n\t-- REMOÇÃO DE CANDIDATOS --")
 
@@ -605,6 +778,17 @@ def remocao_candidato(): # FUNÇÃO PARA REMOVER UM CANDIDATO DO BANCO DE DADOS
         return
     
 def verificacao_existencia(opcao): # VERIFICA SE HÁ ELEITORES (opcao = 0) OU CANDIDATOS (opcao = 1) REGISTRADOS NO BANCO DE DADOS
+    
+    """
+    Testa se determinada tabela no banco de dados possui registros.
+
+    Args:
+        opcao (int): Especifica a tabela (0 para 'eleitores', 1 para 'candidatos').
+
+    Returns:
+        bool: Retorna True se a tabela possuir pelo menos um registro, False se vazia.
+    """
+
     if opcao == 0:
         nome = 'eleitores'
     else:

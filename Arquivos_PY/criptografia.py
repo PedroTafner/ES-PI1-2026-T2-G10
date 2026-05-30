@@ -1,14 +1,23 @@
 def criptografia(opcao,dado):
 
-    # A criptografia envolve o método da Cifra de Hills, que usa o cálculo C = A * P,
-    # na qual o C é o texto criptografado, o A é matriz chave 2x2 necessária responsável por 
-    # deixar o texto criptografado, e o P que é o texto normal.     
+    """
+    A criptografia envolve o método da Cifra de Hills, que usa o cálculo C = A * P,
+    na qual o C é o texto criptografado, o A é matriz chave 2x2 necessária responsável por 
+    deixar o texto criptografado, e o P que é o texto normal.     
     
-    # O A foi inserido numa lista, em que A[0] é a primeira linha da matriz, e a A[1] a segunda.
+    O A foi inserido numa lista, em que A[0] é a primeira linha da matriz, e a A[1] a segunda.
     
-    # O dado (CPF, Protocolo de votação, Chave de Acesso) vai ser dividido em uma matriz de 2 linhas,
-    # em que os caractéres ímpares (1º,3º,5º...) vão ser armazenados na linhas_dado[0]
-    # e os caractéres pares (2º, 4º, 6º...) na linhas_dados[1]
+    O dado (CPF, Protocolo de votação, Chave de Acesso) vai ser dividido em uma matriz de 2 linhas,
+    em que os caractéres ímpares (1º,3º,5º...) vão ser armazenados na linhas_dado[0]
+    e os caractéres pares (2º, 4º, 6º...) na linhas_dados[1]
+
+    Args:
+        opcao (0: CPF; 1: Chave de acesso; 2: Protocolo de votacao)
+        dado: respectiva informacao de acordo com a sua opcao
+
+    Returns:
+        (str): o dado informado criptografado
+    """
     
     A=[[4,3],[1,2]]
     dado = str(dado)

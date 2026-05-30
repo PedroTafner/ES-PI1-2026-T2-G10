@@ -5,7 +5,18 @@ import Arquivos_PY.criptografia as c
 import Arquivos_PY.descriptografia as d
 
 
-def validacaoCPF(cpf): # VERIFICA SE O CPF INSERIDO CORRESPONDE AOS REQUISITOS DE VALIDAÇÃO
+def validacaoCPF(cpf): 
+
+    """
+    Verifica se o CPF inserido corresponde aos requisitos de validação.
+
+    Args:
+        cpf (int ou str): O número do CPF a ser validado.
+
+    Returns:
+        bool: Retorna True se o CPF for válido, False caso contrário.
+    """
+
     stringCPF=str(cpf)
 
     if len(stringCPF) != 11 or stringCPF == stringCPF[0] * 11: # SE O CPF NÃO POSSUIR 11 DIGITOS OU SER REPETIDO, É REPROVADO
@@ -42,7 +53,18 @@ def validacaoCPF(cpf): # VERIFICA SE O CPF INSERIDO CORRESPONDE AOS REQUISITOS D
     
     return True
 
-def validacaoTituloEleitor(titulo): # VERIFICA SE O TÍTULO DE ELEITOR INSERIDO CORRESPONDE AOS REQUISITOS DE VALIDAÇÃO
+def validacaoTituloEleitor(titulo): 
+    
+    """
+    Verifica se o título de eleitor inserido corresponde aos requisitos de validação.
+
+    Args:
+        titulo (int ou str): O número do título de eleitor a ser validado.
+
+    Returns:
+        bool: Retorna True se o título for válido, False caso contrário.
+    """
+
     stringTitEleitor=str(titulo)
 
     if len(stringTitEleitor) != 12:
@@ -78,7 +100,7 @@ def validacaoTituloEleitor(titulo): # VERIFICA SE O TÍTULO DE ELEITOR INSERIDO 
 
     if DVT == 10:
         DVT=0
-        if stringTitEleitor[8] == '0' and stringTitEleitor[9] == '1' or '2':
+        if stringTitEleitor[8] == '0' and (stringTitEleitor[9] == '1' or stringTitEleitor[9] == '2'):
             DVT=1
 
     if int(stringTitEleitor[11]) != DVT:
@@ -86,7 +108,19 @@ def validacaoTituloEleitor(titulo): # VERIFICA SE O TÍTULO DE ELEITOR INSERIDO 
     
     return True
 
-def validarChaveAcesso(chave): # VERIFICA SE A CHAVE DE ACESSO INSERIDA EXISTE
+def validarChaveAcesso(chave): 
+
+    
+    """
+    Verifica se a chave de acesso informada possui o tamanho correto e existe no banco de dados.
+
+    Args:
+        chave (str): A chave de acesso de 7 caracteres digitada pelo usuário.
+
+    Returns:
+        bool: Retorna True se a chave for encontrada após a criptografia, False caso contrário.
+    """
+
     if len(chave) != 7:
         return False
     
@@ -99,7 +133,21 @@ def validarChaveAcesso(chave): # VERIFICA SE A CHAVE DE ACESSO INSERIDA EXISTE
     else:
         return False
     
-def validarEleitor(texto, funcao): # VALIDA SE AS INFORMAÇÕES DO ELEITOR ESTÃO CORRETAS DIANTE DO BANCO DE DADOS
+def validarEleitor(texto, funcao): 
+    
+    """
+    Realiza o fluxo interativo de validação das informações do eleitor no banco de dados.
+    Caso a validação seja para voto, gerencia também o processo de votação e confirmação.
+
+    Args:
+        texto (str): O título da operação atual para exibição no menu de interface.
+        funcao (int): O tipo de operação (0 para abertura/fechamento do sistema, 1 para votação).
+
+    Returns:
+        bool ou None: Retorna True ou False para permissões de sistema (funcao=0). 
+                      Não retorna valores em caso de votação direta (funcao=1).
+    """
+    
     print(f"\n\t-- {texto} --")
 
     # 1. VALIDAÇÃO DO TÍTULO DE ELEITOR

@@ -1,15 +1,24 @@
 def descriptografia(opcao,texto):
 
-    # A descriptografia envolve o método da Cifra de Hills, que usa o cálculo P = (1/A) * C,
-    # na qual o C é o texto criptografado, o inverso de A (1/a) é matriz chave 2x2 necessária responsável por 
-    # deixar o texto descriptografado, e o P que é o texto normal.     
+    """
+    A descriptografia envolve o método da Cifra de Hills, que usa o cálculo P = (1/A) * C,
+    na qual o C é o texto criptografado, o inverso de A (1/a) é matriz chave 2x2 necessária responsável por 
+    deixar o texto descriptografado, e o P que é o texto normal.     
     
-    # O 1/A (representado na função como 'A') foi inserido numa lista, em que A[0] é a primeira linha da matriz, e a A[1] a segunda.
+    O 1/A (representado na função como 'A') foi inserido numa lista, em que A[0] é a primeira linha da matriz, e a A[1] a segunda.
     
-    # O dado (CPF, Protocolo de votação, Chave de Acesso) vai ser dividido em uma matriz de 2 linhas,
-    # em que os caractéres ímpares (1º,3º,5º...) vão ser armazenados na linhas_crip[0]
-    # e os caractéres pares (2º, 4º, 6º...) na linhas_crip[1]
+    O dado (CPF, Protocolo de votação, Chave de Acesso) vai ser dividido em uma matriz de 2 linhas,
+    em que os caractéres ímpares (1º,3º,5º...) vão ser armazenados na linhas_crip[0]
+    e os caractéres pares (2º, 4º, 6º...) na linhas_crip[1]
     
+    Args:
+        opcao (0: CPF; 1: Chave de acesso; 2: Protocolo de votacao)
+        dado: respectiva informacao criptografada de acordo com a sua opção
+
+    Returns:
+        (str): o dado informado descriptografado
+    """
+
     A=[[42,-63],[-21,84]]
     linhas_crip = [[], []]
     alfabeto = ['Z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y']

@@ -11,7 +11,18 @@ import datetime
 permicao = 0
 
 
-def opcao_votacao(): # OPÇÃO VOTAÇÃO
+def opcao_votacao(): 
+
+    """
+    Exibe o menu da seção de votação e direciona o usuário para as rotinas correspondentes.
+
+    Args:
+        Não recebe parâmetros de entrada.
+
+    Returns:
+        Nenhum valor é retornado (None).
+    """
+
     limpar()
     opcao=0
     while opcao != 4:
@@ -39,9 +50,20 @@ def opcao_votacao(): # OPÇÃO VOTAÇÃO
             case _: #OPÇÃO INVÁLIDA
                 limpar()
 
-def abertura(): # OPÇÃO ABERTURA DE SISTEMA DE VOTAÇÃO
-    limpar()
+def abertura(): 
     
+    """
+    Valida as pré-condições de cadastros e credenciais do mesário para iniciar o sistema de votação.
+    Executa e exibe a Zerésima caso as condições sejam verdadeiras.
+
+    Args:
+        Não recebe parâmetros de entrada.
+
+    Returns:
+        Nenhum valor é retornado (None).
+    """
+    
+    limpar()
     permicao = ger.verificacao_existencia(0) # VERIFICA SE HÁ ELEITORES CADASTRADOS NO SISTEMA
     if permicao == False: # SE NÃO, A ABERTURA DE VOTAÇÃO É INTERROMPIDA
         print("\n\t-- ABERTURA DE SISTEMA DE VOTAÇÃO --")
@@ -73,9 +95,20 @@ def abertura(): # OPÇÃO ABERTURA DE SISTEMA DE VOTAÇÃO
         validacao
         return
     
-def votacao(): # OPÇÃO ABRIR SISTEMA DE VOTAÇÃO
-    opcao=0
+def votacao(): 
     
+    """
+    Controla o laço interno do ambiente da urna eletrônica, permitindo votos sucessivos 
+    até o encerramento autorizado por um mesário.
+
+    Args:
+        Não recebe parâmetros de entrada.
+
+    Returns:
+        Nenhum valor é retornado (None).
+    """
+
+    opcao=0
     while opcao != 2:
         limpar()
         print("\n\t-- SISTEMA DE VOTAÇÃO --")
@@ -107,7 +140,19 @@ def votacao(): # OPÇÃO ABRIR SISTEMA DE VOTAÇÃO
             case _: #OPÇÃO INVÁLIDA
                 limpar()
     
-def auditoria(): # OPÇÃO AUDITORIA DO SISTEMA DE VOTAÇÃO
+def auditoria(): 
+    
+    """
+    Disponibiliza o menu de auditoria para leitura de logs textuais e visualização dos 
+    protocolos registrados na votação.
+
+    Args:
+        Não recebe parâmetros de entrada.
+
+    Returns:
+        Nenhum valor é retornado (None).
+    """
+
     opcao=0
     while opcao != 3:
         limpar()
@@ -154,7 +199,19 @@ def auditoria(): # OPÇÃO AUDITORIA DO SISTEMA DE VOTAÇÃO
             case _: # OPÇÃO INVÁLIDA
                 limpar()
 
-def resultado(): # OPÇÃO RESULTADO DA VOTAÇÃO
+def resultado(): 
+    
+    """
+    Exibe as opções de relatórios após a eleição, delegando a geração de dados 
+    estatísticos e boletins de urna.
+
+    Args:
+        Não recebe parâmetros de entrada.
+
+    Returns:
+        Nenhum valor é retornado (None).
+    """
+
     limpar()
     opcao=0
     while opcao != 5:
@@ -187,10 +244,33 @@ def resultado(): # OPÇÃO RESULTADO DA VOTAÇÃO
             case _: # OPÇÃO INVÁLIDA
                 limpar()
 
-def limpar(): # LIMPA O TERMINAL PARA MANTER O SISTEMA ORGANIZADO
+def limpar(): 
+    
+    """
+    Limpa as mensagens do terminal para a organização visual do sistema.
+
+    Args:
+        Não recebe parâmetros de entrada.
+
+    Returns:
+        Nenhum valor é retornado (None).
+    """
+
     os.system('cls' if os.name == 'nt' else 'clear')
 
-def arquivoTXT(acao, mensagem): # REGISTRA (acao = 0), LÊ (acao = 1) OU APAGA (acao = 2) O LOG DE OCORRÊNCIAS
+def arquivoTXT(acao, mensagem): 
+    
+    """
+    Gerencia a escrita, leitura ou limpeza do arquivo de log de ocorrências da urna.
+
+    Args:
+        acao (int): Determina a operação (0 para registrar, 1 para ler, 2 para apagar).
+        mensagem (str): Texto contendo a descrição da ocorrência de segurança a ser gravada.
+
+    Returns:
+        str ou None: Retorna a string completa com o conteúdo do arquivo se acao for igual a 1.
+    """
+
     momento = datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S")
 
     if acao == 0:
@@ -206,7 +286,19 @@ def arquivoTXT(acao, mensagem): # REGISTRA (acao = 0), LÊ (acao = 1) OU APAGA (
         with open(f"Arquivos_TXT/logOcorrencias.txt", "w") as arq:
             arq.write("")
 
-def gerador_protocolo(numero_candidato): # GERA O PROTOCOLO DE VOTAÇÃO DE ACORDO COM OS REQUISITOS, OU SEJA, 2 LETRAS ALEATORIAS + 26 + NUM_CANDIDATO + 5 DÍGITOS ALEATÓRIOS
+def gerador_protocolo(numero_candidato): 
+    
+    """
+    Gera uma string de protocolo aleatório baseado nas regras estabelecidas.
+    Formato: 'V' + 2 Letras + '26' + Número Candidato (2 dígitos) + 5 Números Aleatórios.
+
+    Args:
+        numero_candidato (int): O número de identificação eleitoral do candidato que recebeu o voto.
+
+    Returns:
+        str: O protocolo de votação.
+    """
+
     protocolo = 'V'
     for i in range(2):
         alfabeto = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z']
@@ -227,7 +319,19 @@ def gerador_protocolo(numero_candidato): # GERA O PROTOCOLO DE VOTAÇÃO DE ACOR
 
     return protocolo
 
-def reset_protocolo(): # LIMPA OS PROTOCOLOS DO BANCO DE DADOS E MUDA O STATUS_VOTO DO ELEITOR PARA 0 A FIM DE RESETAR O SISTEMA DE ELEIÇÃO
+def reset_protocolo(): 
+    
+    """
+    Limpa completamente os registros da tabela de resultados e reconfigura o status 
+    de voto dos eleitores para 0 no banco de dados.
+
+    Args:
+        Não recebe parâmetros de entrada.
+
+    Returns:
+        Nenhum valor é retornado (None).
+    """
+    
     bd.cursor.execute(f"DELETE from resultado")
     bd.conexao.commit()
     bd.cursor.execute(f"UPDATE eleitores SET status_voto = 0")
