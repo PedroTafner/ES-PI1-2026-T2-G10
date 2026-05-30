@@ -4,7 +4,7 @@ import Arquivos_PY.votacao as vot
 import Arquivos_PY.criptografia as c
 import Arquivos_PY.descriptografia as d
 import mysql.connector # Conexão com o banco
-import datetime
+import datetime # Biblioteca para pegar o tempo e data certa da ocorrência de tal fato
 
 conexao = mysql.connector.connect(
 host='localhost',
@@ -22,14 +22,14 @@ def inserir_eleitores(nome, titulo_eleitor,cpf, mesario, chave_acesso, status_vo
     conexao.commit()
 
 def listar_usuarios(): #FUNÇÃO QUE LISTA INFORMAÇÕES DOS ELEITORES
-    cursor.execute("SELECT  nome, cpf FROM eleitores")
-    
+    cursor.execute("SELECT nome, cpf FROM eleitores ORDER BY nome")
+        
     for (nome, cpf) in cursor.fetchall():
         cpf = d.descriptografia(0,cpf)
-        print(f"Nome: {nome}, CPF: {cpf}")
+        print(f"Nome: {nome}\tCPF: {cpf}")
 
 def buscarEleitor(nome): #FUNÇÃO QUE BUSCA E MOSTRA OS ELEITORES FILTRADOS
-    cursor.execute(f"SELECT nome, cpf, mesario FROM eleitores WHERE nome LIKE '%{nome}%'")
+    cursor.execute(f"SELECT nome, cpf, mesario FROM eleitores WHERE nome LIKE '%{nome}%' ORDER BY nome")
     resultado = cursor.fetchall()
 
     for (nome,  cpf, mesario) in resultado:
@@ -38,10 +38,10 @@ def buscarEleitor(nome): #FUNÇÃO QUE BUSCA E MOSTRA OS ELEITORES FILTRADOS
             break
 
         if mesario == 1:
-            print(f"Nome: {nome}, Cpf: {cpf}, Mesario: Sim")
+            print(f"Nome: {nome}\tCPF: {cpf}\tMesário: Sim")
 
         else:
-            print(f"Nome: {nome}, Cpf: {cpf}, Mesario: Não")                          
+            print(f"Nome: {nome}\tCPF: {cpf}\tMesário: Não")                          
 
 def removerEleitor(chave): #FUNÇÃO PARA EXECUTAR NO BANCO DE DADOS A REMOÇÃO DE CERTO ELEITOR
     cursor.execute(f"DELETE FROM eleitores WHERE chave_acesso = '{chave}'")
@@ -56,7 +56,7 @@ def inserir_candidato(nome,num_vot,partido): #FUNÇÃO PARA EXECUTAR NO BANCO DE
     conexao.commit()
 
 def buscar_eleitorCandidato(nome): #VERIFICA NO BANCO DE DADOS SE UM ELEITOR EXISTE
-    cursor.execute(f"SELECT nome FROM eleitores WHERE nome LIKE '{nome}' ORDER BY na")
+    cursor.execute(f"SELECT nome FROM eleitores WHERE nome LIKE '{nome}' ORDER BY nome")
     resultado = cursor.fetchall()
     for nome in resultado:
         if resultado == None:
@@ -65,7 +65,7 @@ def buscar_eleitorCandidato(nome): #VERIFICA NO BANCO DE DADOS SE UM ELEITOR EXI
             return True
     return False
 
-def buscar_statusVoto(nome): #BUSCA NO BANCO DE DADOS SE UM ELEITOR JA VOTOU
+def buscar_statusVoto(nome): #BUSCA NO BANCO DE DADOS SE UM ELEITOR JA VOTOU OU NÃO
     cursor.execute(f"SELECT status_voto FROM eleitores WHERE nome LIKE '%{nome}%'")
     return cursor.fetchall()[0][0]
 
@@ -75,16 +75,15 @@ def zeresima(): #ZERA VOTOS DE CANDIDATOS E O STATUS DE VOTO DO ELEITOR PARA REI
     cursor.execute("SELECT nome, num_votacao, partido FROM candidatos")
     for (nome, num_votacao, partido) in cursor.fetchall():
         if nome != "Voto Nulo":
-            print(f"{num_votacao} - {nome} | {partido}: votos = 0")
+            print(f"{num_votacao} | {nome} - ({partido})")
     return
 
 def listar_candidatos(): #LISTA TODOS OS CANDIDATOS DISPONÍVEIS NO BANCO DE DADOS
-    cursor.execute("SELECT nome, num_votacao, partido FROM candidatos ORDER BY name")
+    cursor.execute("SELECT nome, num_votacao, partido FROM candidatos ORDER BY nome")
     for (nome, num_votacao, partido) in cursor.fetchall():
-        print(f"{num_votacao} - {partido} - {nome}")
-    return
+        print(f"{num_votacao}\t{nome}\t{partido}")
 
-def votoRealizado(voto,cpfValido,texto):
+def votoRealizado(voto,cpfValido,texto): # FUNÇÃO QUE CADASTRA O VOTO DO ELEITOR NO BANCO DE DADOS JUNTO DE SEU PROTOCOLO DE VOTAÇÃO
     ger.limpar()
     protocolo = vot.gerador_protocolo(voto)
     print(f"\n\t-- {texto} --")
@@ -100,7 +99,7 @@ def votoRealizado(voto,cpfValido,texto):
     conexao.commit()
     ger.limpar()
 
-def votoNulo(cpfValido,texto):
+def votoNulo(cpfValido,texto): # FUNÇAO QUE CADASTRA O VOTO NULO ESCOLHIDO PELO ELEITOR NO BANCO DE DADOS JUNTO DE SEU PROTOCOLO DE VOTAÇÃO
     ger.limpar()
     cursor.execute("SELECT id_candidato FROM candidatos WHERE nome = 'Voto Nulo'")
     resultado = cursor.fetchone()
@@ -126,7 +125,7 @@ def votoNulo(cpfValido,texto):
     conexao.commit()
     ger.limpar()
 
-def somarVotos():
+def somarVotos(): #SOMA TODOS OS VOTOS DE UM CANDIDATO
     cursor.execute(f"SELECT c.nome, COUNT(r.id_candidato) AS total_votos FROM candidatos c JOIN resultado r ON c.id_candidato = r.id_candidato GROUP BY c.id_candidato, c.nome;")
     soma = cursor.fetchone()
     return soma

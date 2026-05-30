@@ -1,9 +1,10 @@
 import Arquivos_PY.gerenciamento as ger
 import Arquivos_PY.votacao as vot
 
+
 ger.limpar()
-vot.arquivoTXT(2,'apagando log')
-vot.reset_protocolo()
+vot.arquivoTXT(2,'apagando log') # RESETA OS LOGS DE OCORRÊNCIAS DO SISTEMA
+vot.reset_protocolo() # RESETA A LISTA DE PROTOCOLOS E DEIXA O STATUS DE VOTO DOS ELEITORES PARA 0
 opcao=0
 
 while opcao != 3:
@@ -15,13 +16,13 @@ while opcao != 3:
 
     opcao=int(input("\nEscolha uma opção: "))
     match opcao:
-        case 1: #OPÇÃO GERENCIAMENTO
+        case 1:  #OPÇÃO GERENCIAMENTO
             ger.opcao_gerenciamento()
         
-        case 2: #OPÇÃO VOTAÇÃO
+        case 2: # OPÇÃO VOTAÇÃO
             vot.opcao_votacao()
         
-        case 3:
+        case 3: # FINALIZA O PROGRAMA
             input("\nPrograma finalizado, tecle ENTER para fechar.")
             ger.limpar()
         

@@ -1,15 +1,17 @@
 import Arquivos_PY.bancoDeDados as bd
-import random as r
-import Arquivos_PY.validacoes as val
-import os
-import datetime
 import Arquivos_PY.resultado as res
 import Arquivos_PY.criptografia as c
 import Arquivos_PY.descriptografia as d
+import Arquivos_PY.validacoes as val
+import Arquivos_PY.gerenciamento as ger
+
+import random as r
+import os
+import datetime
 permicao = 0
 
 
-def opcao_votacao(): #OPÇÃO VOTAÇÃO
+def opcao_votacao(): # OPÇÃO VOTAÇÃO
     limpar()
     opcao=0
     while opcao != 4:
@@ -37,27 +39,41 @@ def opcao_votacao(): #OPÇÃO VOTAÇÃO
             case _: #OPÇÃO INVÁLIDA
                 limpar()
 
-def abertura(): #OPÇÃO ABERTURA DE SISTEMA DE VOTAÇÃO
+def abertura(): # OPÇÃO ABERTURA DE SISTEMA DE VOTAÇÃO
     limpar()
-    validacao = val.validarEleitor('ABERTURA DE SISTEMA DE VOTAÇÃO', 0)
+    
+    permicao = ger.verificacao_existencia(0) # VERIFICA SE HÁ ELEITORES CADASTRADOS NO SISTEMA
+    if permicao == False: # SE NÃO, A ABERTURA DE VOTAÇÃO É INTERROMPIDA
+        print("\n\t-- ABERTURA DE SISTEMA DE VOTAÇÃO --")
+        input("\n*ERRO: Não há eleitores cadastrados.\n\nAperte ENTER para retornar...")
+        limpar()
+        return
+    
+    permicao = ger.verificacao_existencia(1) # VERIFICA SE HÁ CANDIDATOS CADASTRADOS NO SISTEMA
+    if permicao == False: # SE NÃO, A ABERTURA DE VOTAÇÃO É INTERROMPIDA
+        print("\n\t-- ABERTURA DE SISTEMA DE VOTAÇÃO --")
+        input("\n*ERRO: Não há candidatos cadastrados.\n\nAperte ENTER para retornar...")
+        limpar()
+        return
+        
+    validacao = val.validarEleitor('ABERTURA DE SISTEMA DE VOTAÇÃO', 0) # VERIFICA SE AS INFORMAÇÕES DO ELEITOR ESTÃO CORRETAS (CPF, TITULO, CHAVE DE ACESSO E MESÁRIO)
         
     limpar()
-    if validacao == True:
+    if validacao == True: # SE TUDO ESTIVER CERTO, A ABERTURA É FEITO JUNTO DA ZERÉSIMA
         limpar()
-        arquivoTXT(2,'limpando')
         reset_protocolo()
         print("\t-- ZERÉSIMA -- \n")
         bd.zeresima()
-        input( "\n*ATUALIZAÇÃO: Zerésima realizada com sucesso\n\nAperte ENTER para dar continuidade a votação...")
+        input( "\n*ATUALIZAÇÃO: Zerésima realizada com sucesso.\n\nAperte ENTER para dar continuidade a votação...")
         arquivoTXT(0,'ABERTURA: Votação iniciada com sucesso. Total de votos zerado.')
         votacao()
 
-    else:
+    else: # CASO NÃO, NÃO OCORRE A ABERTURA
         limpar()
         validacao
         return
     
-def votacao(): #OPÇÃO ABRIR SISTEMA DE VOTAÇÃO
+def votacao(): # OPÇÃO ABRIR SISTEMA DE VOTAÇÃO
     opcao=0
     
     while opcao != 2:
@@ -69,26 +85,29 @@ def votacao(): #OPÇÃO ABRIR SISTEMA DE VOTAÇÃO
         opcao=int(input("\nEscolha uma opção: "))
 
         match opcao:
-            case 1: #OPÇÃO VOTAR
+            case 1: # OPÇÃO VOTAR
                 limpar()
-                val.validarEleitor('URNA DE VOTAÇÃO', 1)
+                val.validarEleitor('URNA DE VOTAÇÃO', 1) # VALIDA AS INFORMAÇÕES DO ELEITOR PARA A REALIZAÇÃO DE SEU VOTO
 
-            case 2: #OPÇÃO ENCERRAR VOTAÇÃO
+            case 2: # OPÇÃO ENCERRAR VOTAÇÃO
                 limpar()
-                validacao = val.validarEleitor('FECHANDO URNA DE VOTAÇÃO', 0)
+                validacao = val.validarEleitor('FECHANDO URNA DE VOTAÇÃO', 0) # VALIDA AS INFORMAÇÕES DO ELEITOR PARA O FECHAMENTO DA URNA
 
-                if validacao == True:
+                if validacao == True: # CASO TUDO ESTEJA VÁLIDO, É ENCERRADO E É REGISTRADO UM LOG DE OCORRÊNCIA SOBRE O FECHAMENTO
+                    limpar()
+                    print("\n\t-- FECHANDO URNA DE VOTAÇÃO --")
+                    input("\n*SUCESSO: O sistema de votação foi fechado com sucesso.\n\nAperte ENTER para continuar...")
                     arquivoTXT(0,'ENCERRAMENTO: Votação finalizada com sucesso.')
                     limpar()
                     pass
 
-                else:
+                else: # CASO NÃO, VOLTA PARA A ABA DE VOTAÇÃO
                     votacao()
 
             case _: #OPÇÃO INVÁLIDA
                 limpar()
     
-def auditoria(): #OPÇÃO AUDITORIA DO SISTEMA DE VOTAÇÃO
+def auditoria(): # OPÇÃO AUDITORIA DO SISTEMA DE VOTAÇÃO
     opcao=0
     while opcao != 3:
         limpar()
@@ -100,37 +119,42 @@ def auditoria(): #OPÇÃO AUDITORIA DO SISTEMA DE VOTAÇÃO
         opcao=int(input("\nEscolha uma opção: "))
 
         match opcao:
-            case 1: #OPÇÃO LOG DE OCORRÊNCIAS
+            case 1: # OPÇÃO LOG DE OCORRÊNCIAS
                 limpar()
-                print("\n-- Log de Ocorrências --")
+                print("\n\t-- LOG DE OCORRÊNCIAS --")
                 conteudo = arquivoTXT(1,'lendo')
-                if conteudo:
+
+                if conteudo: # CASO TENHA CONTEÚDO REGISTRADO, ESTE É MOSTRADO
                     print(conteudo)
-                else:
-                    print("\nNenhum log foi registrado.")
+
+                else: # CASO NÃO, UM AVISO É MOSTRADO
+                    print("\n*STATUS: Nenhum log foi registrado.")
                 input("\nAperte ENTER para retornar...")
             
-            case 2: #OPÇÃO PROTOCOLOS DE VOTAÇÃO
+            case 2: # OPÇÃO PROTOCOLOS DE VOTAÇÃO
                 limpar()
-                print("\n-- Protocolos de Votação --\n")
-                bd.cursor.execute("SELECT protocolo_votacao, horario_votacao FROM resultado ORDER BY horario_votacao")
+                print("\n\t-- PROTOCOLOS DE VOTAÇÃO --\n")
+
+                bd.cursor.execute("SELECT protocolo_votacao, horario_votacao FROM resultado ORDER BY horario_votacao") # SELECIONA OS PROTOCOLOS DE VOTAÇÃO DO BANCO DE DADOS
                 protocolos = bd.cursor.fetchall()
-                if protocolos:
+
+                if protocolos: # CASO TENHA PROTOCOLOS REGISTRADOS, ESTES SÃO MOSTRADOS
                     for (protocolo, horario) in protocolos:
-                        protocolo = d.descriptografia(2,protocolo)
+                        protocolo = d.descriptografia(2,protocolo) # O PROTOCOLO É DESCRIPTOGRAFADO PARA SER MOSTRADO
                         print(f"({horario}) - {protocolo} - Voto Confirmado")
-                else:
-                    print("Nenhum protocolo registrado.")
+
+                else: # CASO NÃO, UM AVISO É MOSTRADO
+                    print("*STATUS: Nenhum protocolo registrado.")
                 input("\nAperte ENTER para retornar...")
             
-            case 3: #OPÇÃO VOLTAR
+            case 3: # OPÇÃO VOLTAR
                 limpar()
                 return
             
-            case _: #OPÇÃO INVÁLIDA
+            case _: # OPÇÃO INVÁLIDA
                 limpar()
 
-def resultado(): #OPÇÃO RESULTADO DA VOTAÇÃO
+def resultado(): # OPÇÃO RESULTADO DA VOTAÇÃO
     limpar()
     opcao=0
     while opcao != 5:
@@ -144,29 +168,29 @@ def resultado(): #OPÇÃO RESULTADO DA VOTAÇÃO
         opcao=int(input("\nEscolha uma opção: "))
 
         match opcao:
-            case 1: #OPÇÃO BOLETIM DE URNA
+            case 1: # OPÇÃO BOLETIM DE URNA
                 res.boletimUrna()
 
-            case 2: #OPÇÃO ESTATÍSTICA DE COMPARECIMENTO
+            case 2: # OPÇÃO ESTATÍSTICA DE COMPARECIMENTO
                 res.estatistica_comparecimento()
 
-            case 3: #OPÇÃO VOTOS POR PARTIDO
+            case 3: # OPÇÃO VOTOS POR PARTIDO
                 res.votosPartidos()
 
-            case 4: #OPÇÃO VALIDAÇÃO DE INTEGRIDADE
+            case 4: # OPÇÃO VALIDAÇÃO DE INTEGRIDADE
                 res.valIntegridade()
 
-            case 5: #OPÇÃO INVÁLIDA
+            case 5: # OPÇÃO INVÁLIDA
                 limpar()
                 return
             
-            case _: #OPÇÃO INVÁLIDA
+            case _: # OPÇÃO INVÁLIDA
                 limpar()
 
-def limpar(): #LIMPA O TERMINAL PARA MANTER O SISTEMA ORGANIZADO
+def limpar(): # LIMPA O TERMINAL PARA MANTER O SISTEMA ORGANIZADO
     os.system('cls' if os.name == 'nt' else 'clear')
 
-def arquivoTXT(acao, mensagem): #REGISTRA (acao = 0) OU LÊ (acao = 1) UM ARQUIVO TXT
+def arquivoTXT(acao, mensagem): # REGISTRA (acao = 0), LÊ (acao = 1) OU APAGA (acao = 2) O LOG DE OCORRÊNCIAS
     momento = datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S")
 
     if acao == 0:
@@ -182,7 +206,7 @@ def arquivoTXT(acao, mensagem): #REGISTRA (acao = 0) OU LÊ (acao = 1) UM ARQUIV
         with open(f"Arquivos_TXT/logOcorrencias.txt", "w") as arq:
             arq.write("")
 
-def gerador_protocolo(numero_candidato):
+def gerador_protocolo(numero_candidato): # GERA O PROTOCOLO DE VOTAÇÃO DE ACORDO COM OS REQUISITOS, OU SEJA, 2 LETRAS ALEATORIAS + 26 + NUM_CANDIDATO + 5 DÍGITOS ALEATÓRIOS
     protocolo = 'V'
     for i in range(2):
         alfabeto = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z']
@@ -203,7 +227,7 @@ def gerador_protocolo(numero_candidato):
 
     return protocolo
 
-def reset_protocolo():
+def reset_protocolo(): # LIMPA OS PROTOCOLOS DO BANCO DE DADOS E MUDA O STATUS_VOTO DO ELEITOR PARA 0 A FIM DE RESETAR O SISTEMA DE ELEIÇÃO
     bd.cursor.execute(f"DELETE from resultado")
     bd.conexao.commit()
     bd.cursor.execute(f"UPDATE eleitores SET status_voto = 0")

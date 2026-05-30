@@ -5,46 +5,59 @@ import Arquivos_PY.criptografia as c
 import Arquivos_PY.descriptografia as d
 
 
-
-def validacaoCPF(cpf): #VERIFICA SE O CPF INSERIDO CORRESPONDE AOS REQUISITOS DE VALIDAÇÃO
+def validacaoCPF(cpf): # VERIFICA SE O CPF INSERIDO CORRESPONDE AOS REQUISITOS DE VALIDAÇÃO
     stringCPF=str(cpf)
-    if len(stringCPF) != 11 or stringCPF == stringCPF[0] * 11:
+
+    if len(stringCPF) != 11 or stringCPF == stringCPF[0] * 11: # SE O CPF NÃO POSSUIR 11 DIGITOS OU SER REPETIDO, É REPROVADO
         return False
+    
     DV1=0
     digito=0
+
     for multiplicador in range(10,1,-1):
         DV1+=int(stringCPF[digito])*multiplicador
         digito+=1
+
     DV1%=11
 
     if DV1<2:
         if int(stringCPF[9])!= 0:
             return False
+        
     else:
         if int(stringCPF[9]) != 11 - DV1:
             return False
+        
     DV2= 0 
     digito = 0
+
     for multiplicador in range(11,1,-1):
         DV2+=int(stringCPF[digito])*multiplicador
         digito+=1
+
     DV2%=11
+
     if int(stringCPF[10]) != 11 - DV2:
         return False
     
     return True
 
-def validacaoTituloEleitor(NUMTIT): #VERIFICA SE O TÍTULO DE ELEITOR INSERIDO CORRESPONDE AOS REQUISITOS DE VALIDAÇÃO
-    stringTitEleitor=str(NUMTIT)
+def validacaoTituloEleitor(titulo): # VERIFICA SE O TÍTULO DE ELEITOR INSERIDO CORRESPONDE AOS REQUISITOS DE VALIDAÇÃO
+    stringTitEleitor=str(titulo)
+
     if len(stringTitEleitor) != 12:
         return False
+    
     #DVT 1    
     DVT=0
     digitoT=0
+
     for multiplicador in range(2,10):
         DVT+=int(stringTitEleitor[digitoT])*multiplicador
         digitoT+=1
+
     DVT%=11
+
     if DVT == 10:
         DVT=0
         if stringTitEleitor[8] == '0' and stringTitEleitor[9] == '1' or '2':
@@ -56,10 +69,13 @@ def validacaoTituloEleitor(NUMTIT): #VERIFICA SE O TÍTULO DE ELEITOR INSERIDO C
     #DVT 2
     DVT=0
     digitoT=8
+
     for multiplicador in range(7,10):
         DVT+=int(stringTitEleitor[digitoT])*multiplicador
         digitoT+=1
+
     DVT%=11
+
     if DVT == 10:
         DVT=0
         if stringTitEleitor[8] == '0' and stringTitEleitor[9] == '1' or '2':
@@ -70,7 +86,7 @@ def validacaoTituloEleitor(NUMTIT): #VERIFICA SE O TÍTULO DE ELEITOR INSERIDO C
     
     return True
 
-def validarChaveAcesso(chave): #VERIFICA SE A CHAVE DE ACESSO INSERIDA EXISTE
+def validarChaveAcesso(chave): # VERIFICA SE A CHAVE DE ACESSO INSERIDA EXISTE
     if len(chave) != 7:
         return False
     
@@ -86,6 +102,7 @@ def validarChaveAcesso(chave): #VERIFICA SE A CHAVE DE ACESSO INSERIDA EXISTE
 def validarEleitor(texto, funcao): # VALIDA SE AS INFORMAÇÕES DO ELEITOR ESTÃO CORRETAS DIANTE DO BANCO DE DADOS
     print(f"\n\t-- {texto} --")
 
+    # 1. VALIDAÇÃO DO TÍTULO DE ELEITOR
     titulo=int(input("\nDigite seu título de eleitor: "))
     validacao=validacaoTituloEleitor(titulo)
     while validacao != True:
@@ -94,6 +111,7 @@ def validarEleitor(texto, funcao): # VALIDA SE AS INFORMAÇÕES DO ELEITOR ESTÃ
         titulo=int(input("\nDigite seu título de eleitor: "))
         validacao= validacaoTituloEleitor(titulo)
 
+    # 2. VALIDAÇÃO DO CPF
     ger.limpar()
     bd.cursor.execute("SELECT cpf FROM eleitores WHERE titulo_eleitor = %s", (titulo,))
     resultado = bd.cursor.fetchone()
@@ -111,6 +129,7 @@ def validarEleitor(texto, funcao): # VALIDA SE AS INFORMAÇÕES DO ELEITOR ESTÃ
     
     cpf = c.criptografia(0,validacao)
 
+    #3. VALIDAÇÃO DA CHAVE DE ACESSO
     ger.limpar()
     bd.cursor.execute(f"SELECT chave_acesso FROM eleitores WHERE cpf LIKE '{cpf}%'")
     resultado=bd.cursor.fetchone()
@@ -125,13 +144,18 @@ def validarEleitor(texto, funcao): # VALIDA SE AS INFORMAÇÕES DO ELEITOR ESTÃ
         print(f"\n\t-- {texto} --\n\n*ERRO: A chave de acesso é inválida, tente novamente.")
         chave=input("\nDigite a sua chave de acesso: ")
 
+    #
     bd.cursor.execute(f"SELECT cpf,mesario,status_voto FROM eleitores WHERE cpf LIKE '{cpf}%'")
     resultado=bd.cursor.fetchall()
     
     for cpfValido,mesario, status_voto in resultado:
 
+        # TEMOS 2 TIPOS DE FUNÇÕES: 1. ABRIR E FECHAR O SISTEMA DE VOTAÇÃO; 2. VERIFICAÇÃO DA REALIZAÇÃO DO VOTO E, CASO NÃO, O SEU REGISTRO
+
         if funcao == 0:
             if mesario == 0:
+                ger.limpar()
+                print(f"\n\t-- {texto} --")
                 input("\n*ERRO: Somente mesários podem abrir/encerrar o sistema de votação.\n\nAperte ENTER para continuar...")
                 vot.arquivoTXT(0,'ALERTA: Tentativa de acesso negado.')
                 return False

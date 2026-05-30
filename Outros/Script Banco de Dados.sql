@@ -32,5 +32,3 @@ CREATE TABLE resultado (
     FOREIGN KEY (id_candidato)
         REFERENCES candidatos(id_candidato)
 );
-
-INSERT INTO candidatos (id_candidato, nome, partido, num_votacao) VALUES (1, 'Voto Nulo', 'Nulo', 0);

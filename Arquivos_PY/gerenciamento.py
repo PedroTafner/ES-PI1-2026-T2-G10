@@ -6,7 +6,7 @@ import random as r
 import os
 
 
-def opcao_gerenciamento(): #OPÇÃO GERENCIAMENTO
+def opcao_gerenciamento(): # OPÇÃO GERENCIAMENTO
     opcao=0
     limpar()
     while opcao != 7:
@@ -18,21 +18,24 @@ def opcao_gerenciamento(): #OPÇÃO GERENCIAMENTO
         opcao=int(input("\nEscolha uma opção: "))
 
         match opcao:
-            case 1: #OPÇÃO CADASTRO
+            case 1: # OPÇÃO PARA GERENCIAR INFORMAÇÕES DOS ELEITORES
                 gerenciamento_eleitor()
-            case 2: #OPÇÃO EDIÇÃO DE DADOS
+
+            case 2: #OPÇÃO PARA GERENCIAR INFORMAÇÕES DOS CANDIDATOS
                 gerenciamento_candidato()
+
             case 3: #OPÇÃO VOLTAR PARA O MENU PRINCIPAL
                 limpar()
                 return
+            
             case _: #OPÇÃO INVÁLIDA
                 limpar()
 
-def gerenciamento_eleitor():
+def gerenciamento_eleitor(): # OPÇÃO GERENCIAMENTO DO ELEITOR
     opcao=0
     limpar()
     while opcao != 7:
-        print("\n\t-- GERENCIAMENTO DO ELEITOR--")
+        print("\n\t-- GERENCIAMENTO DO ELEITOR --")
         print("\n1 - Cadastro")
         print("2 - Edição de dados do Eleitor")
         print("3 - Remoção de Eleitor")
@@ -45,21 +48,27 @@ def gerenciamento_eleitor():
         match opcao:
             case 1: #OPÇÃO CADASTRO
                 cadastro_eleitor()
-            case 2: #OPÇÃO EDIÇÃO DE DADOS
+
+            case 2: #OPÇÃO EDIÇÃO DE DADOS DO ELEITOR
                 edicao_eleitor()
+
             case 3: #OPÇÃO REMOÇÃO DE ELEITOR
                 retirar_eleitor()
+
             case 4: #OPÇÃO BUSCA POR ELEITOR
                 busca_eleitores()
+
             case 5: #OPÇÃO LISTAGEM DE ELEITOR
                 listagem_eleitores()
+
             case 6: #OPÇÃO VOLTAR PARA O MENU PRINCIPAL
                 limpar()
                 return
+            
             case _: #OPÇÃO INVÁLIDA
                 limpar()
             
-def gerenciamento_candidato():
+def gerenciamento_candidato(): # OPÇÃO GERENCIAMENTO DO CANDIDATO
     opcao=0
     limpar()
     while opcao != 7:
@@ -73,44 +82,52 @@ def gerenciamento_candidato():
         opcao=int(input("\nEscolha uma opção: "))
 
         match opcao:
-            case 1: #OPÇÃO ADICIONAR CANDIDATO
+            case 1: # OPÇÃO ADICIONAR CANDIDATO
                 add_candidato()
-            case 2:
+
+            case 2: # OPÇÃO DE REMOÇÃO DO CANDIDATO
                 remocao_candidato()
-            case 3:
+
+            case 3: # OPÇÃO DE BUSCA DE CANDIDATOS
                 buscar_candidato()
-            case 4:
+
+            case 4: # OPÇÃO DE LISTAGEM DE TODOS OS CANDIDATOS REGISTRADOS
                 list_candidatos()
-            case 5: #OPÇÃO VOLTAR PARA O MENU PRINCIPAL
+
+            case 5: #OPÇÃO VOLTAR PARA O MENU GERENCIAMENTO
                 limpar()
                 return
+            
             case _: #OPÇÃO INVÁLIDA
                 limpar()
 
-def cadastro_eleitor(): #OPÇÃO CADASTRO
+def cadastro_eleitor(): # OPÇÃO CADASTRO DO ELEITOR
     limpar()
     print("\n\t-- CADASTRANDO ELEITOR --")
     nome=str(input("\nDigite seu Nome: "))
     partes_nome = nome.strip().split()
 
-    while len(partes_nome) < 2:
+    # 1. NOME
+    while len(partes_nome) < 2: # CASO NÃO TENHA 2 NOMES OU NOME E SOBRENOME, QUE É NECESSÁRIO PARA A FORMAÇÃO DA CHAVE DE ACESSO, DA ERRO E PEDE DENOVO
         limpar()
         print("\n\t-- CADASTRANDO ELEITOR --\n\n*ERRO: O nome deve conter pelo menos nome e sobrenome, tente novamente.")
         nome=str(input("\nDigite seu Nome: "))
         partes_nome = nome.strip().split()
     
+    # 2. TITULO DE ELEITOR
     limpar()
     print("\n\t-- CADASTRANDO ELEITOR --")
     titulo=int(input("\nDigite seu Título de Eleitor: "))
 
-    bd.cursor.execute(f"SELECT id_eleitor FROM eleitores WHERE titulo_eleitor = {titulo}")
-    resultado = bd.cursor.fetchone()
+    bd.cursor.execute(f"SELECT id_eleitor FROM eleitores WHERE titulo_eleitor = {titulo}") # VERIFICA SE O TITULO DE ELEITOR NÃO ESTÁ SENDO USADO POR OUTRA PESSOA
+    resultado = bd.cursor.fetchall()
+    
     if resultado:
         aprovacao = False
     else:
-        aprovacao=v.validacaoTituloEleitor(titulo)
+        aprovacao=v.validacaoTituloEleitor(titulo) # FAZ A VALIDAÇÃO DO TÍTULO DE ELEITOR
 
-    while aprovacao != True:
+    while aprovacao != True: # CASO O TÍTULO NÃO SEJA VÁLIDO É PEDIDO NOVAMENTE
         limpar()
         print("\n\t-- CADASTRANDO ELEITOR --\n\n*ERRO: O Título de Eleitor informado não é válido, tente novamente.")
         titulo=int(input("\nDigite seu Título de eleitor: "))
@@ -121,35 +138,45 @@ def cadastro_eleitor(): #OPÇÃO CADASTRO
         else:
             aprovacao=v.validacaoTituloEleitor(titulo)
     
+    # 3. CPF
     limpar()
     print("\n\t-- CADASTRANDO ELEITOR --")
     cpf=int(input("\nDigite seu CPF, sem pontuação: "))
 
-    cpf_crip=c.criptografia(0,cpf)
-    bd.cursor.execute(f"SELECT id_eleitor FROM eleitores WHERE cpf = '{cpf_crip}'")
-    resultado = bd.cursor.fetchone()
-    if resultado:
-        aprovacao=False
+    if len(str(cpf)) != 11:
+        aprovacao = False
     else:
-        aprovacao=v.validacaoCPF(cpf)
-
-    while aprovacao != True:
-        limpar()
-        print("\n\t-- CADASTRANDO ELEITOR --\n\n*ERRO: O CPF informado não é válido, tente novamente.")
-        cpf=int(input("\nDigite seu CPF, sem pontuação: "))
-        bd.cursor.execute(f"SELECT id_eleitor FROM eleitores WHERE cpf = '{cpf}'")
+        cpf_crip=c.criptografia(0,cpf)
+        bd.cursor.execute(f"SELECT id_eleitor FROM eleitores WHERE cpf = '{cpf_crip}'") # VERIFICA SE O CPF NÃO ESTÁ SENDO USADO
         resultado = bd.cursor.fetchone()
         if resultado:
             aprovacao=False
         else:
-            aprovacao=v.validacaoCPF(cpf)
+            aprovacao=v.validacaoCPF(cpf) # CASO NÃO, FAZ A SUA VALIDAÇÃO
+
+    while aprovacao != True: # CASO SIM, INFORMA O ERRO E PEDE DENOVO
+        limpar()
+        print("\n\t-- CADASTRANDO ELEITOR --\n\n*ERRO: O CPF informado não é válido, tente novamente.")
+        cpf=int(input("\nDigite seu CPF, sem pontuação: "))
+        if len(str(cpf)) != 11:
+            aprovacao = False
+        else:
+            cpf = c.criptografia(0,cpf)
+            bd.cursor.execute(f"SELECT id_eleitor FROM eleitores WHERE cpf = '{cpf}'")
+            resultado = bd.cursor.fetchone()
+            cpf = d.descriptografia(0,cpf)
+            if resultado:
+                aprovacao=False
+            else:
+                aprovacao=v.validacaoCPF(cpf)
         
+    # 4. Mesário
     limpar()
     print("\n\t-- CADASTRANDO ELEITOR --")
-    mesario=str(input("\nVocê atuará como mesário? (s/n): "))
+    mesario=str(input("\nVocê atuará como mesário? (s/n): ")) # PERGUNTA SE O ELEITOR QUER SER MESÁRIO OU NÃO
     mesario=mesario.lower()
     
-    while mesario != "s" and mesario != "n":
+    while mesario != "s" and mesario != "n": # CASO O USUÁRIO NÃO RESPONDA CORRETAMENTE, UM ERRO APARECE E A PERGUNTA É REPETIDA
         limpar()
         print("\n\t-- CADASTRANDO ELEITOR --\n\n*ERRO: Digite 's' para sim e 'n' para não, tente novamente.")
         mesario=str(input("\nVocê atuará como mesário? (s/n): "))
@@ -162,25 +189,27 @@ def cadastro_eleitor(): #OPÇÃO CADASTRO
     
     limpar()
     print("\n\t-- CADASTRO ELEITOR --")
-    chave_acesso = gerar_chave_acesso(nome)
-    print("\n*ATUALIZAÇÃO: Cadastro realizado com sucesso.")
+    chave_acesso = gerar_chave_acesso(nome) # GERA A CHAVE DE ACESSO
     print(f"\nSua chave de acesso é {chave_acesso}.")
+    print("*ATUALIZAÇÃO: Cadastro realizado com sucesso.")
 
-    cpf = c.criptografia(0,cpf)
-    chave_acesso = c.criptografia(1,chave_acesso)
+    cpf = c.criptografia(0,cpf) # CRIPTOGRAFA O CPF
+    chave_acesso = c.criptografia(1,chave_acesso) # CRIPTOGRAFA A CHAVE DE ACESSO
 
     input("\nAperte ENTER para prosseguir...")
-    bd.inserir_eleitores(nome,titulo,cpf,mesario,chave_acesso)
+    bd.inserir_eleitores(nome,titulo,cpf,mesario,chave_acesso) # INSERE TUDO NO BANCO DE DADOS
     limpar()
 
-def gerar_chave_acesso(nome): #GERAR CHAVE DE ACESSO
-    partes_nome = nome.strip().split()
-    if len(partes_nome) < 2:
+def gerar_chave_acesso(nome): # GERAR CHAVE DE ACESSO
+    partes_nome = nome.strip().split() # DIVIDE O NOME EM PARTES
+
+    if len(partes_nome) < 2: # CASO NÃO TENHA 2 NOMES OU NOME+SOBRENOME, UM ERRO É GERADO
         raise ValueError("O nome deve conter pelo menos nome e sobrenome.")
     
-    primeiro_nome = partes_nome[0]
-    segundo_nome = partes_nome[1]
+    primeiro_nome = partes_nome[0] # PRIMEIRO NOME
+    segundo_nome = partes_nome[1] # SEGUNDO NOME OU SOBRENOME
 
+    # GERANDO A CHAVE DE ACESSO DE ACORDO COM OS REQUISITOS
     letras = (
         primeiro_nome[:2].upper() +
         segundo_nome[0].upper()
@@ -190,102 +219,94 @@ def gerar_chave_acesso(nome): #GERAR CHAVE DE ACESSO
     for _ in range(4):
         numeros += str(r.randint(0, 9))
 
-
+    # FORMAÇÃO DA CHAVE DE ACESSO
     chave_acesso = letras + numeros
 
     return chave_acesso
 
-def edicao_eleitor(): #OPÇÃO QUE POSSIBILITA A MUDANÇA DE INFORMAÇÕES DO ELEITOR
+def edicao_eleitor():  # OPÇÃO QUE POSSIBILITA A MUDANÇA DE INFORMAÇÕES DO ELEITOR
     limpar()
     print("\n\t-- EDIÇÃO DE DADOS DO ELEITOR --")
-    chave_acesso=input("\nDigite a chave de acesso do eleitor: ")
-    validacao = v.validarChaveAcesso(chave_acesso)
 
-    while validacao == False:
-        limpar()
-        print("\n\t-- EDIÇÃO DE DADOS DO ELEITOR --\n\n*ERRO: Chave de acesso inexistente, tente novamente.")
+    permicao = verificacao_existencia(0)
+
+    if permicao == True:
         chave_acesso=input("\nDigite a chave de acesso do eleitor: ")
         validacao = v.validarChaveAcesso(chave_acesso)
 
-    chave_acesso = c.criptografia(1,chave_acesso)
-    limpar()
-    print("\n\t-- EDIÇÃO DE DADOS DO ELEITOR --")
+        while validacao == False:
+            limpar()
+            print("\n\t-- EDIÇÃO DE DADOS DO ELEITOR --\n\n*ERRO: Chave de acesso inexistente, tente novamente.")
+            chave_acesso=input("\nDigite a chave de acesso do eleitor: ")
+            validacao = v.validarChaveAcesso(chave_acesso)
 
-    bd.cursor.execute(f"SELECT nome FROM eleitores WHERE chave_acesso = '{chave_acesso}'")
+        chave_acesso = c.criptografia(1,chave_acesso)
+        limpar()
+        print("\n\t-- EDIÇÃO DE DADOS DO ELEITOR --")
 
-    for nome in bd.cursor.fetchall():
-        print(f"\n\t| Usuário encontrado - {nome[0]} |\nSelecione o que você deseja alterar no seu cadastro:\n\n1 - Nome\n2 - CPF\n3 - Título de Eleitor\n4 - Mesário\n5 - Retornar ao menu Gerenciamento")
-        opcao=int(input("\nEscolha uma opção: "))
-        
-        match opcao:
-            case 1: #ALTERA O NOME DO ELEITOR
-                limpar()
-                print("\n\t-- EDIÇÃO DE DADOS DO ELEITOR --")
-                alteracao = str(input("\nDigite o novo nome: "))
-                
-                partes_nome = alteracao.strip().split()
-                while len(partes_nome) < 2:
-                    limpar()
-                    print("\n\t-- EDIÇÃO DE DADOS DO ELEITOR --\n\n*ERRO: O nome deve conter pelo menos nome e sobrenome, tente novamente.")
-                    alteracao=str(input("\nDigite seu Nome: "))
-                    partes_nome = alteracao.strip().split()
+        bd.cursor.execute(f"SELECT nome FROM eleitores WHERE chave_acesso = '{chave_acesso}'")
 
-                alteracao_mysql(1 , alteracao, chave_acesso)
-                limpar()
-                input("\n\t-- EDIÇÃO DE DADOS DO ELEITOR --\n\n*ATUALIZAÇÃO: Nome alterado com sucesso.\n\nAperte ENTER para prosseguir...")
-                limpar()
-
-            case 2: # ALTERA O CPF DO ELEITOR
-                validacao = False
-                while validacao == False:
+        for nome in bd.cursor.fetchall():
+            print(f"\n\t| Usuário encontrado - {nome[0]} |\nSelecione o que você deseja alterar no seu cadastro:\n\n1 - Nome\n2 - CPF\n3 - Título de Eleitor\n4 - Mesário\n5 - Retornar ao menu Gerenciamento")
+            opcao=int(input("\nEscolha uma opção: "))
+            
+            match opcao:
+                case 1: #ALTERA O NOME DO ELEITOR
                     limpar()
                     print("\n\t-- EDIÇÃO DE DADOS DO ELEITOR --")
-                    cpf_novo = int(input("\nDigite o novo CPF: "))
+                    alteracao = str(input("\nDigite o novo nome: "))
+                    
+                    partes_nome = alteracao.strip().split()
+                    while len(partes_nome) < 2:
+                        limpar()
+                        print("\n\t-- EDIÇÃO DE DADOS DO ELEITOR --\n\n*ERRO: O nome deve conter pelo menos nome e sobrenome, tente novamente.")
+                        alteracao=str(input("\nDigite seu Nome: "))
+                        partes_nome = alteracao.strip().split()
 
-                    while len(str(cpf_novo)) != 11:
+                    alteracao_mysql(1 , alteracao, chave_acesso)
+                    limpar()
+                    input("\n\t-- EDIÇÃO DE DADOS DO ELEITOR --\n\n*ATUALIZAÇÃO: Nome alterado com sucesso.\n\nAperte ENTER para prosseguir...")
+                    limpar()
+
+                case 2: # ALTERA O CPF DO ELEITOR
+                    validacao = False
+                    while validacao == False:
                         limpar()
                         print("\n\t-- EDIÇÃO DE DADOS DO ELEITOR --")
-                        print("\n*ERRO: O CPF precisa conter 11 dígitos.")
                         cpf_novo = int(input("\nDigite o novo CPF: "))
 
-                    cpf_crip = c.criptografia(0, cpf_novo)
-                    bd.cursor.execute(f"SELECT id_eleitor FROM eleitores WHERE cpf = '{cpf_crip}'")
-                    resultado = bd.cursor.fetchone()
+                        while len(str(cpf_novo)) != 11:
+                            limpar()
+                            print("\n\t-- EDIÇÃO DE DADOS DO ELEITOR --")
+                            print("\n*ERRO: O CPF precisa conter 11 dígitos.")
+                            cpf_novo = int(input("\nDigite o novo CPF: "))
 
-                    if resultado:
-                        limpar()
-                        print("\n\t-- EDIÇÃO DE DADOS DO ELEITOR --")
-                        print("\n*ERRO: Este CPF já está sendo usado.")
-                        input("\nPressione Enter para tentar novamente...")
-                        continue
+                        cpf_crip = c.criptografia(0, cpf_novo)
+                        bd.cursor.execute(f"SELECT id_eleitor FROM eleitores WHERE cpf = '{cpf_crip}'")
+                        resultado = bd.cursor.fetchone()
 
-                    else:
-                        validacao = v.validacaoCPF(cpf_novo)
-                        if validacao == False:
-                            print("\n*ERRO: Este CPF é inválido.")
-                            input("\nPressione Enter para tentar novamente...")
+                        if resultado:
+                            limpar()
+                            print("\n\t-- EDIÇÃO DE DADOS DO ELEITOR --")
+                            print("\n*ERRO: Este CPF já está sendo usado.")
+                            input("\nPressione Enter para retornar...")
                             continue
-                            
-                alteracao_mysql(2, cpf_crip, chave_acesso)
-                limpar()
-                input("\n\t-- EDIÇÃO DE DADOS DO ELEITOR --\n\n*ATUALIZAÇÃO: CPF alterado com sucesso.\n\nAperte ENTER para prosseguir...")
-                limpar()
 
-            case 3: # ALTERA O TÍTULO DE ELEITOR
-                limpar()
-                print("\n\t-- EDIÇÃO DE DADOS DO ELEITOR --")
-                alteracao = int(input("\nDigite o novo título de eleitor: "))
-
-                bd.cursor.execute(f"SELECT id_eleitor FROM eleitores WHERE titulo_eleitor = {alteracao}")
-                resultado = bd.cursor.fetchone() 
-                if resultado:
-                    validacao = False
-                else:
-                    validacao=v.validacaoTituloEleitor(alteracao)
-
-                while validacao == False:
+                        else:
+                            validacao = v.validacaoCPF(cpf_novo)
+                            if validacao == False:
+                                print("\n*ERRO: Este CPF é inválido.")
+                                input("\nPressione Enter para tentar novamente...")
+                                continue
+                                
+                    alteracao_mysql(2, cpf_crip, chave_acesso)
                     limpar()
-                    print("\n\t-- EDIÇÃO DE DADOS DO ELEITOR --\n\n*ERRO: Este título de eleitor é inválido ou já está sendo usado, tente novamente.")
+                    input("\n\t-- EDIÇÃO DE DADOS DO ELEITOR --\n\n*ATUALIZAÇÃO: CPF alterado com sucesso.\n\nAperte ENTER para prosseguir...")
+                    limpar()
+
+                case 3: # ALTERA O TÍTULO DE ELEITOR
+                    limpar()
+                    print("\n\t-- EDIÇÃO DE DADOS DO ELEITOR --")
                     alteracao = int(input("\nDigite o novo título de eleitor: "))
 
                     bd.cursor.execute(f"SELECT id_eleitor FROM eleitores WHERE titulo_eleitor = {alteracao}")
@@ -295,42 +316,64 @@ def edicao_eleitor(): #OPÇÃO QUE POSSIBILITA A MUDANÇA DE INFORMAÇÕES DO EL
                     else:
                         validacao=v.validacaoTituloEleitor(alteracao)
 
-                alteracao_mysql(3, alteracao, chave_acesso)
-                limpar()
-                input("\n\t-- EDIÇÃO DE DADOS DO ELEITOR --\n\n*ATUALIZAÇÃO: Título de eleitor alterado com sucesso.\n\nAperte ENTER para prosseguir...")
-                limpar()
+                    while validacao == False:
+                        limpar()
+                        print("\n\t-- EDIÇÃO DE DADOS DO ELEITOR --\n\n*ERRO: Este título de eleitor é inválido ou já está sendo usado, tente novamente.")
+                        alteracao = int(input("\nDigite o novo título de eleitor: "))
 
-            case 4: #ALTERA A OPÇÃO DE SER MESÁRIO DO ELEITOR
-                limpar()
-                print("\n\t-- EDIÇÃO DE DADOS DO ELEITOR --")
-                alteracao = str(input("\nVocê deseja atuar como mesário? (s/n): "))
-                while alteracao != "s" and alteracao != "n":
+                        bd.cursor.execute(f"SELECT id_eleitor FROM eleitores WHERE titulo_eleitor = {alteracao}")
+                        resultado = bd.cursor.fetchone() 
+                        if resultado:
+                            validacao = False
+                        else:
+                            validacao=v.validacaoTituloEleitor(alteracao)
+
+                    alteracao_mysql(3, alteracao, chave_acesso)
                     limpar()
-                    print("\n\t-- EDIÇÃO DE DADOS DO ELEITOR--\n\n*ERRO: Digite 's' para sim e 'n' para não, tente novamente.")
-                    alteracao=str(input("\nVocê deseja atuar como mesário? (s/n): "))
-                if alteracao == "s":
-                    alteracao = 1
-                else:
-                    alteracao = 0
-                alteracao_mysql(4, alteracao, chave_acesso)
-                limpar()
-                input("\n\t-- EDIÇÃO DE DADOS DO ELEITOR --\n\n*ATUALIZAÇÃO: Opção Mesário alterado com sucesso.\n\nAperte ENTER para prosseguir...")
-                limpar()
+                    input("\n\t-- EDIÇÃO DE DADOS DO ELEITOR --\n\n*ATUALIZAÇÃO: Título de eleitor alterado com sucesso.\n\nAperte ENTER para prosseguir...")
+                    limpar()
 
-            case 5: #VOLTA PARA A ABA GERENCIAMENTO
-                limpar()
-                opcao_gerenciamento()
-            
-            case _:
-                limpar()
+                case 4: #ALTERA A OPÇÃO DE SER MESÁRIO DO ELEITOR
+                    limpar()
+                    print("\n\t-- EDIÇÃO DE DADOS DO ELEITOR --")
+                    alteracao = str(input("\nVocê deseja atuar como mesário? (s/n): "))
+                    alteracao=alteracao.lower()
 
-def alteracao_mysql(opc, mudanca, chave_acesso): #FUNÇÃO FEITA PARA FACILITAR A TROCA DE DADOS DO ELEITOR
+                    while alteracao != "s" and alteracao != "n":
+                        limpar()
+                        print("\n\t-- EDIÇÃO DE DADOS DO ELEITOR--\n\n*ERRO: Digite 's' para sim e 'n' para não, tente novamente.")
+                        alteracao=str(input("\nVocê deseja atuar como mesário? (s/n): "))
+                        alteracao=alteracao.lower()
+
+                    if alteracao == "s":
+                        alteracao = 1
+
+                    else:
+                        alteracao = 0
+
+                    alteracao_mysql(4, alteracao, chave_acesso)
+                    limpar()
+                    input("\n\t-- EDIÇÃO DE DADOS DO ELEITOR --\n\n*ATUALIZAÇÃO: Opção Mesário alterado com sucesso.\n\nAperte ENTER para prosseguir...")
+                    limpar()
+
+                case 5: #VOLTA PARA A ABA GERENCIAMENTO
+                    limpar()
+                    opcao_gerenciamento()
+                
+                case _:
+                    limpar()
+    else:
+        input("\n*ERRO: Não há eleitores cadastrados.\n\nAperte ENTER para retornar...")
+        limpar()
+        return
+
+def alteracao_mysql(opc, mudanca, chave_acesso): # FUNÇÃO FEITA PARA FACILITAR A TROCA DE DADOS DO ELEITOR
     match opc:
         case 1: #nome
             bd.cursor.execute(f"UPDATE eleitores SET nome = '{mudanca}' WHERE chave_acesso = '{chave_acesso}'")
             bd.conexao.commit()
         case 2: #cpf
-            bd.cursor.execute(f"UPDATE eleitores SET cpf = {mudanca} WHERE chave_acesso = '{chave_acesso}'")
+            bd.cursor.execute(f"UPDATE eleitores SET cpf = '{mudanca}' WHERE chave_acesso = '{chave_acesso}'")
             bd.conexao.commit()
         case 3: #titulo
             bd.cursor.execute(f"UPDATE eleitores SET titulo_eleitor = {mudanca} WHERE chave_acesso = '{chave_acesso}'")
@@ -342,54 +385,86 @@ def alteracao_mysql(opc, mudanca, chave_acesso): #FUNÇÃO FEITA PARA FACILITAR 
 def retirar_eleitor(): # REMOVE CERTO ELEITOR DE UM SISTEMA DE VOTAÇÃO
     limpar()
     remocao=False
-    while remocao == False:
-        print(f"\n\t-- REMOÇÃO ELEITOR --\n")
-        chave = input(f"Digite a chave de acesso do eleitor: ")
-        chave = c.criptografia(1,chave)
-        remocao = bd.removerEleitor(chave)
-        while remocao <= 0:
-            limpar()
-            print(f"\n\t-- REMOÇÃO ELEITOR --")
-            print("\n*ERRO: Eleitor não encontrado.")
-            continuar = input("\nDeseja tentar novamente? (s/n): ")
-            continuar=continuar.lower()
-            while continuar != "s" and continuar != "n":
+    print(f"\n\t-- REMOÇÃO ELEITOR --\n")
+
+    permicao = verificacao_existencia(0)
+
+    if permicao == True:
+        while remocao == False:
+            chave = input(f"Digite a chave de acesso do eleitor: ")
+            chave = c.criptografia(1,chave)
+            remocao = bd.removerEleitor(chave)
+
+            if remocao <= 0:
                 limpar()
-                print(f"\n\t-- REMOÇÃO ELEITOR --\n\n*ERRO: Digite 's' para sim e 'n' para não, tente novamente.")
+                print(f"\n\t-- REMOÇÃO ELEITOR --")
                 print("\n*ERRO: Eleitor não encontrado.")
                 continuar = input("\nDeseja tentar novamente? (s/n): ")
-                continuar = continuar.lower()
-                                
-            if continuar == "s":
-                retirar_eleitor() 
+                continuar=continuar.lower()
+                while continuar != "s" and continuar != "n":
+                    limpar()
+                    print(f"\n\t-- REMOÇÃO ELEITOR --\n\n*ERRO: Digite 's' para sim e 'n' para não, tente novamente.")
+                    print("\n*ERRO: Eleitor não encontrado.")
+                    continuar = input("\nDeseja tentar novamente? (s/n): ")
+                    continuar = continuar.lower()
+                                    
+                if continuar == "s":
+                    limpar()
+                    continue
+                else:
+                    input("\nAperte ENTER para retornar...")
+                    limpar()
+                    return
+        
             else:
-                remocao=True
+                limpar()
+                print(f"\n\t-- REMOÇÃO ELEITOR --")
+                print("\n*ATUALIZAÇÃO: Eleitor removido com sucesso.\n")
+                remocao = True
+                
+        input("Aperte ENTER para continuar...")
+        limpar()
+        return
     
-        if remocao > 0:
-            print("\n*ATUALIZAÇÃO: Eleitor removido com sucesso.")
-            remocao = True
-            
-    input("Aperte ENTER para continuar...")
-    return
+    else:
+        input("*ERRO: Não há eleitores cadastrados.\n\nAperte ENTER para retornar...")
+        limpar()
+        return
 
-def busca_eleitores(): #BUSCA OS ELEITORES CADASTRADOS
+def busca_eleitores(): # BUSCA OS ELEITORES CADASTRADOS
     limpar()
     print("\n\t-- BUSCA DE ELEITOR --")
-    nomeEleitor = input("\nDigite o Nome do eleitor que deseja buscar: ")
-    print("")
-    resultadoBusca = bd.buscarEleitor(nomeEleitor)
-    if resultadoBusca == None:
-        print("Mais nenhum eleitor encontrado")
-    else:
-        print(resultadoBusca)
+
+    permicao = verificacao_existencia(0)
+
+    if permicao == True: # CASO SIM, INICIA A BUSCA
+        nomeEleitor = input("\nDigite o Nome do eleitor que deseja buscar: ")
+        print("")
+        resultadoBusca = bd.buscarEleitor(nomeEleitor) # BUSCA NO BANCO DE DADOS TODOS OS ELEITORES COM O NOME DADO
+
+        if resultadoBusca == None: # SE NÃO HOUVER NENHUM 
+            print("Mais nenhum eleitor encontrado")
+
+        else:
+            print(resultadoBusca) # CASO TENHA
+    
+    else: # CASO NÃO, AVISA
+        print("\n*ERRO: Não há eleitores registrados.")
+
     input("\nAperte ENTER para continuar...")
     limpar()
 
 def listagem_eleitores(): # FUNÇÃO FEITA PARA LISTAR OS ELEITORES 
     limpar()
     print(f"\n\t-- LISTAGEM DOS ELEITORES --\n")
-    bd.listar_usuarios()
 
+    permicao = verificacao_existencia(0)
+
+    if permicao == True:
+        bd.listar_usuarios() # FUNÇÃO QUE LISTA TODOS OS ELEITORES NO BANCO DE DADOS
+
+    else:
+        print("*ERRO: Não há eleitores cadastrados.")
     input("\nAperte ENTER para continuar...")
     limpar()
 
@@ -402,12 +477,13 @@ def add_candidato(): # ADICIONA CANDIDATOS AO SISTEMA
     limpar()
     print("\n\t-- CADASTRO DE CANDIDATOS --\n")
     num_vot=int(input("Digite o número de votação do candidato: "))
-    bd.cursor.execute(f"SELECT id_candidato FROM candidatos WHERE num_votacao = {num_vot}")
+    bd.cursor.execute(f"SELECT id_candidato FROM candidatos WHERE num_votacao = {num_vot}") # VERIFICA SE O NÚMERO DE VOTAÇÃO JÁ ESTÁ SENDO USADO OU NÃO
     resultado=bd.cursor.fetchone()
-    while len(str(num_vot)) != 2 or resultado:
+
+    while resultado: # SE O NÚMERO DE VOTAÇÃO ESTIVER SENDO USADO APARECE UM ERRO E PEDE NOVAMENTE UM NÚMERO
         limpar()
         print("\n\t-- CADASTRO DE CANDIDATOS --")
-        print("\n*ERRO: Número de votação inválida, tente novamente.")
+        print("\n*ERRO: Número de votação em uso, tente novamente.")
         num_vot=int(input("\nDigite o número de votação do candidato: "))
         bd.cursor.execute(f"SELECT id_candidato FROM candidatos WHERE num_votacao = {num_vot}")
         resultado=bd.cursor.fetchone()
@@ -415,78 +491,129 @@ def add_candidato(): # ADICIONA CANDIDATOS AO SISTEMA
     limpar()
     print("\n\t-- CADASTRO DE CANDIDATOS --\n")
     partido=input("Digite o partido do candidato: ")
-    bd.inserir_candidato(nome,num_vot,partido)
+    bd.inserir_candidato(nome,num_vot,partido) # CADASTRA NO BANCO DE DADOS O NOME DO CANDIDATO, O SEU NÚMERO E PARTIDO
 
     limpar()
     print("\n\t-- CADASTRO DE CANDIDATOS --\n")
     input("*ATUALIZAÇÃO: O candidato foi cadastrado com sucesso!\n\nAperte ENTER para retornar...")
     limpar()
 
-def limpar(): #LIMPA O TERMINAL PARA MANTER O SISTEMA ORGANIZADO
+def limpar(): # LIMPA O TERMINAL PARA MANTER O SISTEMA ORGANIZADO
     os.system('cls' if os.name == 'nt' else 'clear')
 
-def list_candidatos(): 
+def list_candidatos(): # FUNÇÃO QUE VISA ORDENAR TODOS OS CANDIDATOS REGISTRADOS NO BANCO DE DADOS POR ORDEM ALFABÉTICAs
     limpar()
-    bd.cursor.execute("SELECT id_candidato, nome, partido, num_votacao FROM candidatos")
-    resultado=bd.cursor.fetchall()
+    print("\n\t-- LISTAGEM DOS CANDIDATOS --\n")
 
-    print("\n\t-- Lista de Candidatos --\n")
+    permicao = verificacao_existencia(1)
 
-    for candidato in resultado:
-        if candidato[1] != 'Voto Nulo':
-            print(f"Nome: {candidato [1]} | Partido: {candidato[2]} | Número: {candidato[3]}")
+    if permicao == True:
+        bd.cursor.execute("SELECT id_candidato, nome, partido, num_votacao FROM candidatos ORDER BY nome")
+        resultado=bd.cursor.fetchall()
+
+        for candidato in resultado:
+            if candidato[1] != 'Voto Nulo':
+                print(f"Nome: {candidato [1]}   Partido: {candidato[2]}   Nº: {candidato[3]}")
+
+    else:
+        print("*ERRO: Não há candidatos registrados.")
     
     input("\nAperte ENTER para retornar...")
-    opcao_gerenciamento()
+    limpar()
+    return
 
-def buscar_candidato():
+def buscar_candidato(): # FUNÇÃO PARA BUSCAR UM CANDIDATO PELO SEU NÚMERO DE VOTAÇÃO
     limpar()
     print("\n\t-- BUSCA DE CANDIDATOS --")
-    numero=int(input("\nDigite o número da votação: "))
 
-    bd.cursor.execute(f"SELECT nome, partido FROM candidatos WHERE num_votacao = {numero}")
+    permicao = verificacao_existencia(1)
 
-    resultado=bd.cursor.fetchall()
+    if permicao == True:
+        numero=int(input("\nDigite o número da votação: "))
 
-    limpar()
-    print("\n\t-- BUSCA DE CANDIDATOS --\n")
+        bd.cursor.execute(f"SELECT nome, partido FROM candidatos WHERE num_votacao = {numero}")
 
-    if resultado:
-        for nome, partido in resultado:
-            print(f"Nome: {nome} | Partido: {partido}")
-            
+        resultado=bd.cursor.fetchall()
+
+        limpar()
+        print("\n\t-- BUSCA DE CANDIDATOS --\n")
+
+        if resultado: # CASO EXISTA CANDIDATO COM TAL NÚMERO, ELE É MOSTRADO
+            for nome, partido in resultado:
+                print(f"Nome: {nome}\tPartido: {partido}")
+                
+        else: # CASO NÃO APARECE UMA MENSAGEM DIZENDO QUE NÃO HÁ
+            print("*ERRO: Candidato não encontrado.")
+
+        input("\nAperte ENTER para retornar...")
+        limpar()
+        return
+    
     else:
-        print("Candidato não encontrado.")
+        input("\n*ERRO: Não há candidatos registrados.\n\nAperte ENTER para retornar...")
+        limpar()
+        return
 
-    input("\nAperte ENTER para retornar...")
-    opcao_gerenciamento()
-
-def remocao_candidato():
+def remocao_candidato(): # FUNÇÃO PARA REMOVER UM CANDIDATO DO BANCO DE DADOS
     limpar()
     print("\n\t-- REMOÇÃO DE CANDIDATOS --")
-    num_candidato = input("\nDigite o número do candidato que deseja deletar: ")
-    confirmacao = input(f"Tem certeza que deseja deletar o candidato nº {num_candidato}? (s/n): ")
-    confirmacao = confirmacao.lower()
 
-    while confirmacao != "s" and confirmacao != "n":
-        limpar()
-        print("\n\t-- REMOÇÃO DE CANDIDATOS --\n\n*ERRO: Digite 's' para sim e 'n' para não, tente novamente.")
+    permicao = verificacao_existencia(1)
+
+    if permicao == True:
         num_candidato = input("\nDigite o número do candidato que deseja deletar: ")
-        confirmacao = input(f"Tem certeza que deseja deletar o candidato nº {num_candidato}? (s/n): ")
 
-    if confirmacao == "s": 
-        limpar()
-        print("\n\t-- REMOÇÃO DE CANDIDATOS --")
-        input("\nCandidato removido com sucesso!\n\nAperte ENTER para retornar...")
-        bd.cursor.execute(f"DELETE FROM candidatos WHERE num_votacao = {num_candidato}")
-        bd.conexao.commit()
-        limpar()
-        opcao_gerenciamento()
+        bd.cursor.execute(f"SELECT nome FROM candidatos WHERE num_votacao = {num_candidato}") # VERIFICA SE O CANDIDATO EXISTE
+        resultado = bd.cursor.fetchone()
 
-    if confirmacao == "n":
-        limpar()
-        print("\n\t-- REMOÇÃO DE CANDIDATOS --")
-        input("\nOperação cancelada!\n\nAperte ENTER para retornar...")
-        limpar()
-        opcao_gerenciamento()
+        if resultado: # CASO EXISTA, ELE PEDE UMA CONFIRMAÇÃO DE EXCLUSÃO
+            for nome in resultado:
+                confirmacao = input(f"Tem certeza que deseja deletar {nome}, nº {num_candidato}? (s/n): ")
+                confirmacao = confirmacao.lower()
 
+                while confirmacao != "s" and confirmacao != "n":
+                    limpar()
+                    print("\n\t-- REMOÇÃO DE CANDIDATOS --\n\n*ERRO: Digite 's' para sim e 'n' para não, tente novamente.")
+                    confirmacao = input(f"Tem certeza que deseja deletar o {nome}, nº {num_candidato}? (s/n): ")
+
+                if confirmacao == "s": # CASO SIM, ELE REMOVE E UM AVISO DE EXCLUSÃO É MOSTRADO
+                    limpar()
+                    print("\n\t-- REMOÇÃO DE CANDIDATOS --")
+                    input("\n*SUCESSO: Candidato removido com sucesso!\n\nAperte ENTER para retornar...")
+                    bd.cursor.execute(f"DELETE FROM candidatos WHERE num_votacao = {num_candidato}")
+                    bd.conexao.commit()
+                    limpar()
+                    return
+
+                if confirmacao == "n": # CASO NÃO, ELE CANCELA A OPERAÇÃO E VOLTA AO MENU
+                    limpar()
+                    print("\n\t-- REMOÇÃO DE CANDIDATOS --")
+                    input("\nOperação cancelada!\n\nAperte ENTER para retornar...")
+                    limpar()
+                    return
+                
+        else: # SE O CANDIDATO NÃO EXISTIR, ELE MOSTRA O ERRO E VOLTA PARA O MENU
+            limpar()
+            print("\n\t-- REMOÇÃO DE CANDIDATOS --")
+            input("\n*ERRO: Candidato não foi encontrado.\n\nAperte ENTER para retornar...")
+            limpar()
+            return
+        
+    else:
+        input("\n*ERRO: Não há candidatos registrados.\n\nAperte ENTER para retornar...")
+        limpar()
+        return
+    
+def verificacao_existencia(opcao): # VERIFICA SE HÁ ELEITORES (opcao = 0) OU CANDIDATOS (opcao = 1) REGISTRADOS NO BANCO DE DADOS
+    if opcao == 0:
+        nome = 'eleitores'
+    else:
+        nome = 'candidatos'
+    
+    bd.cursor.execute(f"SELECT nome FROM {nome}")
+    resultado = bd.cursor.fetchall()
+
+    if resultado:
+        return True
+    else:
+        return False

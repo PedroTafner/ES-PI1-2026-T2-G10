@@ -6,7 +6,7 @@ Descrição: Projeto com o intuito de criar um sistema backend de votação digi
 Integrantes do Grupo:
 - Arthur Paioli  
 - Daniel Castro  
-- João Bodo  
+- João Felipe Bodo Pinheiro  
 - Pedro Osti  
 - Pedro Tafner  
 
